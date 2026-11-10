@@ -129,9 +129,10 @@ const paletteOf = (name: string) =>
 
 /** Anything that is not a current palette, such as an Orbit era accent, falls back to the default. */
 const read = (): ThemeSettings => {
+  if (typeof window === "undefined") return DEFAULT_THEME
   try {
     const stored = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) ?? "null",
+      window.localStorage.getItem(STORAGE_KEY) ?? "null",
     ) as Partial<ThemeSettings> | null
     if (!stored || !presets.some((preset) => preset.name === stored.palette))
       return DEFAULT_THEME

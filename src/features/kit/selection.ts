@@ -4,8 +4,9 @@ const KEY = "kg-kit"
 const listeners = new Set<() => void>()
 
 const read = (): string[] => {
+  if (typeof window === "undefined") return []
   try {
-    const parsed = JSON.parse(localStorage.getItem(KEY) ?? "[]")
+    const parsed = JSON.parse(window.localStorage.getItem(KEY) ?? "[]")
     return Array.isArray(parsed) ? parsed.filter((id) => typeof id === "string") : []
   } catch {
     return []
@@ -16,9 +17,11 @@ let ids = read()
 
 const write = (next: string[]) => {
   ids = [...new Set(next)]
-  try {
-    localStorage.setItem(KEY, JSON.stringify(ids))
-  } catch {}
+  if (typeof window !== "undefined") {
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify(ids))
+    } catch {}
+  }
   for (const listener of listeners) listener()
 }
 

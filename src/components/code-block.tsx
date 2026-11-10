@@ -117,8 +117,9 @@ const installCommand: Record<Manager, string> = {
 const PM_KEY = "kg-playground-pm"
 
 const readManager = (): Manager => {
+  if (typeof window === "undefined") return "npm"
   try {
-    const stored = localStorage.getItem(PM_KEY)
+    const stored = window.localStorage.getItem(PM_KEY)
     return managers.includes(stored as Manager) ? (stored as Manager) : "npm"
   } catch {
     return "npm"
