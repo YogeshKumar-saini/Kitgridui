@@ -1,0 +1,2360 @@
+{
+ "accent-picker": {
+  "tests": 2,
+  "gzip": 1770,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "accordion": {
+  "tests": 6,
+  "gzip": 2660,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "action-bar": {
+  "tests": 3,
+  "gzip": 1462,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "activity-feed": {
+  "tests": 3,
+  "gzip": 2164,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "add-to-cart-button": {
+  "tests": 6,
+  "gzip": 3780,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "address-form": {
+  "tests": 4,
+  "gzip": 2286,
+  "motion": "unchecked",
+  "tailwind": true
+ },
+ "agent-trace": {
+  "tests": 2,
+  "gzip": 1927,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "alert": {
+  "tests": 4,
+  "gzip": 1986,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "alert-dialog": {
+  "tests": 3,
+  "gzip": 1841,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "anchor-nav": {
+  "tests": 2,
+  "gzip": 1660,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "animated-beam": {
+  "tests": 1,
+  "gzip": 1830,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "animated-list": {
+  "tests": 3,
+  "gzip": 1243,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "announcement-bar": {
+  "tests": 9,
+  "gzip": 2974,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "api-key-field": {
+  "tests": 3,
+  "gzip": 2599,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "app-shell": {
+  "tests": 5,
+  "gzip": 2799,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "appearance-preview": {
+  "tests": 2,
+  "gzip": 1758,
+  "motion": "none",
+  "tailwind": true
+ },
+ "aspect-ratio": {
+  "tests": 2,
+  "gzip": 462,
+  "motion": "none",
+  "tailwind": true
+ },
+ "audit-log": {
+  "tests": 1,
+  "gzip": 1297,
+  "motion": "none",
+  "tailwind": true
+ },
+ "aurora": {
+  "tests": 6,
+  "gzip": 1883,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "autocomplete": {
+  "tests": 4,
+  "gzip": 2241,
+  "motion": "none",
+  "tailwind": true
+ },
+ "avatar": {
+  "tests": 6,
+  "gzip": 3594,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "avatar-upload": {
+  "tests": 4,
+  "gzip": 2061,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "back-in-stock-form": {
+  "tests": 2,
+  "gzip": 2006,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "back-to-top": {
+  "tests": 2,
+  "gzip": 1798,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "backdrop-kit": {
+  "tests": 0,
+  "gzip": 1901,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "background-beams": {
+  "tests": 5,
+  "gzip": 2798,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "badge": {
+  "tests": 3,
+  "gzip": 1217,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "ball-pit": {
+  "tests": 0,
+  "gzip": 2194,
+  "motion": "none",
+  "tailwind": true
+ },
+ "barcode": {
+  "tests": 7,
+  "gzip": 2306,
+  "motion": "none",
+  "tailwind": true
+ },
+ "bento-light": {
+  "tests": 1,
+  "gzip": 1563,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "billing-usage": {
+  "tests": 1,
+  "gzip": 1201,
+  "motion": "none",
+  "tailwind": true
+ },
+ "bleed": {
+  "tests": 2,
+  "gzip": 485,
+  "motion": "none",
+  "tailwind": true
+ },
+ "bokeh": {
+  "tests": 0,
+  "gzip": 2220,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "border-beam": {
+  "tests": 3,
+  "gzip": 1863,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "bottom-navigation": {
+  "tests": 3,
+  "gzip": 1807,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "bottom-sheet": {
+  "tests": 2,
+  "gzip": 3305,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "bounce-cards": {
+  "tests": 2,
+  "gzip": 1303,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "box": {
+  "tests": 2,
+  "gzip": 1275,
+  "motion": "none",
+  "tailwind": true
+ },
+ "breadcrumb": {
+  "tests": 4,
+  "gzip": 2818,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "breadcrumb-menu": {
+  "tests": 4,
+  "gzip": 1658,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "bundle-builder": {
+  "tests": 3,
+  "gzip": 1968,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "button": {
+  "tests": 4,
+  "gzip": 1437,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "button-group": {
+  "tests": 2,
+  "gzip": 687,
+  "motion": "none",
+  "tailwind": true
+ },
+ "calendar": {
+  "tests": 6,
+  "gzip": 4914,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "calendar-view": {
+  "tests": 5,
+  "gzip": 4696,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "card": {
+  "tests": 4,
+  "gzip": 1838,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "card-swap": {
+  "tests": 5,
+  "gzip": 2201,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "carousel": {
+  "tests": 9,
+  "gzip": 8956,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "cart": {
+  "tests": 8,
+  "gzip": 2382,
+  "motion": "none",
+  "tailwind": true
+ },
+ "cart-button": {
+  "tests": 3,
+  "gzip": 1864,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "cart-drawer": {
+  "tests": 5,
+  "gzip": 5444,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "cascader": {
+  "tests": 4,
+  "gzip": 3200,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "center": {
+  "tests": 2,
+  "gzip": 498,
+  "motion": "none",
+  "tailwind": true
+ },
+ "changelog-list": {
+  "tests": 1,
+  "gzip": 1443,
+  "motion": "none",
+  "tailwind": true
+ },
+ "chat-message": {
+  "tests": 3,
+  "gzip": 2370,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "chat-thread": {
+  "tests": 4,
+  "gzip": 2389,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "checkbox": {
+  "tests": 9,
+  "gzip": 2660,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "checkbox-card": {
+  "tests": 4,
+  "gzip": 1329,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "checkout-form": {
+  "tests": 3,
+  "gzip": 2026,
+  "motion": "unchecked",
+  "tailwind": true
+ },
+ "checkout-steps": {
+  "tests": 3,
+  "gzip": 2124,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "chip-list": {
+  "tests": 3,
+  "gzip": 1470,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "choice-list": {
+  "tests": 3,
+  "gzip": 1852,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "circular-gallery": {
+  "tests": 2,
+  "gzip": 2121,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "circular-text": {
+  "tests": 5,
+  "gzip": 1869,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "clamp": {
+  "tests": 2,
+  "gzip": 1354,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "click-spark": {
+  "tests": 2,
+  "gzip": 1405,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "cluster": {
+  "tests": 2,
+  "gzip": 624,
+  "motion": "none",
+  "tailwind": true
+ },
+ "code": {
+  "tests": 1,
+  "gzip": 598,
+  "motion": "none",
+  "tailwind": true
+ },
+ "code-block": {
+  "tests": 5,
+  "gzip": 4213,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "code-tabs": {
+  "tests": 3,
+  "gzip": 2071,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "collapsible": {
+  "tests": 3,
+  "gzip": 1402,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "color-picker": {
+  "tests": 7,
+  "gzip": 5082,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "columns": {
+  "tests": 1,
+  "gzip": 746,
+  "motion": "none",
+  "tailwind": true
+ },
+ "combobox": {
+  "tests": 6,
+  "gzip": 5296,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "command-palette": {
+  "tests": 7,
+  "gzip": 5675,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "comment-thread": {
+  "tests": 3,
+  "gzip": 2578,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "comparison-table": {
+  "tests": 3,
+  "gzip": 1707,
+  "motion": "none",
+  "tailwind": true
+ },
+ "confetti": {
+  "tests": 7,
+  "gzip": 4245,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "confirm-button": {
+  "tests": 4,
+  "gzip": 1891,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "container": {
+  "tests": 2,
+  "gzip": 688,
+  "motion": "none",
+  "tailwind": true
+ },
+ "context-menu": {
+  "tests": 4,
+  "gzip": 4938,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "cookie-banner": {
+  "tests": 3,
+  "gzip": 2098,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "copy-field": {
+  "tests": 2,
+  "gzip": 2338,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "countdown": {
+  "tests": 11,
+  "gzip": 3327,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "counter": {
+  "tests": 3,
+  "gzip": 1111,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "coupon-input": {
+  "tests": 7,
+  "gzip": 3201,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "credit-card-input": {
+  "tests": 4,
+  "gzip": 2469,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "crosshair": {
+  "tests": 2,
+  "gzip": 1082,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "cube-field": {
+  "tests": 0,
+  "gzip": 2358,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "currency-input": {
+  "tests": 4,
+  "gzip": 967,
+  "motion": "none",
+  "tailwind": true
+ },
+ "currency-selector": {
+  "tests": 1,
+  "gzip": 833,
+  "motion": "none",
+  "tailwind": true
+ },
+ "curved-loop": {
+  "tests": 3,
+  "gzip": 1852,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "data-table": {
+  "tests": 6,
+  "gzip": 3978,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "date-input": {
+  "tests": 3,
+  "gzip": 761,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "date-picker": {
+  "tests": 4,
+  "gzip": 2440,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "date-range-picker": {
+  "tests": 5,
+  "gzip": 2209,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "date-time-field": {
+  "tests": 4,
+  "gzip": 3426,
+  "motion": "none",
+  "tailwind": true
+ },
+ "delivery-estimate": {
+  "tests": 11,
+  "gzip": 3855,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "delta": {
+  "tests": 5,
+  "gzip": 1620,
+  "motion": "none",
+  "tailwind": true
+ },
+ "deploy-status": {
+  "tests": 1,
+  "gzip": 1729,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "description-list": {
+  "tests": 3,
+  "gzip": 1235,
+  "motion": "none",
+  "tailwind": true
+ },
+ "deviation-rows": {
+  "tests": 3,
+  "gzip": 2177,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "dialog": {
+  "tests": 7,
+  "gzip": 5111,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "diff-view": {
+  "tests": 6,
+  "gzip": 4004,
+  "motion": "none",
+  "tailwind": true
+ },
+ "dither": {
+  "tests": 0,
+  "gzip": 1802,
+  "motion": "none",
+  "tailwind": true
+ },
+ "dock": {
+  "tests": 5,
+  "gzip": 3965,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "dot-field": {
+  "tests": 0,
+  "gzip": 2772,
+  "motion": "none",
+  "tailwind": false
+ },
+ "dot-pagination": {
+  "tests": 2,
+  "gzip": 1401,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "dot-pattern": {
+  "tests": 6,
+  "gzip": 3040,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "drawer": {
+  "tests": 7,
+  "gzip": 3907,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "dropdown-menu": {
+  "tests": 9,
+  "gzip": 5193,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "dynamic-island": {
+  "tests": 8,
+  "gzip": 5208,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "elastic-slider": {
+  "tests": 5,
+  "gzip": 2175,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "empty-state": {
+  "tests": 2,
+  "gzip": 1052,
+  "motion": "none",
+  "tailwind": true
+ },
+ "environment-switcher": {
+  "tests": 2,
+  "gzip": 1949,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "falling-text": {
+  "tests": 5,
+  "gzip": 2325,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "feature-comparison": {
+  "tests": 2,
+  "gzip": 1318,
+  "motion": "none",
+  "tailwind": true
+ },
+ "feature-flag-list": {
+  "tests": 2,
+  "gzip": 1577,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "fetch-progress": {
+  "tests": 3,
+  "gzip": 1272,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "field": {
+  "tests": 6,
+  "gzip": 2022,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "file-dropzone": {
+  "tests": 5,
+  "gzip": 3899,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "file-tree": {
+  "tests": 3,
+  "gzip": 2157,
+  "motion": "none",
+  "tailwind": true
+ },
+ "filter-bar": {
+  "tests": 3,
+  "gzip": 1759,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "filter-chips": {
+  "tests": 7,
+  "gzip": 2466,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "filter-sheet": {
+  "tests": 2,
+  "gzip": 1822,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "flip-card": {
+  "tests": 5,
+  "gzip": 1747,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "floating-action-button": {
+  "tests": 3,
+  "gzip": 1667,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "flowing-menu": {
+  "tests": 2,
+  "gzip": 1596,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "folder": {
+  "tests": 3,
+  "gzip": 1423,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "font-picker": {
+  "tests": 1,
+  "gzip": 792,
+  "motion": "none",
+  "tailwind": true
+ },
+ "form-wizard": {
+  "tests": 5,
+  "gzip": 2971,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "formatted-number": {
+  "tests": 3,
+  "gzip": 1144,
+  "motion": "none",
+  "tailwind": true
+ },
+ "frame": {
+  "tests": 2,
+  "gzip": 1031,
+  "motion": "none",
+  "tailwind": true
+ },
+ "free-shipping-progress": {
+  "tests": 7,
+  "gzip": 1787,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "getting-started-cards": {
+  "tests": 1,
+  "gzip": 1362,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "gift-card": {
+  "tests": 2,
+  "gzip": 2277,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "glare-hover": {
+  "tests": 2,
+  "gzip": 954,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "glass-panel": {
+  "tests": 3,
+  "gzip": 1553,
+  "motion": "none",
+  "tailwind": false
+ },
+ "glitch-text": {
+  "tests": 2,
+  "gzip": 1300,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "glow-grid": {
+  "tests": 0,
+  "gzip": 2420,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "gradient-border": {
+  "tests": 3,
+  "gzip": 1198,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "gradient-text": {
+  "tests": 3,
+  "gzip": 1206,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "grainient": {
+  "tests": 2,
+  "gzip": 2371,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "grid": {
+  "tests": 3,
+  "gzip": 1087,
+  "motion": "none",
+  "tailwind": true
+ },
+ "grid-pattern": {
+  "tests": 7,
+  "gzip": 4079,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "halftone": {
+  "tests": 0,
+  "gzip": 2323,
+  "motion": "none",
+  "tailwind": false
+ },
+ "heading": {
+  "tests": 2,
+  "gzip": 919,
+  "motion": "none",
+  "tailwind": true
+ },
+ "hero-spotlight": {
+  "tests": 6,
+  "gzip": 2116,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "highlight": {
+  "tests": 4,
+  "gzip": 1154,
+  "motion": "none",
+  "tailwind": true
+ },
+ "hint-layer": {
+  "tests": 3,
+  "gzip": 4505,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "holo-card": {
+  "tests": 8,
+  "gzip": 4447,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "hover-card": {
+  "tests": 3,
+  "gzip": 1683,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "icon-button": {
+  "tests": 0,
+  "gzip": 1200,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "image-compare": {
+  "tests": 3,
+  "gzip": 2320,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "image-trail": {
+  "tests": 4,
+  "gzip": 3630,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "inbox-list": {
+  "tests": 2,
+  "gzip": 1807,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "incident-timeline": {
+  "tests": 1,
+  "gzip": 1035,
+  "motion": "none",
+  "tailwind": true
+ },
+ "infinite-list": {
+  "tests": 3,
+  "gzip": 1290,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "inline-edit": {
+  "tests": 4,
+  "gzip": 2073,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "input": {
+  "tests": 8,
+  "gzip": 2696,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "input-group": {
+  "tests": 2,
+  "gzip": 1653,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "insight-list": {
+  "tests": 4,
+  "gzip": 2189,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "integration-card": {
+  "tests": 1,
+  "gzip": 1355,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "invite-members": {
+  "tests": 2,
+  "gzip": 2225,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "iridescence": {
+  "tests": 0,
+  "gzip": 2222,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "json-viewer": {
+  "tests": 3,
+  "gzip": 2261,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "kanban-board": {
+  "tests": 3,
+  "gzip": 4194,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "kbd": {
+  "tests": 4,
+  "gzip": 1983,
+  "motion": "none",
+  "tailwind": true
+ },
+ "key-value": {
+  "tests": 3,
+  "gzip": 1364,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "keyboard-shortcuts-dialog": {
+  "tests": 3,
+  "gzip": 1690,
+  "motion": "none",
+  "tailwind": true
+ },
+ "knob": {
+  "tests": 4,
+  "gzip": 2298,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "kpi-strip": {
+  "tests": 1,
+  "gzip": 847,
+  "motion": "none",
+  "tailwind": true
+ },
+ "leaderboard": {
+  "tests": 3,
+  "gzip": 1634,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "lens": {
+  "tests": 3,
+  "gzip": 1231,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "light-cone": {
+  "tests": 0,
+  "gzip": 2125,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "light-rays": {
+  "tests": 0,
+  "gzip": 2267,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "lightbox": {
+  "tests": 5,
+  "gzip": 3919,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "lightning": {
+  "tests": 0,
+  "gzip": 2737,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "link": {
+  "tests": 3,
+  "gzip": 1198,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "liquid-glass": {
+  "tests": 7,
+  "gzip": 6297,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "live-cursor-badge": {
+  "tests": 1,
+  "gzip": 1267,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "log-viewer": {
+  "tests": 4,
+  "gzip": 3160,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "logo-cloud": {
+  "tests": 1,
+  "gzip": 1275,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "loyalty-meter": {
+  "tests": 2,
+  "gzip": 2092,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "magnet-lines": {
+  "tests": 3,
+  "gzip": 1218,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "magnetic": {
+  "tests": 5,
+  "gzip": 1404,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "markdown-text": {
+  "tests": 4,
+  "gzip": 3942,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "marquee": {
+  "tests": 4,
+  "gzip": 3175,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "mask-reveal": {
+  "tests": 2,
+  "gzip": 930,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "masonry": {
+  "tests": 2,
+  "gzip": 1432,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "member-list": {
+  "tests": 2,
+  "gzip": 1514,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "mention-input": {
+  "tests": 3,
+  "gzip": 3168,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "menubar": {
+  "tests": 4,
+  "gzip": 2840,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "mesh-gradient": {
+  "tests": 0,
+  "gzip": 2091,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "meteors": {
+  "tests": 6,
+  "gzip": 2393,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "metric-compare": {
+  "tests": 3,
+  "gzip": 1263,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "mini-cart": {
+  "tests": 3,
+  "gzip": 2409,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "mobile-nav-sheet": {
+  "tests": 3,
+  "gzip": 2483,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "modal-stack": {
+  "tests": 2,
+  "gzip": 1585,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "mode-toggle": {
+  "tests": 3,
+  "gzip": 1521,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "moire": {
+  "tests": 0,
+  "gzip": 1955,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "morph-dialog": {
+  "tests": 8,
+  "gzip": 6335,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "morphing-text": {
+  "tests": 3,
+  "gzip": 1629,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "multi-select": {
+  "tests": 5,
+  "gzip": 3140,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "navigation-menu": {
+  "tests": 4,
+  "gzip": 4545,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "nested-drawer": {
+  "tests": 2,
+  "gzip": 1225,
+  "motion": "none",
+  "tailwind": true
+ },
+ "newsletter-form": {
+  "tests": 3,
+  "gzip": 2240,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "noise": {
+  "tests": 5,
+  "gzip": 2139,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "notification-center": {
+  "tests": 3,
+  "gzip": 2990,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "number-field": {
+  "tests": 5,
+  "gzip": 3306,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "number-ticker": {
+  "tests": 8,
+  "gzip": 4337,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "onboarding-checklist": {
+  "tests": 2,
+  "gzip": 2324,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "option-tile": {
+  "tests": 1,
+  "gzip": 1452,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "orb": {
+  "tests": 0,
+  "gzip": 2306,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "orbit-rings": {
+  "tests": 0,
+  "gzip": 2291,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "orbiting-circles": {
+  "tests": 2,
+  "gzip": 1221,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "order-summary": {
+  "tests": 5,
+  "gzip": 2815,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "order-tracker": {
+  "tests": 2,
+  "gzip": 1911,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "page-header": {
+  "tests": 2,
+  "gzip": 1129,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "pager": {
+  "tests": 2,
+  "gzip": 1057,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "pagination": {
+  "tests": 6,
+  "gzip": 2510,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "panel": {
+  "tests": 3,
+  "gzip": 3002,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "panel-grid": {
+  "tests": 1,
+  "gzip": 1285,
+  "motion": "none",
+  "tailwind": true
+ },
+ "parallax-layers": {
+  "tests": 2,
+  "gzip": 1423,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "particles": {
+  "tests": 6,
+  "gzip": 5114,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "password-field": {
+  "tests": 4,
+  "gzip": 2778,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "payment-method-selector": {
+  "tests": 2,
+  "gzip": 1728,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "permission-matrix": {
+  "tests": 5,
+  "gzip": 3063,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "phone-input": {
+  "tests": 5,
+  "gzip": 2765,
+  "motion": "none",
+  "tailwind": true
+ },
+ "pin-input": {
+  "tests": 8,
+  "gzip": 3112,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "pixel-transition": {
+  "tests": 3,
+  "gzip": 1599,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "plan-badge": {
+  "tests": 1,
+  "gzip": 754,
+  "motion": "none",
+  "tailwind": true
+ },
+ "plan-summary": {
+  "tests": 1,
+  "gzip": 1148,
+  "motion": "none",
+  "tailwind": true
+ },
+ "plasma": {
+  "tests": 0,
+  "gzip": 2506,
+  "motion": "none",
+  "tailwind": false
+ },
+ "plate": {
+  "tests": 1,
+  "gzip": 913,
+  "motion": "none",
+  "tailwind": true
+ },
+ "pointer-light": {
+  "tests": 2,
+  "gzip": 979,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "pointer-trail": {
+  "tests": 3,
+  "gzip": 1523,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "poll": {
+  "tests": 2,
+  "gzip": 1916,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "popconfirm": {
+  "tests": 3,
+  "gzip": 1893,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "popover": {
+  "tests": 5,
+  "gzip": 2193,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "presence-avatars": {
+  "tests": 1,
+  "gzip": 1540,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "price": {
+  "tests": 3,
+  "gzip": 1341,
+  "motion": "none",
+  "tailwind": true
+ },
+ "price-range-slider": {
+  "tests": 5,
+  "gzip": 2451,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "pricing-card": {
+  "tests": 3,
+  "gzip": 1777,
+  "motion": "none",
+  "tailwind": true
+ },
+ "pricing-table": {
+  "tests": 3,
+  "gzip": 1249,
+  "motion": "none",
+  "tailwind": true
+ },
+ "pricing-toggle": {
+  "tests": 2,
+  "gzip": 795,
+  "motion": "none",
+  "tailwind": true
+ },
+ "prism": {
+  "tests": 0,
+  "gzip": 2273,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "product-badge": {
+  "tests": 3,
+  "gzip": 1439,
+  "motion": "none",
+  "tailwind": true
+ },
+ "product-banner": {
+  "tests": 1,
+  "gzip": 1480,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "product-card": {
+  "tests": 7,
+  "gzip": 3233,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "product-compare": {
+  "tests": 4,
+  "gzip": 2121,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "product-gallery": {
+  "tests": 6,
+  "gzip": 4808,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "product-spin": {
+  "tests": 12,
+  "gzip": 10279,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "product-tabs": {
+  "tests": 2,
+  "gzip": 1173,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "progress": {
+  "tests": 5,
+  "gzip": 2642,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "progressive-blur": {
+  "tests": 2,
+  "gzip": 953,
+  "motion": "none",
+  "tailwind": true
+ },
+ "project-card": {
+  "tests": 1,
+  "gzip": 1693,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "prompt-input": {
+  "tests": 4,
+  "gzip": 2118,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "prose": {
+  "tests": 2,
+  "gzip": 1516,
+  "motion": "none",
+  "tailwind": false
+ },
+ "qr-code": {
+  "tests": 6,
+  "gzip": 5237,
+  "motion": "none",
+  "tailwind": true
+ },
+ "quantity-stepper": {
+  "tests": 13,
+  "gzip": 4333,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "quick-view": {
+  "tests": 4,
+  "gzip": 4195,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "quota-bar": {
+  "tests": 3,
+  "gzip": 1413,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "radial-burst": {
+  "tests": 0,
+  "gzip": 1959,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "radio-group": {
+  "tests": 7,
+  "gzip": 2590,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "rating": {
+  "tests": 18,
+  "gzip": 4527,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "reactions-bar": {
+  "tests": 3,
+  "gzip": 2315,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "readout": {
+  "tests": 2,
+  "gzip": 1190,
+  "motion": "none",
+  "tailwind": true
+ },
+ "recently-viewed": {
+  "tests": 3,
+  "gzip": 2186,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "reel": {
+  "tests": 2,
+  "gzip": 797,
+  "motion": "none",
+  "tailwind": true
+ },
+ "referral-card": {
+  "tests": 2,
+  "gzip": 1706,
+  "motion": "none",
+  "tailwind": true
+ },
+ "relative-time": {
+  "tests": 4,
+  "gzip": 1287,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "responsive-dialog": {
+  "tests": 2,
+  "gzip": 1115,
+  "motion": "none",
+  "tailwind": true
+ },
+ "reveal": {
+  "tests": 5,
+  "gzip": 1948,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "review-card": {
+  "tests": 2,
+  "gzip": 1737,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "review-form": {
+  "tests": 2,
+  "gzip": 1795,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "review-summary": {
+  "tests": 3,
+  "gzip": 2528,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "ribbons": {
+  "tests": 0,
+  "gzip": 1581,
+  "motion": "none",
+  "tailwind": true
+ },
+ "ripple": {
+  "tests": 6,
+  "gzip": 1995,
+  "motion": "none",
+  "tailwind": true
+ },
+ "ripple-grid": {
+  "tests": 0,
+  "gzip": 2252,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "roadmap-board": {
+  "tests": 2,
+  "gzip": 1727,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "rotating-text": {
+  "tests": 6,
+  "gzip": 2514,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "row-splitter": {
+  "tests": 3,
+  "gzip": 2381,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "scale-input": {
+  "tests": 4,
+  "gzip": 1685,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "scramble-text": {
+  "tests": 8,
+  "gzip": 2203,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "scroll-area": {
+  "tests": 2,
+  "gzip": 2525,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "scroll-progress": {
+  "tests": 3,
+  "gzip": 1128,
+  "motion": "unchecked",
+  "tailwind": true
+ },
+ "scroll-stack": {
+  "tests": 7,
+  "gzip": 3378,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "scroll-text": {
+  "tests": 5,
+  "gzip": 2256,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "search-field": {
+  "tests": 4,
+  "gzip": 1362,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "search-select": {
+  "tests": 4,
+  "gzip": 3350,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "secret-input": {
+  "tests": 2,
+  "gzip": 1382,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "section": {
+  "tests": 1,
+  "gzip": 692,
+  "motion": "none",
+  "tailwind": true
+ },
+ "segmented-control": {
+  "tests": 6,
+  "gzip": 2927,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "segmented-nav": {
+  "tests": 3,
+  "gzip": 1748,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "select": {
+  "tests": 9,
+  "gzip": 4327,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "separator": {
+  "tests": 3,
+  "gzip": 857,
+  "motion": "none",
+  "tailwind": true
+ },
+ "series-swatch": {
+  "tests": 2,
+  "gzip": 1005,
+  "motion": "none",
+  "tailwind": true
+ },
+ "session-list": {
+  "tests": 3,
+  "gzip": 1826,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "settings-nav": {
+  "tests": 2,
+  "gzip": 1535,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "shimmer-button": {
+  "tests": 4,
+  "gzip": 2184,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "shiny-text": {
+  "tests": 3,
+  "gzip": 1183,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "shipment-timeline": {
+  "tests": 1,
+  "gzip": 1304,
+  "motion": "none",
+  "tailwind": true
+ },
+ "shortcut-table": {
+  "tests": 1,
+  "gzip": 828,
+  "motion": "none",
+  "tailwind": true
+ },
+ "show": {
+  "tests": 1,
+  "gzip": 895,
+  "motion": "none",
+  "tailwind": true
+ },
+ "shuffle-text": {
+  "tests": 5,
+  "gzip": 2032,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "sidebar-nav": {
+  "tests": 5,
+  "gzip": 3575,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "signature-pad": {
+  "tests": 4,
+  "gzip": 2482,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "silk": {
+  "tests": 0,
+  "gzip": 2137,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "size-guide": {
+  "tests": 2,
+  "gzip": 1898,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "skeleton": {
+  "tests": 4,
+  "gzip": 1998,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "skip-link": {
+  "tests": 1,
+  "gzip": 922,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "slider": {
+  "tests": 10,
+  "gzip": 4930,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "spacer": {
+  "tests": 2,
+  "gzip": 516,
+  "motion": "none",
+  "tailwind": true
+ },
+ "speed-dial": {
+  "tests": 3,
+  "gzip": 2797,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "spinner": {
+  "tests": 2,
+  "gzip": 1291,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "split-button": {
+  "tests": 2,
+  "gzip": 1230,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "split-flap": {
+  "tests": 5,
+  "gzip": 2318,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "spotlight-card": {
+  "tests": 0,
+  "gzip": 1093,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "squares-grid": {
+  "tests": 0,
+  "gzip": 2174,
+  "motion": "none",
+  "tailwind": false
+ },
+ "stack": {
+  "tests": 3,
+  "gzip": 881,
+  "motion": "none",
+  "tailwind": true
+ },
+ "star-border": {
+  "tests": 2,
+  "gzip": 1193,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "starfield": {
+  "tests": 0,
+  "gzip": 1496,
+  "motion": "none",
+  "tailwind": true
+ },
+ "starry-sky": {
+  "tests": 0,
+  "gzip": 2615,
+  "motion": "none",
+  "tailwind": false
+ },
+ "stat": {
+  "tests": 5,
+  "gzip": 2543,
+  "motion": "none",
+  "tailwind": true
+ },
+ "state-panel": {
+  "tests": 3,
+  "gzip": 1654,
+  "motion": "none",
+  "tailwind": true
+ },
+ "status-dot": {
+  "tests": 4,
+  "gzip": 1188,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "status-indicator": {
+  "tests": 2,
+  "gzip": 1502,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "stepper": {
+  "tests": 3,
+  "gzip": 1879,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "sticky": {
+  "tests": 1,
+  "gzip": 1088,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "sticky-add-to-cart": {
+  "tests": 4,
+  "gzip": 1698,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "sticky-reveal": {
+  "tests": 3,
+  "gzip": 1474,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "stock-indicator": {
+  "tests": 6,
+  "gzip": 1389,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "store-locator-list": {
+  "tests": 2,
+  "gzip": 1942,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "stripes": {
+  "tests": 0,
+  "gzip": 2013,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "stroke-text": {
+  "tests": 3,
+  "gzip": 1321,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "subscription-selector": {
+  "tests": 2,
+  "gzip": 2176,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "suggestion-chips": {
+  "tests": 2,
+  "gzip": 1348,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "swatch-picker": {
+  "tests": 3,
+  "gzip": 1565,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "swipe-deck": {
+  "tests": 8,
+  "gzip": 6113,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "switch": {
+  "tests": 6,
+  "gzip": 1866,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "switch-group": {
+  "tests": 3,
+  "gzip": 1154,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "switcher": {
+  "tests": 1,
+  "gzip": 667,
+  "motion": "none",
+  "tailwind": true
+ },
+ "table-of-contents": {
+  "tests": 3,
+  "gzip": 2349,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "tabs": {
+  "tests": 6,
+  "gzip": 3435,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "tag": {
+  "tests": 4,
+  "gzip": 2000,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "tag-input": {
+  "tests": 5,
+  "gzip": 3427,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "team-switcher": {
+  "tests": 2,
+  "gzip": 1703,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "terminal": {
+  "tests": 3,
+  "gzip": 2369,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "testimonial-card": {
+  "tests": 2,
+  "gzip": 1438,
+  "motion": "none",
+  "tailwind": true
+ },
+ "text": {
+  "tests": 2,
+  "gzip": 1076,
+  "motion": "none",
+  "tailwind": true
+ },
+ "text-highlight": {
+  "tests": 4,
+  "gzip": 2201,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "text-pressure": {
+  "tests": 3,
+  "gzip": 1554,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "text-reveal": {
+  "tests": 7,
+  "gzip": 2652,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "textarea": {
+  "tests": 5,
+  "gzip": 2550,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "theme-card": {
+  "tests": 1,
+  "gzip": 701,
+  "motion": "none",
+  "tailwind": true
+ },
+ "thought-line": {
+  "tests": 4,
+  "gzip": 1890,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "threads": {
+  "tests": 0,
+  "gzip": 2530,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "tilt-card": {
+  "tests": 6,
+  "gzip": 2570,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "time-picker": {
+  "tests": 4,
+  "gzip": 3936,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "time-slot-picker": {
+  "tests": 2,
+  "gzip": 1210,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "timeline": {
+  "tests": 3,
+  "gzip": 1632,
+  "motion": "none",
+  "tailwind": true
+ },
+ "toast": {
+  "tests": 9,
+  "gzip": 7119,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "toggle": {
+  "tests": 3,
+  "gzip": 1300,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "toggle-group": {
+  "tests": 5,
+  "gzip": 1906,
+  "motion": "none",
+  "tailwind": true
+ },
+ "toolbar": {
+  "tests": 3,
+  "gzip": 2032,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "tooltip": {
+  "tests": 6,
+  "gzip": 2104,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "topbar": {
+  "tests": 3,
+  "gzip": 768,
+  "motion": "none",
+  "tailwind": true
+ },
+ "topo-lines": {
+  "tests": 0,
+  "gzip": 2660,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "tracing-beam": {
+  "tests": 2,
+  "gzip": 1394,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "transfer-list": {
+  "tests": 5,
+  "gzip": 3427,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "tree-select": {
+  "tests": 5,
+  "gzip": 3544,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "tree-view": {
+  "tests": 6,
+  "gzip": 4339,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "trial-countdown": {
+  "tests": 1,
+  "gzip": 1408,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "true-focus": {
+  "tests": 3,
+  "gzip": 1617,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "truncate-text": {
+  "tests": 3,
+  "gzip": 857,
+  "motion": "none",
+  "tailwind": true
+ },
+ "trust-badges": {
+  "tests": 2,
+  "gzip": 1508,
+  "motion": "none",
+  "tailwind": true
+ },
+ "typewriter": {
+  "tests": 6,
+  "gzip": 2294,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "upsell-card": {
+  "tests": 3,
+  "gzip": 1691,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "uptime-bars": {
+  "tests": 2,
+  "gzip": 2160,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "usage-meter": {
+  "tests": 3,
+  "gzip": 1584,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "user-menu": {
+  "tests": 2,
+  "gzip": 1183,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "variable-proximity": {
+  "tests": 3,
+  "gzip": 1658,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "variant-picker": {
+  "tests": 13,
+  "gzip": 3446,
+  "motion": "respects-reduced",
+  "tailwind": true
+ },
+ "virtual-list": {
+  "tests": 3,
+  "gzip": 1820,
+  "motion": "none",
+  "tailwind": true
+ },
+ "visually-hidden": {
+  "tests": 2,
+  "gzip": 458,
+  "motion": "none",
+  "tailwind": true
+ },
+ "vortex": {
+  "tests": 0,
+  "gzip": 1631,
+  "motion": "none",
+  "tailwind": true
+ },
+ "watermark": {
+  "tests": 3,
+  "gzip": 1354,
+  "motion": "none",
+  "tailwind": true
+ },
+ "waves": {
+  "tests": 1,
+  "gzip": 2505,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "wavy-lines": {
+  "tests": 0,
+  "gzip": 2364,
+  "motion": "none",
+  "tailwind": false
+ },
+ "webhook-log": {
+  "tests": 2,
+  "gzip": 2183,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "wishlist-button": {
+  "tests": 6,
+  "gzip": 2477,
+  "motion": "respects-reduced",
+  "tailwind": false
+ },
+ "workspace-switcher": {
+  "tests": 3,
+  "gzip": 2905,
+  "motion": "respects-reduced",
+  "tailwind": true
+ }
+}

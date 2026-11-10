@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "integration-card",
+  "type": "registry:ui",
+  "title": "Integration Card",
+  "description": "One integration in a directory: logo, name, a line of copy and a connect toggle.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/button.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/integration-card/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  IntegrationCard,\n  type IntegrationCardLabels,\n  type IntegrationCardProps,\n} from \"./integration-card\"\n",
+      "target": "components/kitgrid/integration-card/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/integration-card/integration-card.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useId, useState } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Button } from \"../button/button\"\n\nexport interface IntegrationCardLabels {\n  connect?: string\n  disconnect?: string\n  connected?: string\n}\n\nexport interface IntegrationCardProps extends Omit<HTMLAttributes<HTMLElement>, \"title\"> {\n  name: string\n  /** The service logo. Decorative: the name is the label. */\n  logo?: ReactNode\n  /** One short line. */\n  description?: ReactNode\n  /** e.g. \"Warehouse\". */\n  category?: ReactNode\n  connected?: boolean\n  defaultConnected?: boolean\n  onConnectedChange?: (connected: boolean) => void\n  /** Runs before the state flips; the button shows a spinner while it resolves. */\n  onConnect?: () => void | Promise<void>\n  onDisconnect?: () => void | Promise<void>\n  /** Shown when connected, e.g. \"Synced 4m ago\". */\n  status?: ReactNode\n  labels?: IntegrationCardLabels\n}\n\nconst words: Required<IntegrationCardLabels> = {\n  connect: \"Connect\",\n  disconnect: \"Disconnect\",\n  connected: \"Connected\",\n}\n\n/** One integration in a directory: logo, name, a line of copy and a connect toggle. */\nexport const IntegrationCard = forwardRef<HTMLElement, IntegrationCardProps>(\n  (\n    {\n      name,\n      logo,\n      description,\n      category,\n      connected: connectedProp,\n      defaultConnected = false,\n      onConnectedChange,\n      onConnect,\n      onDisconnect,\n      status,\n      labels,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const t = { ...words, ...labels }\n    const nameId = useId()\n    const [connected, setConnected] = useControllableState({\n      value: connectedProp,\n      defaultValue: defaultConnected,\n      onChange: onConnectedChange,\n    })\n    const [busy, setBusy] = useState(false)\n\n    const toggle = async () => {\n      setBusy(true)\n      try {\n        await (connected ? onDisconnect?.() : onConnect?.())\n        setConnected(!connected)\n      } finally {\n        setBusy(false)\n      }\n    }\n\n    return (\n      <article\n        ref={ref}\n        aria-labelledby={nameId}\n        className={cx(\n          \"kg-integration-card relative flex min-w-0 flex-col gap-1.5 p-4\",\n          \"rounded-kg-xl border-2 border-kg-ink bg-kg-surface text-kg-fg shadow-kg-sm\",\n          className,\n        )}\n        data-connected={connected || undefined}\n        {...props}\n      >\n        <div className=\"kg-integration-card__head mb-1.5 flex items-start justify-between gap-2\">\n          <span\n            className={cx(\n              \"kg-integration-card__logo grid size-10 place-items-center rounded-kg-lg border-2 border-kg-ink shadow-kg-xs\",\n              \"text-kg-md font-bold text-kg-fg transition-colors duration-(--kg-duration-base) ease-kg-out\",\n              \"[&_img]:size-5.5 [&_svg]:size-5.5\",\n              connected ? \"bg-kg-paper-sage\" : \"bg-kg-surface\",\n            )}\n            aria-hidden=\"true\"\n          >\n            {logo ?? name.trim()[0]}\n          </span>\n          {category != null && <span className=\"kg-integration-card__category rounded-full bg-kg-paper-sky px-2 text-[0.6875rem] leading-5 font-medium text-kg-fg\">{category}</span>}\n        </div>\n        <h3 id={nameId} className=\"kg-integration-card__name m-0 text-kg-sm font-semibold text-kg-fg\">\n          {name}\n        </h3>\n        {description != null && <p className=\"kg-integration-card__description m-0 text-kg-xs leading-normal text-kg-fg-muted\">{description}</p>}\n        <div className=\"kg-integration-card__foot mt-auto flex items-center justify-between gap-2 pt-3\">\n          {connected ? (\n            <span className=\"kg-integration-card__status inline-flex items-center gap-1.5 text-kg-xs font-medium text-kg-fg-muted animate-[kg-fade-in_var(--kg-duration-base)_var(--kg-ease-out)] motion-reduce:animate-none\">\n              <span className=\"kg-integration-card__dot size-[0.4375rem] rounded-full bg-kg-success\" aria-hidden=\"true\" />\n              {status ?? t.connected}\n            </span>\n          ) : (\n            <span />\n          )}\n          <Button\n            size=\"sm\"\n            variant={connected ? \"ghost\" : \"outline\"}\n            loading={busy}\n            aria-label={`${connected ? t.disconnect : t.connect} ${name}`}\n            onClick={() => void toggle()}\n          >\n            {connected ? t.disconnect : t.connect}\n          </Button>\n        </div>\n      </article>\n    )\n  },\n)\n\nIntegrationCard.displayName = \"IntegrationCard\"\n",
+      "target": "components/kitgrid/integration-card/integration-card.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "search-field",
+  "type": "registry:ui",
+  "title": "Search Field",
+  "description": "A searchbox with clear, shortcut and debounce.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/command-palette.json",
+    "https://kitgrid.dev/r/field.json",
+    "https://kitgrid.dev/r/input.json",
+    "https://kitgrid.dev/r/kbd.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/search-field/index.ts",
+      "type": "registry:ui",
+      "content": "export { SearchField, type SearchFieldProps } from \"./search-field\"\n",
+      "target": "components/kitgrid/search-field/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/search-field/search-field.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type KeyboardEvent, useEffect, useRef } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { useEventCallback } from \"../lib/hooks/use-event-callback\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport { useShortcut } from \"../command-palette/shortcut\"\nimport { useField } from \"../field/field\"\nimport { Input, type InputProps } from \"../input/input\"\nimport { Kbd } from \"../kbd/kbd\"\n\nexport interface SearchFieldProps extends Omit<\n  InputProps,\n  \"type\" | \"value\" | \"defaultValue\" | \"onClear\" | \"leading\"\n> {\n  value?: string\n  defaultValue?: string\n  /** Every keystroke. */\n  onValueChange?: (value: string) => void\n  /** The settled query: after `debounce` ms of quiet, or at once when cleared. */\n  onSearch?: (value: string) => void\n  /** Delay before `onSearch`, in ms. */\n  debounce?: number\n  /** Focuses the field from anywhere and shows the keys as a hint, e.g. `[\"/\"]`. */\n  shortcut?: readonly string[]\n  /** Accessible name when no `Field` label is present. */\n  label?: string\n}\n\nconst SearchIcon = () => (\n  <svg\n    viewBox=\"0 0 24 24\"\n    fill=\"none\"\n    stroke=\"currentColor\"\n    strokeWidth=\"2\"\n    strokeLinecap=\"round\"\n    aria-hidden=\"true\"\n  >\n    <circle cx=\"11\" cy=\"11\" r=\"7\" />\n    <path d=\"m20 20-3.5-3.5\" />\n  </svg>\n)\n\nexport const SearchField = forwardRef<HTMLInputElement, SearchFieldProps>(\n  (\n    {\n      value: valueProp,\n      defaultValue = \"\",\n      onValueChange,\n      onSearch,\n      debounce = 0,\n      shortcut,\n      label = \"Search\",\n      placeholder = \"Search\",\n      clearLabel = \"Clear search\",\n      className,\n      onKeyDown,\n      onChange,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const [value, setValue] = useControllableState({\n      value: valueProp,\n      defaultValue,\n      onChange: onValueChange,\n    })\n    const local = useRef<HTMLInputElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const search = useEventCallback(onSearch)\n    const settled = useRef(value)\n    const field = useField()\n\n    useEffect(() => {\n      if (settled.current === value) return\n      const flush = () => {\n        settled.current = value\n        search(value)\n      }\n      if (debounce <= 0 || value === \"\") {\n        flush()\n        return\n      }\n      const timer = setTimeout(flush, debounce)\n      return () => clearTimeout(timer)\n    }, [value, debounce, search])\n\n    useShortcut(shortcut ?? [], () => local.current?.focus(), {\n      enabled: Boolean(shortcut?.length),\n    })\n\n    const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {\n      onKeyDown?.(event)\n      // Escape empties a filled field first; only an empty one lets Escape close its dialog.\n      if (event.defaultPrevented || event.key !== \"Escape\" || value === \"\") return\n      event.preventDefault()\n      event.stopPropagation()\n      setValue(\"\")\n    }\n\n    return (\n      <Input\n        ref={ref}\n        type=\"search\"\n        aria-label={field || props[\"aria-labelledby\"] ? undefined : label}\n        className={cx(\n          \"kg-search-field [&_.kg-input__control::-webkit-search-decoration]:appearance-none\",\n          className,\n        )}\n        leading={<SearchIcon />}\n        trailing={\n          shortcut?.length && value === \"\" ? (\n            <Kbd keys={[...shortcut]} size=\"sm\" className={cx(\n                \"kg-search-field__kbd transition-[opacity,scale] duration-(--kg-duration-fast) ease-kg-out\",\n                \"[.kg-search-field:focus-within_&]:opacity-0 [.kg-search-field:focus-within_&]:scale-90\",\n              )} />\n          ) : undefined\n        }\n        placeholder={placeholder}\n        clearLabel={clearLabel}\n        enterKeyHint=\"search\"\n        autoComplete=\"off\"\n        value={value}\n        onChange={(event) => {\n          onChange?.(event)\n          setValue(event.currentTarget.value)\n        }}\n        onClear={() => {}}\n        onKeyDown={handleKeyDown}\n        {...props}\n      />\n    )\n  },\n)\n\nSearchField.displayName = \"SearchField\"\n",
+      "target": "components/kitgrid/search-field/search-field.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

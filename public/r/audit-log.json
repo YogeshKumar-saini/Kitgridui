@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "audit-log",
+  "type": "registry:ui",
+  "title": "Audit Log",
+  "description": "Who did what, when: security and admin events grouped by day. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/avatar.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/audit-log/audit-log.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode, useId } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { variants } from \"../lib/utils/variants\"\nimport { Avatar } from \"../avatar/avatar\"\n\nexport type AuditLogTone = \"neutral\" | \"create\" | \"change\" | \"delete\" | \"security\"\n\nexport interface AuditLogEntry {\n  id: string\n  actor: string\n  avatar?: string\n  /** A verb phrase: \"invited\", \"changed the role of\". */\n  action: ReactNode\n  /** What was acted on, drawn as a mono chip. */\n  target?: ReactNode\n  /** Display time, e.g. \"14:32\". */\n  time: ReactNode\n  dateTime?: string\n  /** A quiet trailing detail, such as an IP or location. */\n  meta?: ReactNode\n  tone?: AuditLogTone\n}\n\nexport interface AuditLogGroup {\n  id: string\n  /** Day heading, e.g. \"Today\". */\n  label: ReactNode\n  entries: readonly AuditLogEntry[]\n}\n\n/* A short tone tick on the leading edge marks what kind of event it was. */\nconst entryVariants = variants({\n  base: [\n    \"kg-audit-log__entry relative grid grid-cols-[auto_minmax(0,1fr)_auto_auto] items-center gap-3 rounded-kg-md py-2 ps-3 pe-2\",\n    \"hover:bg-kg-muted\",\n    \"before:absolute before:inset-y-[30%] before:start-0 before:w-[3px] before:rounded-full before:bg-(--_tone) before:content-['']\",\n  ],\n  variants: {\n    tone: {\n      neutral: \"[--_tone:var(--kg-ink)]\",\n      create: \"[--_tone:var(--kg-success)]\",\n      change: \"[--_tone:var(--kg-info)]\",\n      delete: \"[--_tone:var(--kg-danger)]\",\n      security: \"[--_tone:var(--kg-warning)]\",\n    },\n  },\n  defaults: { tone: \"neutral\" },\n})\n\nexport interface AuditLogProps extends HTMLAttributes<HTMLDivElement> {\n  groups: readonly AuditLogGroup[]\n  /** Heading level for the day labels. */\n  headingLevel?: 3 | 4 | 5\n}\n\n/** Who did what, when: security and admin events grouped by day. Server-safe. */\nexport const AuditLog = forwardRef<HTMLDivElement, AuditLogProps>(\n  ({ groups, headingLevel = 3, className, ...props }, ref) => {\n    const baseId = useId()\n    const Heading = `h${headingLevel}` as \"h3\"\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-audit-log @container grid min-w-0 gap-5\", className)}\n        {...props}\n      >\n        {groups.map((group) => {\n          const headingId = `${baseId}-${group.id}`\n          return (\n            <section\n              key={group.id}\n              className=\"kg-audit-log__group grid gap-1.5\"\n              aria-labelledby={headingId}\n            >\n              <Heading\n                id={headingId}\n                className=\"kg-audit-log__day sticky top-0 z-1 m-0 bg-kg-bg py-1 text-kg-xs font-semibold text-kg-fg-muted\"\n              >\n                {group.label}\n              </Heading>\n              <ol className=\"kg-audit-log__list m-0 grid list-none p-0\">\n                {group.entries.map((entry) => (\n                  <li\n                    key={entry.id}\n                    className={entryVariants({ tone: entry.tone ?? \"neutral\" })}\n                    data-tone={entry.tone ?? \"neutral\"}\n                  >\n                    <Avatar\n                      className=\"kg-audit-log__avatar\"\n                      size=\"xs\"\n                      name={entry.actor}\n                      src={entry.avatar}\n                      aria-hidden=\"true\"\n                    />\n                    <p className=\"kg-audit-log__text m-0 min-w-0 truncate text-kg-sm text-kg-fg-muted @max-[30rem]:whitespace-normal [&_strong]:font-semibold [&_strong]:text-kg-fg\">\n                      <strong>{entry.actor}</strong> {entry.action}\n                      {entry.target != null && (\n                        <>\n                          {\" \"}\n                          <code className=\"kg-audit-log__target rounded-kg-xs bg-kg-paper-sky px-1.5 py-px font-kg-mono text-[0.75rem] text-kg-fg\">\n                            {entry.target}\n                          </code>\n                        </>\n                      )}\n                    </p>\n                    {entry.meta != null && (\n                      <span className=\"kg-audit-log__meta font-kg-mono text-kg-xs whitespace-nowrap text-kg-fg-faint @max-[30rem]:hidden\">\n                        {entry.meta}\n                      </span>\n                    )}\n                    <time\n                      className=\"kg-audit-log__time min-w-[3rem] text-end text-kg-xs tabular-nums text-kg-fg-faint\"\n                      dateTime={entry.dateTime}\n                    >\n                      {entry.time}\n                    </time>\n                  </li>\n                ))}\n              </ol>\n            </section>\n          )\n        })}\n      </div>\n    )\n  },\n)\n\nAuditLog.displayName = \"AuditLog\"\n",
+      "target": "components/kitgrid/audit-log/audit-log.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/audit-log/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  AuditLog,\n  type AuditLogEntry,\n  type AuditLogGroup,\n  type AuditLogProps,\n  type AuditLogTone,\n} from \"./audit-log\"\n",
+      "target": "components/kitgrid/audit-log/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

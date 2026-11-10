@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "vortex",
+  "type": "registry:ui",
+  "title": "Vortex",
+  "description": "A slow whirlpool of light: particles spiral inward, faster near the eye, leaving fading trails, and are reborn at the rim. Canvas, DPR-capped, paused offscreen, a still spiral under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/backdrop-kit.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/vortex/index.ts",
+      "type": "registry:ui",
+      "content": "export { Vortex, type VortexProps } from \"./vortex\"\n",
+      "target": "components/kitgrid/vortex/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/vortex/vortex.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { createRandom } from \"../aurora/internal/random\"\nimport { rgba, useCanvasStage } from \"../backdrop-kit/stage\"\n\nexport interface VortexProps extends HTMLAttributes<HTMLDivElement> {\n  /** Number of particles, capped at 1500. */\n  count?: number\n  /** Any CSS color. Defaults to ink. */\n  color?: string\n  /** Any CSS color for a share of slower outer particles. Defaults to a faint foreground. */\n  secondaryColor?: string\n  /** Spin speed multiplier; 0 holds the vortex still. */\n  speed?: number\n  /** Trail persistence, 0–1: higher leaves longer light trails. */\n  trail?: number\n  /** Same seed, same vortex. */\n  seed?: number\n  children?: ReactNode\n}\n\ninterface Mote {\n  angle: number\n  radius: number\n  rate: number\n  size: number\n  secondary: boolean\n}\n\n/**\n * A slow whirlpool of light: particles spiral inward, faster near the eye, leaving fading trails,\n * and are reborn at the rim. Canvas, DPR-capped, paused offscreen, a still spiral under reduced\n * motion.\n */\nexport const Vortex = forwardRef<HTMLDivElement, VortexProps>(\n  (\n    {\n      count = 700,\n      color = \"var(--kg-ink)\",\n      secondaryColor = \"color-mix(in oklab, var(--kg-fg) 40%, transparent)\",\n      speed = 1,\n      trail = 0.85,\n      seed = 8,\n      className,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const wrapper = hasChildren(children)\n    const motes = useRef<Mote[]>([])\n    const built = useRef(\"\")\n    const total = Math.min(Math.max(Math.round(count), 0), 1500)\n\n    if (built.current !== `${total}:${seed}`) {\n      built.current = `${total}:${seed}`\n      const random = createRandom(seed)\n      motes.current = Array.from({ length: total }, () => ({\n        angle: random() * Math.PI * 2,\n        radius: 0.06 + random() ** 0.7 * 0.94,\n        rate: 0.6 + random() * 0.8,\n        size: 0.5 + random() * 1.3,\n        secondary: random() < 0.35,\n      }))\n    }\n\n    useCanvasStage(root, canvasRef, {\n      pointer: false,\n      deps: [total, seed],\n      draw: ({ ctx, width, height, dt, still, color: resolve }) => {\n        const cx = width / 2\n        const cy = height / 2\n        const reach = Math.hypot(width, height) * 0.55\n        const fade = 1 - Math.min(Math.max(trail, 0), 0.97)\n        if (still) {\n          ctx.clearRect(0, 0, width, height)\n        } else {\n          ctx.globalCompositeOperation = \"destination-out\"\n          ctx.fillStyle = `rgb(0 0 0 / ${fade * dt})`\n          ctx.fillRect(0, 0, width, height)\n          ctx.globalCompositeOperation = \"source-over\"\n        }\n        const primary = resolve(color)\n        const secondary = resolve(secondaryColor)\n        ctx.lineCap = \"round\"\n        for (const mote of motes.current) {\n          const spin = (0.0045 * mote.rate * speed * dt) / Math.max(mote.radius, 0.05) ** 0.8\n          const r0 = mote.radius * reach\n          const x0 = cx + Math.cos(mote.angle) * r0\n          const y0 = cy + Math.sin(mote.angle) * r0 * 0.62\n          let x1 = x0\n          let y1 = y0\n          if (still) {\n            const back = mote.angle - 0.08 / Math.max(mote.radius, 0.05) ** 0.6\n            x1 = cx + Math.cos(back) * r0\n            y1 = cy + Math.sin(back) * r0 * 0.62\n          } else {\n            mote.angle += spin\n            mote.radius -= 0.0007 * mote.rate * speed * dt\n            if (mote.radius < 0.04) mote.radius = 1\n            const r1 = mote.radius * reach\n            x1 = cx + Math.cos(mote.angle) * r1\n            y1 = cy + Math.sin(mote.angle) * r1 * 0.62\n          }\n          const glow = 1 - mote.radius\n          ctx.strokeStyle = rgba(mote.secondary ? secondary : primary, 0.25 + glow * 0.75)\n          ctx.lineWidth = mote.size\n          ctx.beginPath()\n          ctx.moveTo(x0, y0)\n          ctx.lineTo(x1, y1)\n          ctx.stroke()\n        }\n      },\n    })\n\n    return (\n      <div ref={ref} {...backdropRoot(\"kg-vortex absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\", className, wrapper)} {...props}>\n        <div className=\"kg-vortex__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <canvas ref={canvasRef} className=\"kg-vortex__canvas block size-full\" />\n        </div>\n        {wrapper && <div className=\"kg-vortex__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nVortex.displayName = \"Vortex\"\n",
+      "target": "components/kitgrid/vortex/vortex.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

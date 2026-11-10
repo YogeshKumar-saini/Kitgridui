@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "action-bar",
+  "type": "registry:ui",
+  "title": "Action Bar",
+  "description": "A floating toolbar for bulk actions on a selection, turning up from the bottom edge.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/toolbar.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/action-bar/action-bar.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type ReactNode } from \"react\"\nimport { usePresence } from \"../lib/hooks/use-presence\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Toolbar, ToolbarButton, type ToolbarProps, ToolbarSeparator } from \"../toolbar/toolbar\"\n\nexport type ActionBarPosition = \"fixed\" | \"absolute\"\n\nexport interface ActionBarProps extends Omit<ToolbarProps, \"orientation\"> {\n  /** Number of selected items. The bar shows while it is above zero. */\n  count: number\n  /** Formats the count, e.g. `(n) => \\`${n} files\\``. */\n  formatCount?: (count: number) => ReactNode\n  /** Clears the selection: from the close button or Escape inside the bar. */\n  onClear?: () => void\n  clearLabel?: string\n  /** `fixed` floats over the viewport; `absolute` floats over the nearest positioned parent. */\n  position?: ActionBarPosition\n  /** Actions, usually ToolbarButton elements. */\n  children?: ReactNode\n}\n\n/* An inverted ink bar on a sage offset; it rises calmly from the bottom edge. */\nconst barClass = [\n  \"kg-action-bar z-40 left-1/2 bottom-[max(calc(var(--kg-space)*6),env(safe-area-inset-bottom))] max-w-[calc(100%-var(--kg-space)*6)]\",\n  \"-translate-x-1/2 origin-[50%_100%] data-[position=fixed]:fixed data-[position=absolute]:absolute\",\n  \"[--_toolbar-bg:var(--kg-fg)] [--_toolbar-fg:var(--kg-surface)] [--_toolbar-edge:var(--kg-fg)] [--_toolbar-radius:var(--kg-radius-xl)]\",\n  \"[--_toolbar-shadow:5px_5px_0_var(--kg-paper-sage)] [--_toolbar-separator:color-mix(in_oklab,var(--kg-surface)_30%,transparent)]\",\n  \"[--_toolbar-button:color-mix(in_oklab,var(--kg-surface)_80%,transparent)] [--_toolbar-button-hover:var(--kg-surface)]\",\n  \"[--_toolbar-button-hover-bg:color-mix(in_oklab,var(--kg-surface)_14%,transparent)]\",\n  \"[--kg-enter-y:12px] data-[state=open]:animate-[kg-pop-in_var(--kg-duration-slow)_var(--kg-ease-out)]\",\n  \"data-[state=closed]:pointer-events-none data-[state=closed]:animate-[kg-pop-out_var(--kg-duration-fast)_var(--kg-ease-in)_forwards]\",\n]\n\nconst Close = () => (\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth=\"2\" aria-hidden=\"true\">\n    <path d=\"M18 6 6 18M6 6l12 12\" strokeLinecap=\"round\" strokeLinejoin=\"round\" />\n  </svg>\n)\n\n/** A floating toolbar for bulk actions on a selection, turning up from the bottom edge. */\nexport const ActionBar = forwardRef<HTMLDivElement, ActionBarProps>(\n  (\n    {\n      count,\n      formatCount = (value) => `${value} selected`,\n      onClear,\n      clearLabel = \"Clear selection\",\n      position = \"fixed\",\n      className,\n      children,\n      onKeyDown,\n      \"aria-label\": ariaLabel = \"Selection actions\",\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const { ref, present, state } = usePresence<HTMLDivElement>(count > 0)\n    const composed = useComposedRefs(ref, forwardedRef)\n    if (!present) return null\n    return (\n      <Toolbar\n        ref={composed}\n        aria-label={ariaLabel}\n        className={cx(barClass, className)}\n        data-state={state}\n        data-position={position}\n        onKeyDown={(event) => {\n          onKeyDown?.(event)\n          if (event.key === \"Escape\" && onClear) {\n            event.preventDefault()\n            onClear()\n          }\n        }}\n        {...props}\n      >\n        <span className=\"kg-action-bar__count inline-flex items-center gap-2 ps-1 pe-2 text-kg-sm font-medium whitespace-nowrap\" aria-live=\"polite\">\n          <span className=\"kg-action-bar__badge grid h-[1.5rem] min-w-[1.5rem] place-items-center rounded-full bg-kg-paper-sage px-[6px] text-kg-xs font-bold tabular-nums text-kg-fg\" aria-hidden=\"true\">\n            {count}\n          </span>\n          <span className=\"kg-action-bar__count-text text-[color-mix(in_oklab,var(--kg-surface)_86%,transparent)] max-[30rem]:sr-only\">{formatCount(count)}</span>\n        </span>\n        <ToolbarSeparator />\n        {children}\n        {onClear && (\n          <>\n            <ToolbarSeparator />\n            <ToolbarButton label={clearLabel} icon={<Close />} onClick={onClear} />\n          </>\n        )}\n      </Toolbar>\n    )\n  },\n)\n\nActionBar.displayName = \"ActionBar\"\n",
+      "target": "components/kitgrid/action-bar/action-bar.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/action-bar/index.ts",
+      "type": "registry:ui",
+      "content": "export { ActionBar, type ActionBarPosition, type ActionBarProps } from \"./action-bar\"\n",
+      "target": "components/kitgrid/action-bar/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

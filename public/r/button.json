@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button",
+  "type": "registry:ui",
+  "title": "Button",
+  "description": "Six variants, three sizes and a stable loading state.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/button/button.tsx",
+      "type": "registry:ui",
+      "content": "import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: a raised button is a sheet lifted off the page by an offset, ink by default or\n * --_lift when the fill is ink itself. Hover lifts it further; pressing pushes it flat.\n */\nconst raised = [\n  \"border-kg-ink shadow-[3px_3px_0_var(--_lift,var(--kg-ink))]\",\n  \"interactive:hover:-translate-px interactive:hover:shadow-[5px_5px_0_var(--_lift,var(--kg-ink))]\",\n  \"interactive:active:translate-x-[3px] interactive:active:translate-y-[3px] interactive:active:shadow-none\",\n]\n\nexport const buttonVariants = variants({\n  base: [\n    \"kg-button relative inline-flex items-center justify-center gap-2 rounded-full border-2\",\n    \"font-semibold leading-none whitespace-nowrap no-underline select-none cursor-pointer\",\n    \"transition-[translate,box-shadow,background-color,color] duration-(--kg-duration-fast) ease-kg-out\",\n    \"focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-kg-ring\",\n    \"disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none\",\n    \"aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:shadow-none\",\n    \"data-loading:cursor-progress data-loading:opacity-100\",\n    \"[&_svg]:size-[1.15em] [&_svg]:shrink-0\",\n  ],\n  variants: {\n    variant: {\n      solid: [raised, \"bg-kg-accent text-kg-accent-fg [--_lift:var(--kg-paper-sage)]\"],\n      outline: [raised, \"bg-kg-surface text-kg-fg\"],\n      danger: [raised, \"bg-kg-danger text-kg-danger-fg\"],\n      soft: \"border-transparent bg-kg-paper-sage text-kg-fg interactive:hover:bg-kg-accent-soft\",\n      ghost: \"border-transparent bg-transparent text-kg-fg interactive:hover:bg-kg-muted\",\n      link: \"h-auto rounded-none border-0 bg-transparent px-0 text-kg-accent-strong underline-offset-[0.25em] interactive:hover:underline\",\n    },\n    size: {\n      sm: \"h-kg-sm px-3 text-kg-sm\",\n      md: \"h-kg-md px-4 text-kg-base\",\n      lg: \"h-kg-lg px-5 text-kg-md\",\n    },\n    fullWidth: {\n      true: \"w-full\",\n      false: \"\",\n    },\n  },\n  defaults: { variant: \"solid\", size: \"md\", fullWidth: false },\n  compound: [{ variant: \"link\", class: \"h-auto px-0\" }],\n})\n\ntype ButtonVariantProps = VariantProps<typeof buttonVariants>\nexport type ButtonVariant = NonNullable<ButtonVariantProps[\"variant\"]>\nexport type ButtonSize = NonNullable<ButtonVariantProps[\"size\"]>\n\nexport interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {\n  variant?: ButtonVariant\n  size?: ButtonSize\n  /** Shows a spinner and blocks clicks while keeping the button's width. */\n  loading?: boolean\n  leading?: ReactNode\n  trailing?: ReactNode\n  fullWidth?: boolean\n  /** Render the child element (e.g. a router link) with button styling instead of a <button>. */\n  asChild?: boolean\n}\n\nexport const Button = forwardRef<HTMLButtonElement, ButtonProps>(\n  (\n    {\n      variant = \"solid\",\n      size = \"md\",\n      loading = false,\n      leading,\n      trailing,\n      fullWidth = false,\n      asChild = false,\n      className,\n      disabled,\n      type,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const shared = {\n      className: buttonVariants({ variant, size, fullWidth, className }),\n      \"data-variant\": variant,\n      \"data-size\": size,\n      \"data-loading\": loading || undefined,\n      \"data-full-width\": fullWidth || undefined,\n      \"aria-busy\": loading || undefined,\n    }\n\n    if (asChild) {\n      return (\n        <Slot\n          ref={ref}\n          {...shared}\n          aria-disabled={disabled || loading || undefined}\n          {...props}\n        >\n          {children}\n        </Slot>\n      )\n    }\n\n    return (\n      <button\n        ref={ref}\n        type={type ?? \"button\"}\n        disabled={disabled || loading}\n        {...shared}\n        {...props}\n      >\n        {loading && (\n          <span\n            className=\"kg-button__spinner absolute inset-0 m-auto size-[1.15em] animate-spin rounded-full border-2 border-current border-e-transparent [animation-duration:0.7s] motion-reduce:[animation-duration:1.6s]\"\n            aria-hidden=\"true\"\n          />\n        )}\n        <span\n          className={`kg-button__content inline-flex items-center gap-2 ${loading ? \"invisible\" : \"\"}`}\n        >\n          {leading}\n          {children}\n          {trailing}\n        </span>\n      </button>\n    )\n  },\n)\n\nButton.displayName = \"Button\"\n",
+      "target": "components/kitgrid/button/button.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/button/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Button,\n  type ButtonProps,\n  type ButtonSize,\n  type ButtonVariant,\n} from \"./button\"\n",
+      "target": "components/kitgrid/button/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

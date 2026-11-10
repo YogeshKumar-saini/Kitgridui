@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "section",
+  "type": "registry:ui",
+  "title": "Section",
+  "description": "A full-width band of the page with vertical rhythm. Pair with `aria-labelledby` pointing at its heading so it is announced as a named region.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/section/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Section,\n  type SectionProps,\n  type SectionSpacing,\n  type SectionSurface,\n} from \"./section\"\n",
+      "target": "components/kitgrid/section/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/section/section.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\nconst sectionVariants = variants({\n  base: \"kg-section @container box-border\",\n  variants: {\n    spacing: {\n      none: \"py-0\",\n      sm: \"py-[clamp(calc(var(--kg-space)*5),4vw,calc(var(--kg-space)*8))]\",\n      md: \"py-[clamp(calc(var(--kg-space)*8),6vw,calc(var(--kg-space)*14))]\",\n      lg: \"py-[clamp(calc(var(--kg-space)*12),9vw,calc(var(--kg-space)*20))]\",\n      xl: \"py-[clamp(calc(var(--kg-space)*16),12vw,calc(var(--kg-space)*28))]\",\n    },\n    surface: {\n      none: \"\",\n      surface: \"bg-kg-surface\",\n      sunken: \"bg-kg-surface-sunken\",\n      muted: \"bg-kg-muted\",\n    },\n    divided: {\n      true: \"border-t-2 border-kg-border\",\n      false: \"\",\n    },\n  },\n  defaults: { spacing: \"md\", surface: \"none\", divided: false },\n})\n\ntype SectionVariantProps = VariantProps<typeof sectionVariants>\nexport type SectionSpacing = NonNullable<SectionVariantProps[\"spacing\"]>\nexport type SectionSurface = NonNullable<SectionVariantProps[\"surface\"]>\n\nexport interface SectionProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  /** Vertical padding, which grows a little on wide screens. */\n  spacing?: SectionSpacing\n  surface?: SectionSurface\n  /** A rule above, to separate stacked sections on the same surface. */\n  divided?: boolean\n}\n\n/**\n * A full-width band of the page with vertical rhythm. Pair with `aria-labelledby` pointing at its\n * heading so it is announced as a named region.\n */\nexport const Section = forwardRef<HTMLElement, SectionProps>(\n  (\n    {\n      as: Tag = \"section\",\n      spacing = \"md\",\n      surface = \"none\",\n      divided = false,\n      className,\n      ...props\n    },\n    ref,\n  ) => (\n    <Tag\n      ref={ref}\n      className={sectionVariants({ spacing, surface, divided, className })}\n      data-spacing={spacing}\n      data-surface={surface === \"none\" ? undefined : surface}\n      data-divided={divided || undefined}\n      {...props}\n    />\n  ),\n)\n\nSection.displayName = \"Section\"\n",
+      "target": "components/kitgrid/section/section.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

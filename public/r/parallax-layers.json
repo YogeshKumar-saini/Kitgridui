@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "parallax-layers",
+  "type": "registry:ui",
+  "title": "Parallax Layers",
+  "description": "A scene of stacked layers that drift at different speeds as it scrolls through the viewport (and optionally as the pointer moves), for depth without WebGL. Progress is written to CSS variables once per frame, only while the scene is on screen.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/parallax-layers/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  ParallaxLayer,\n  type ParallaxLayerProps,\n  ParallaxLayers,\n  type ParallaxLayersProps,\n} from \"./parallax-layers\"\n",
+      "target": "components/kitgrid/parallax-layers/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/parallax-layers/parallax-layers.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useInView } from \"../lib/hooks/use-in-view\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface ParallaxLayersProps extends HTMLAttributes<HTMLDivElement> {\n  /** Travel of a depth-1 layer across the full scroll, in px. */\n  range?: number\n  /** Also shift layers with the pointer, for a hover diorama. */\n  pointer?: boolean\n}\n\nexport interface ParallaxLayerProps extends HTMLAttributes<HTMLDivElement> {\n  /** 0 stays fixed to the scene, 1 travels the full range, negatives move against it. */\n  depth?: number\n}\n\n/**\n * A scene of stacked layers that drift at different speeds as it scrolls through the viewport\n * (and optionally as the pointer moves), for depth without WebGL. Progress is written to CSS\n * variables once per frame, only while the scene is on screen.\n */\nexport const ParallaxLayers = forwardRef<HTMLDivElement, ParallaxLayersProps>(\n  ({ range = 140, pointer = false, className, style, ...props }, forwardedRef) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const reduced = useReducedMotion()\n    const inView = useInView(local, { once: false, amount: 0 })\n    const active = inView && !reduced\n\n    useEffect(() => {\n      const node = local.current\n      if (!node || !active) return\n      let frame = 0\n      const update = () => {\n        frame = 0\n        const rect = node.getBoundingClientRect()\n        const vh = window.innerHeight || 1\n        // -0.5 as the scene enters at the bottom, 0 centred, 0.5 as it leaves at the top.\n        const p = (vh / 2 - (rect.top + rect.height / 2)) / (vh + rect.height)\n        node.style.setProperty(\"--_scroll\", p.toFixed(4))\n      }\n      const schedule = () => {\n        if (!frame) frame = requestAnimationFrame(update)\n      }\n      const move = (event: PointerEvent) => {\n        const rect = node.getBoundingClientRect()\n        node.style.setProperty(\"--_px\", ((event.clientX - rect.left) / rect.width - 0.5).toFixed(3))\n        node.style.setProperty(\"--_py\", ((event.clientY - rect.top) / rect.height - 0.5).toFixed(3))\n      }\n      const leave = () => {\n        node.style.setProperty(\"--_px\", \"0\")\n        node.style.setProperty(\"--_py\", \"0\")\n      }\n      update()\n      window.addEventListener(\"scroll\", schedule, { passive: true })\n      window.addEventListener(\"resize\", schedule)\n      if (pointer) {\n        node.addEventListener(\"pointermove\", move, { passive: true })\n        node.addEventListener(\"pointerleave\", leave)\n      }\n      return () => {\n        cancelAnimationFrame(frame)\n        window.removeEventListener(\"scroll\", schedule)\n        window.removeEventListener(\"resize\", schedule)\n        node.removeEventListener(\"pointermove\", move)\n        node.removeEventListener(\"pointerleave\", leave)\n      }\n    }, [active, pointer])\n\n    useEffect(() => {\n      if (!reduced) return\n      const node = local.current\n      for (const name of [\"--_scroll\", \"--_px\", \"--_py\"]) node?.style.removeProperty(name)\n    }, [reduced])\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-parallax-layers group/parallax relative isolate grid overflow-hidden [--_px:0] [--_py:0] [--_scroll:0]\", className)}\n        data-pointer-parallax={pointer || undefined}\n        style={{ \"--_range\": `${range}px`, ...style } as CSSProperties}\n        {...props}\n      />\n    )\n  },\n)\n\nParallaxLayers.displayName = \"ParallaxLayers\"\n\nexport const ParallaxLayer = forwardRef<HTMLDivElement, ParallaxLayerProps>(\n  ({ depth = 0.5, className, style, ...props }, ref) => (\n    <div\n      ref={ref}\n      className={cx(\n        \"kg-parallax-layers__layer min-w-0 will-change-transform [grid-area:1/1] [transform:translate3d(calc(var(--_px)_*_var(--_depth)_*_var(--_range)_*_-0.35),calc(var(--_scroll)_*_var(--_depth)_*_var(--_range)_+_var(--_py)_*_var(--_depth)_*_var(--_range)_*_-0.35),0)] group-data-pointer-parallax/parallax:transition-transform group-data-pointer-parallax/parallax:duration-(--kg-duration-slower) group-data-pointer-parallax/parallax:ease-kg-out\",\n        className,\n      )}\n      style={{ \"--_depth\": depth, ...style } as CSSProperties}\n      {...props}\n    />\n  ),\n)\n\nParallaxLayer.displayName = \"ParallaxLayer\"\n",
+      "target": "components/kitgrid/parallax-layers/parallax-layers.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

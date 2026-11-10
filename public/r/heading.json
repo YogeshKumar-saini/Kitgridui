@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "heading",
+  "type": "registry:ui",
+  "title": "Heading",
+  "description": "A heading whose outline level and visual size are chosen separately.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/heading/heading.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\nconst headingVariants = variants({\n  base: \"kg-heading m-0\",\n  variants: {\n    // Display sizes scale down on narrow screens so a long word never overflows.\n    size: {\n      xs: \"text-kg-sm leading-[1.25] tracking-normal\",\n      sm: \"text-kg-base leading-[1.25] tracking-normal\",\n      md: \"text-kg-md leading-[1.25] tracking-[-0.005em]\",\n      lg: \"text-kg-lg leading-[1.25] tracking-[-0.01em]\",\n      xl: \"text-(length:--kg-text-xl) leading-[1.25] tracking-[-0.01em]\",\n      \"2xl\": \"text-(length:--kg-text-2xl) leading-[1.2] tracking-[-0.018em]\",\n      \"3xl\":\n        \"text-[length:clamp(var(--kg-text-2xl),5vw,var(--kg-text-3xl))] leading-[1.12] tracking-[-0.024em]\",\n      \"4xl\":\n        \"text-[length:clamp(var(--kg-text-2xl),6.5vw,var(--kg-text-4xl))] leading-[1.06] tracking-[-0.03em]\",\n      \"5xl\":\n        \"text-[length:clamp(var(--kg-text-3xl),8vw,var(--kg-text-5xl))] leading-[1.02] tracking-[-0.035em]\",\n    },\n    weight: {\n      medium: \"font-medium\",\n      semibold: \"font-semibold\",\n      bold: \"font-bold\",\n    },\n    tone: {\n      default: \"text-kg-fg\",\n      muted: \"text-kg-fg-muted\",\n      accent: \"text-kg-accent-display\",\n    },\n    balance: {\n      true: \"text-balance\",\n      false: \"text-pretty\",\n    },\n  },\n  defaults: { weight: \"semibold\", tone: \"default\", balance: true },\n})\n\ntype HeadingVariantProps = VariantProps<typeof headingVariants>\nexport type HeadingLevel = 1 | 2 | 3 | 4 | 5 | 6\nexport type HeadingSize = NonNullable<HeadingVariantProps[\"size\"]>\nexport type HeadingWeight = NonNullable<HeadingVariantProps[\"weight\"]>\nexport type HeadingTone = NonNullable<HeadingVariantProps[\"tone\"]>\n\nexport interface HeadingProps extends HTMLAttributes<HTMLHeadingElement> {\n  /** The document outline level: renders `h1` to `h6`. */\n  level?: HeadingLevel\n  /** The visual size, independent of the level. Follows the level when omitted. */\n  size?: HeadingSize\n  weight?: HeadingWeight\n  tone?: HeadingTone\n  /** Evens out line lengths across a wrapped heading. On by default. */\n  balance?: boolean\n  asChild?: boolean\n}\n\nconst SIZE_FOR: Record<HeadingLevel, HeadingSize> = {\n  1: \"3xl\",\n  2: \"2xl\",\n  3: \"xl\",\n  4: \"lg\",\n  5: \"md\",\n  6: \"sm\",\n}\n\n/** A heading whose outline level and visual size are chosen separately. */\nexport const Heading = forwardRef<HTMLHeadingElement, HeadingProps>(\n  (\n    {\n      level = 2,\n      size,\n      weight = \"semibold\",\n      tone = \"default\",\n      balance = true,\n      asChild = false,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const Tag = asChild ? Slot : (`h${level}` as const)\n    const resolved = size ?? SIZE_FOR[level]\n    return (\n      <Tag\n        ref={ref}\n        className={headingVariants({ size: resolved, weight, tone, balance, className })}\n        data-size={resolved}\n        data-weight={weight}\n        data-tone={tone === \"default\" ? undefined : tone}\n        data-balance={balance || undefined}\n        {...props}\n      />\n    )\n  },\n)\n\nHeading.displayName = \"Heading\"\n",
+      "target": "components/kitgrid/heading/heading.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/heading/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Heading,\n  type HeadingLevel,\n  type HeadingProps,\n  type HeadingSize,\n  type HeadingTone,\n  type HeadingWeight,\n} from \"./heading\"\n",
+      "target": "components/kitgrid/heading/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

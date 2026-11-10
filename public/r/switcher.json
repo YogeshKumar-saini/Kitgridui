@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switcher",
+  "type": "registry:ui",
+  "title": "Switcher",
+  "description": "Children side by side in equal columns, or all stacked once the container is narrower than `threshold`. No breakpoints: it reacts to its own width, wherever it is placed. Each child gets a huge positive basis below the threshold and a huge negative one above, so all wrap or none do.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/switcher/index.ts",
+      "type": "registry:ui",
+      "content": "export { Switcher, type SwitcherProps } from \"./switcher\"\n",
+      "target": "components/kitgrid/switcher/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/switcher/switcher.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxAlign, type BoxSpace, alignValue, space, vars } from \"../box/space\"\n\nexport interface SwitcherProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  /** Below this container width every child takes a full row. Any CSS length. */\n  threshold?: string\n  gap?: BoxSpace\n  align?: BoxAlign\n}\n\n/**\n * Children side by side in equal columns, or all stacked once the container is narrower than\n * `threshold`. No breakpoints: it reacts to its own width, wherever it is placed. Each child\n * gets a huge positive basis below the threshold and a huge negative one above, so all wrap\n * or none do.\n */\nexport const Switcher = forwardRef<HTMLElement, SwitcherProps>(\n  (\n    { as: Tag = \"div\", threshold = \"30rem\", gap = 4, align, className, style, ...props },\n    ref,\n  ) => (\n    <Tag\n      ref={ref}\n      className={cx(\n        \"kg-switcher m-0 flex min-w-0 list-none flex-wrap p-0\",\n        \"[align-items:var(--_align,stretch)] gap-[var(--_gap,calc(var(--kg-space)*4))]\",\n        \"*:min-w-0 *:grow *:basis-[calc((var(--_threshold,30rem)-100%)*999)]\",\n        className,\n      )}\n      style={{\n        ...vars({\n          \"--_threshold\": threshold,\n          \"--_gap\": space(gap),\n          \"--_align\": alignValue(align),\n        }),\n        ...style,\n      }}\n      {...props}\n    />\n  ),\n)\n\nSwitcher.displayName = \"Switcher\"\n",
+      "target": "components/kitgrid/switcher/switcher.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

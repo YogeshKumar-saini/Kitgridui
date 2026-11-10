@@ -1,0 +1,47 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dot-pattern",
+  "type": "registry:ui",
+  "title": "Dot Pattern",
+  "description": "An SVG dot grid. Static by default and server-component safe; `glow` mounts a small client part that lights the dots around the pointer through CSS variables, without re-rendering.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/dot-pattern/dot-pattern-glow.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { useId, useRef } from \"react\"\nimport { useIsomorphicLayoutEffect } from \"../lib/hooks/use-isomorphic-layout-effect\"\nimport { usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { svgId } from \"../aurora/internal/backdrop\"\nimport { DotPatternSvg } from \"./dot-pattern-svg\"\n\ninterface DotPatternGlowProps {\n  gap: number\n  radius: number\n}\n\n/**\n * The bright copy of the dots, revealed by a radial mask at the pointer. The pattern itself is\n * inert, so the pointer is tracked on the element the pattern fills (or on the pattern when it\n * wraps content) and its CSS variables cascade down into the mask.\n */\nexport const DotPatternGlow = ({ gap, radius }: DotPatternGlowProps) => {\n  const ref = useRef<HTMLDivElement>(null)\n  const target = useRef<HTMLElement | null>(null)\n  const id = svgId(\"kg-dots-glow\", useId())\n\n  useIsomorphicLayoutEffect(() => {\n    const root = ref.current?.closest<HTMLElement>(\".kg-dot-pattern\")\n    target.current = root?.hasAttribute(\"data-wrapper\")\n      ? root\n      : (root?.parentElement ?? null)\n  }, [])\n\n  usePointerVars(target, {\n    onMove: () => {\n      if (ref.current) ref.current.dataset.active = \"\"\n    },\n    onLeave: () => {\n      if (ref.current) delete ref.current.dataset.active\n    },\n  })\n\n  return (\n    <div\n      ref={ref}\n      className=\"kg-dot-pattern__glow absolute inset-0 text-[var(--_glow)] opacity-0 transition-opacity duration-[var(--kg-duration-slower)] ease-kg-out data-active:opacity-100\"\n    >\n      <DotPatternSvg\n        id={id}\n        gap={gap}\n        radius={Math.min(radius * 1.6, gap / 2)}\n        className=\"kg-dot-pattern__svg absolute inset-0 block\"\n      />\n    </div>\n  )\n}\n",
+      "target": "components/kitgrid/dot-pattern/dot-pattern-glow.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/dot-pattern/dot-pattern-svg.tsx",
+      "type": "registry:ui",
+      "content": "interface DotPatternSvgProps {\n  id: string\n  gap: number\n  radius: number\n  className: string\n}\n\n/** One dot per cell, centred so the pattern tiles symmetrically from any edge. */\nexport const DotPatternSvg = ({ id, gap, radius, className }: DotPatternSvgProps) => (\n  <svg className={className} width=\"100%\" height=\"100%\" aria-hidden=\"true\">\n    <defs>\n      <pattern id={id} width={gap} height={gap} patternUnits=\"userSpaceOnUse\">\n        <circle cx={gap / 2} cy={gap / 2} r={radius} fill=\"currentColor\" />\n      </pattern>\n    </defs>\n    <rect width=\"100%\" height=\"100%\" fill={`url(#${id})`} />\n  </svg>\n)\n",
+      "target": "components/kitgrid/dot-pattern/dot-pattern-svg.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/dot-pattern/dot-pattern.css",
+      "type": "registry:file",
+      "content": "/* Edge masks and the pointer-following glow are gradient stacks: neither fits in utilities. */\n@layer kg.components {\n  .kg-dot-pattern {\n    &[data-mask=\"radial\"] > .kg-dot-pattern__layer {\n      mask-image: radial-gradient(ellipse 70% 70% at 50% 50%, #000 20%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-dot-pattern__layer {\n      mask-image: radial-gradient(ellipse 90% 80% at 50% 0%, #000 25%, transparent 100%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-dot-pattern__layer {\n      mask-image: radial-gradient(ellipse 90% 80% at 50% 100%, #000 25%, transparent 100%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-dot-pattern__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n\n  /* --kg-pointer-x/y are written by usePointerVars on the tracked element and inherited here. */\n  .kg-dot-pattern__glow {\n    --_at: var(--kg-pointer-x, -100vmax) var(--kg-pointer-y, -100vmax);\n\n    background: radial-gradient(\n      circle var(--_glow-radius) at var(--_at),\n      color-mix(in oklab, var(--_glow) 12%, transparent),\n      transparent 80%\n    );\n    mask-image: radial-gradient(circle var(--_glow-radius) at var(--_at), #000 25%, transparent);\n  }\n}\n",
+      "target": "components/kitgrid/dot-pattern/dot-pattern.css"
+    },
+    {
+      "path": "kitgrid/src/components/dot-pattern/dot-pattern.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n  useId,\n} from \"react\"\nimport {\n  type BackdropMask,\n  backdropRoot,\n  hasChildren,\n  svgId,\n} from \"../aurora/internal/backdrop\"\nimport { DotPatternGlow } from \"./dot-pattern-glow\"\nimport { DotPatternSvg } from \"./dot-pattern-svg\"\n\nexport type DotPatternMask = BackdropMask\n\nexport interface DotPatternProps extends HTMLAttributes<HTMLDivElement> {\n  /** Distance between dot centres, in px. */\n  gap?: number\n  /** Dot radius, in px. */\n  radius?: number\n  /** Any CSS color. Defaults to the foreground at low alpha. */\n  color?: string\n  /** Dots near the pointer brighten. Tracks the parent element, or this one when it wraps content. */\n  glow?: boolean\n  /** Any CSS color for lit dots. Defaults to the ink. */\n  glowColor?: string\n  /** Radius of the lit area, in px. */\n  glowRadius?: number\n  /** Fade the dots out toward the edges. */\n  mask?: DotPatternMask\n  /** Optional content, painted above the dots. */\n  children?: ReactNode\n}\n\n/**\n * An SVG dot grid. Static by default and server-component safe; `glow` mounts a small client part\n * that lights the dots around the pointer through CSS variables, without re-rendering.\n */\nexport const DotPattern = forwardRef<HTMLDivElement, DotPatternProps>(\n  (\n    {\n      gap = 20,\n      radius = 1,\n      color,\n      glow = false,\n      glowColor,\n      glowRadius = 180,\n      mask = \"radial\",\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const id = svgId(\"kg-dots\", useId())\n    const spacing = Math.max(gap, 2)\n    const dot = Math.min(Math.max(radius, 0.1), spacing / 2)\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-dot-pattern absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:overflow-visible data-wrapper:isolate data-wrapper:pointer-events-auto [--_glow:var(--kg-dot-glow-color,var(--kg-ink))] [--_glow-radius:var(--kg-dot-glow-radius,180px)]\",\n          className,\n          wrapper,\n        )}\n        data-mask={mask}\n        style={\n          {\n            ...(color ? { \"--kg-dot-color\": color } : null),\n            ...(glowColor ? { \"--kg-dot-glow-color\": glowColor } : null),\n            \"--kg-dot-glow-radius\": `${Math.max(glowRadius, 0)}px`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div\n          className=\"kg-dot-pattern__layer pointer-events-none absolute inset-0 z-0 overflow-hidden text-[var(--kg-dot-color,color-mix(in_oklab,var(--kg-fg)_30%,transparent))]\"\n          aria-hidden=\"true\"\n        >\n          <DotPatternSvg\n            id={id}\n            gap={spacing}\n            radius={dot}\n            className=\"kg-dot-pattern__svg absolute inset-0 block\"\n          />\n          {glow && <DotPatternGlow gap={spacing} radius={dot} />}\n        </div>\n        {wrapper && <div className=\"kg-dot-pattern__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nDotPattern.displayName = \"DotPattern\"\n",
+      "target": "components/kitgrid/dot-pattern/dot-pattern.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/dot-pattern/index.ts",
+      "type": "registry:ui",
+      "content": "export { DotPattern, type DotPatternMask, type DotPatternProps } from \"./dot-pattern\"\n",
+      "target": "components/kitgrid/dot-pattern/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

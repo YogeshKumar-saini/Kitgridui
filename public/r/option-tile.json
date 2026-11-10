@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "option-tile",
+  "type": "registry:ui",
+  "title": "Option Tile",
+  "description": "A native radio drawn as a tile with a preview. Give tiles the same `name` inside a `role=\"radiogroup\"` and the browser supplies arrow-key selection and form submission. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/chat-message.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/option-tile/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  OptionTile,\n  type OptionTileLayout,\n  type OptionTileProps,\n} from \"./option-tile\"\n",
+      "target": "components/kitgrid/option-tile/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/option-tile/option-tile.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type InputHTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { variants } from \"../lib/utils/variants\"\nimport { CheckIcon } from \"../chat-message/internal/icons\"\n\nexport type OptionTileLayout = \"stack\" | \"row\"\n\nexport interface OptionTileProps extends Omit<\n  InputHTMLAttributes<HTMLInputElement>,\n  \"type\" | \"size\"\n> {\n  label: ReactNode\n  description?: ReactNode\n  /** What choosing this option produces: a swatch, a mini layout, a type sample. */\n  preview?: ReactNode\n  /** `stack` puts the preview above the label; `row` puts it at the start. */\n  layout?: OptionTileLayout\n  /** Applied to the tile, not the input. */\n  className?: string\n  style?: CSSProperties\n}\n\n/*\n * Paper Layers: a tile is a white sheet edged in ink. The chosen tile turns sage and lifts on an\n * ink offset, with an ink check badge, so the choice never rests on colour alone.\n */\nconst tileVariants = variants({\n  base: [\n    \"kg-option-tile group/tile relative flex min-w-0 cursor-pointer rounded-kg-lg border-2 border-kg-ink\",\n    \"bg-kg-surface text-kg-fg [-webkit-tap-highlight-color:transparent]\",\n    \"transition-[translate,box-shadow,background-color] duration-(--kg-duration-fast) ease-kg-out\",\n    \"hover:not-data-disabled:-translate-px hover:not-data-disabled:shadow-kg-xs\",\n    \"active:not-data-disabled:translate-0 active:not-data-disabled:shadow-none\",\n    \"has-checked:-translate-px has-checked:bg-kg-paper-sage has-checked:shadow-kg-sm\",\n    \"has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-kg-ring\",\n    \"data-disabled:cursor-not-allowed data-disabled:opacity-50\",\n  ],\n  variants: {\n    layout: {\n      stack: \"flex-col gap-1.5 p-1.5\",\n      row: \"flex-row items-center gap-3 py-2 ps-2.5 pe-9\",\n    },\n  },\n  defaults: { layout: \"stack\" },\n})\n\n/**\n * A native radio drawn as a tile with a preview. Give tiles the same `name` inside a\n * `role=\"radiogroup\"` and the browser supplies arrow-key selection and form submission.\n * Server-component safe.\n */\nexport const OptionTile = forwardRef<HTMLInputElement, OptionTileProps>(\n  (\n    {\n      label,\n      description,\n      preview,\n      layout = \"stack\",\n      className,\n      style,\n      disabled,\n      ...props\n    },\n    ref,\n  ) => (\n    <label\n      className={tileVariants({ layout, className })}\n      data-layout={layout}\n      data-disabled={disabled || undefined}\n      style={style}\n    >\n      <input\n        ref={ref}\n        type=\"radio\"\n        className=\"kg-option-tile__input absolute inset-0 m-0 size-full opacity-0 cursor-[inherit]\"\n        disabled={disabled}\n        {...props}\n      />\n      {preview != null && (\n        <span className=\"kg-option-tile__preview pointer-events-none grid min-h-10 place-items-center overflow-hidden rounded-kg-md border-2 border-kg-ink bg-kg-bg group-data-[layout=row]/tile:min-w-10 group-data-[layout=row]/tile:shrink-0\" aria-hidden=\"true\">\n          {preview}\n        </span>\n      )}\n      <span className=\"kg-option-tile__text pointer-events-none flex min-w-0 flex-col gap-px px-0.5 group-data-[layout=stack]/tile:items-center group-data-[layout=stack]/tile:text-center\">\n        <span className=\"kg-option-tile__label max-w-full truncate text-kg-sm font-semibold\">{label}</span>\n        {description != null && (\n          <span className=\"kg-option-tile__description max-w-full truncate text-kg-xs text-kg-fg-muted\">{description}</span>\n        )}\n      </span>\n      <span\n        className={cx(\n          \"kg-option-tile__check pointer-events-none absolute end-1 top-1 grid size-4 place-items-center rounded-full\",\n          \"bg-kg-accent text-[0.625rem] text-kg-accent-fg opacity-0 scale-40 [&_svg]:[stroke-width:3]\",\n          \"transition-[opacity,scale] duration-(--kg-duration-fast) ease-kg-out group-has-checked/tile:scale-100 group-has-checked/tile:opacity-100\",\n          \"group-data-[layout=row]/tile:end-3 group-data-[layout=row]/tile:top-1/2 group-data-[layout=row]/tile:-translate-y-1/2\",\n        )}\n        aria-hidden=\"true\"\n      >\n        <CheckIcon />\n      </span>\n    </label>\n  ),\n)\n\nOptionTile.displayName = \"OptionTile\"\n",
+      "target": "components/kitgrid/option-tile/option-tile.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

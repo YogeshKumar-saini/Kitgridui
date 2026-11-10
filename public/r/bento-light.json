@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bento-light",
+  "type": "registry:ui",
+  "title": "Bento Light",
+  "description": "A bento grid lit by one light that travels across it: every cell knows where the pointer is in its own box, so edges glow on whichever cells the pointer nears, neighbours included. A single listener on the grid, one write per cell per frame, no re-renders.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/bento-light/bento-light.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type CSSProperties, forwardRef, type HTMLAttributes, useRef } from \"react\"\nimport { type PointerSample, usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface BentoLightProps extends HTMLAttributes<HTMLDivElement> {\n  /** Grid columns at full width. Cells collapse to one column on narrow screens. */\n  columns?: number\n  /** Any CSS color. Defaults to sage paper. */\n  color?: string\n  /** Reach of the light, in px. Neighbouring cells within it glow too. */\n  radius?: number\n}\n\nexport interface BentoLightCellProps extends HTMLAttributes<HTMLDivElement> {\n  colSpan?: number\n  rowSpan?: number\n}\n\nconst CELL = \":scope > .kg-bento-light__cell\"\n\nconst gridClass = cx(\n  \"kg-bento-light grid grid-flow-dense grid-cols-[repeat(var(--kg-bento-columns,3),minmax(0,1fr))] gap-3\",\n  \"max-[40rem]:grid-cols-1 max-[40rem]:[&>.kg-bento-light__cell]:col-auto!\",\n)\n\n/*\n * Paper Layers: each cell is an ink-edged sheet. The travelling light is a faint paper wash inside\n * and, through two XOR'd masks, a lit ring along the edge wherever the light reaches.\n */\nconst cellClass = cx(\n  \"kg-bento-light__cell group/cell relative isolate min-w-0 rounded-kg-xl border-2 border-kg-ink bg-kg-surface p-5 text-kg-fg shadow-kg-sm\",\n  \"before:pointer-events-none before:absolute before:inset-0 before:-z-1 before:rounded-[inherit] before:opacity-0 before:content-['']\",\n  \"before:bg-[radial-gradient(calc(var(--kg-bento-radius,260px)*0.9)_circle_at_var(--kg-bento-x,-999px)_var(--kg-bento-y,-999px),color-mix(in_oklab,var(--kg-bento-color,var(--kg-paper-sage))_40%,transparent),transparent_70%)]\",\n  \"after:pointer-events-none after:absolute after:-inset-0.5 after:rounded-[inherit] after:p-0.5 after:opacity-0 after:content-['']\",\n  \"after:bg-[radial-gradient(var(--kg-bento-radius,260px)_circle_at_var(--kg-bento-x,-999px)_var(--kg-bento-y,-999px),var(--kg-bento-color,var(--kg-paper-sage)),transparent_65%)]\",\n  \"after:[mask:linear-gradient(#000_0_0)_content-box_exclude,linear-gradient(#000_0_0)]\",\n  \"before:transition-opacity after:transition-opacity before:duration-(--kg-duration-slow) after:duration-(--kg-duration-slow) before:ease-kg-out after:ease-kg-out\",\n  \"in-data-[pointer=in]:before:opacity-100 in-data-[pointer=in]:after:opacity-100 focus-within:after:opacity-100\",\n)\n\n/**\n * A bento grid lit by one light that travels across it: every cell knows where the pointer is\n * in its own box, so edges glow on whichever cells the pointer nears, neighbours included.\n * A single listener on the grid, one write per cell per frame, no re-renders.\n */\nexport const BentoLight = forwardRef<HTMLDivElement, BentoLightProps>(\n  ({ columns = 3, color, radius = 260, className, style, ...props }, forwardedRef) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n\n    usePointerVars(local, {\n      onMove: ({ x, y, rect }: PointerSample) => {\n        const node = local.current\n        if (!node) return\n        for (const cell of node.querySelectorAll<HTMLElement>(CELL)) {\n          const box = cell.getBoundingClientRect()\n          cell.style.setProperty(\"--kg-bento-x\", `${rect.left + x - box.left}px`)\n          cell.style.setProperty(\"--kg-bento-y\", `${rect.top + y - box.top}px`)\n        }\n      },\n    })\n\n    return (\n      <div\n        ref={ref}\n        className={cx(gridClass, className)}\n        style={\n          {\n            \"--kg-bento-columns\": Math.max(Math.round(columns), 1),\n            \"--kg-bento-radius\": `${Math.max(radius, 0)}px`,\n            ...(color ? { \"--kg-bento-color\": color } : null),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      />\n    )\n  },\n)\n\nBentoLight.displayName = \"BentoLight\"\n\n/** One tile of a `BentoLight` grid. Server-component safe. */\nexport const BentoLightCell = forwardRef<HTMLDivElement, BentoLightCellProps>(\n  ({ colSpan, rowSpan, className, style, ...props }, ref) => (\n    <div\n      ref={ref}\n      className={cx(cellClass, className)}\n      style={{\n        ...(colSpan ? { gridColumn: `span ${colSpan}` } : null),\n        ...(rowSpan ? { gridRow: `span ${rowSpan}` } : null),\n        ...style,\n      }}\n      {...props}\n    />\n  ),\n)\n\nBentoLightCell.displayName = \"BentoLightCell\"\n",
+      "target": "components/kitgrid/bento-light/bento-light.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/bento-light/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  BentoLight,\n  BentoLightCell,\n  type BentoLightCellProps,\n  type BentoLightProps,\n} from \"./bento-light\"\n",
+      "target": "components/kitgrid/bento-light/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

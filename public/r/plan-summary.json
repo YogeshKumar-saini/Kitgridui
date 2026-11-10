@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "plan-summary",
+  "type": "registry:ui",
+  "title": "Plan Summary",
+  "description": "The plan a workspace is on today, for the billing settings page. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/plan-badge.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/plan-summary/index.ts",
+      "type": "registry:ui",
+      "content": "export { PlanSummary, type PlanSummaryProps } from \"./plan-summary\"\n",
+      "target": "components/kitgrid/plan-summary/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/plan-summary/plan-summary.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode, useId } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { PlanBadge, type PlanBadgeTier } from \"../plan-badge/plan-badge\"\n\nexport interface PlanSummaryProps extends Omit<HTMLAttributes<HTMLElement>, \"title\"> {\n  /** Heading, e.g. \"Northwind workspace\" or \"Current plan\". */\n  title: ReactNode\n  tier: PlanBadgeTier\n  /** Overrides the badge text. */\n  tierLabel?: ReactNode\n  /** Formatted price, e.g. \"$96\". */\n  price: ReactNode\n  /** e.g. \"per month\". */\n  cadence?: ReactNode\n  /** A quiet line such as \"Renews Nov 1\". */\n  renewal?: ReactNode\n  /** Two to four short lines. */\n  features?: readonly ReactNode[]\n  /** Usually \"Change plan\" and \"Cancel\". */\n  actions?: ReactNode\n}\n\nconst Check = () => (\n  <svg\n    viewBox=\"0 0 16 16\"\n    fill=\"none\"\n    aria-hidden=\"true\"\n    className=\"shrink-0 size-4 mt-[0.125rem] text-kg-accent-strong\"\n  >\n    <path\n      d=\"m3.5 8.3 2.8 2.8 6.2-6.4\"\n      stroke=\"currentColor\"\n      strokeWidth=\"1.8\"\n      strokeLinecap=\"round\"\n      strokeLinejoin=\"round\"\n    />\n  </svg>\n)\n\n/** The plan a workspace is on today, for the billing settings page. Server-safe. */\nexport const PlanSummary = forwardRef<HTMLElement, PlanSummaryProps>(\n  (\n    { title, tier, tierLabel, price, cadence, renewal, features, actions, className, ...props },\n    ref,\n  ) => {\n    const titleId = useId()\n    return (\n      <section\n        ref={ref}\n        aria-labelledby={titleId}\n        className={cx(\n          \"kg-plan-summary @container relative grid gap-x-8 gap-y-5 min-w-0 p-5 text-kg-fg\",\n          \"grid-cols-[minmax(0,1fr)_minmax(0,1fr)] @max-[30rem]:grid-cols-[minmax(0,1fr)]\",\n          \"bg-kg-surface border-2 border-kg-ink rounded-kg-xl shadow-kg-md\",\n          className,\n        )}\n        data-tier={tier}\n        {...props}\n      >\n        <div className=\"kg-plan-summary__main relative grid content-start gap-2\">\n          <header className=\"kg-plan-summary__head flex flex-wrap items-center gap-2\">\n            <h3 id={titleId} className=\"kg-plan-summary__title m-0 text-kg-md font-[640] text-kg-fg\">\n              {title}\n            </h3>\n            <PlanBadge tier={tier}>{tierLabel}</PlanBadge>\n          </header>\n          <p className=\"kg-plan-summary__price flex items-baseline gap-1.5 m-0\">\n            <span className=\"kg-plan-summary__amount text-(length:--kg-text-3xl) font-bold tabular-nums tracking-[-0.03em] leading-[1.05] text-kg-fg\">\n              {price}\n            </span>\n            {cadence != null && (\n              <span className=\"kg-plan-summary__cadence text-kg-xs text-kg-fg-muted\">{cadence}</span>\n            )}\n          </p>\n          {renewal != null && (\n            <p className=\"kg-plan-summary__renewal m-0 text-kg-xs text-kg-fg-muted\">{renewal}</p>\n          )}\n        </div>\n        {features && features.length > 0 && (\n          <ul className=\"kg-plan-summary__features relative grid content-start gap-2 m-0 p-0 list-none text-kg-sm text-kg-fg-muted\">\n            {features.map((feature, index) => (\n              <li key={index} className=\"flex gap-2\">\n                <Check />\n                <span>{feature}</span>\n              </li>\n            ))}\n          </ul>\n        )}\n        {actions != null && (\n          <div className=\"kg-plan-summary__actions col-span-full flex flex-wrap justify-end gap-2 pt-4 border-t-2 border-kg-border\">\n            {actions}\n          </div>\n        )}\n      </section>\n    )\n  },\n)\n\nPlanSummary.displayName = \"PlanSummary\"\n",
+      "target": "components/kitgrid/plan-summary/plan-summary.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

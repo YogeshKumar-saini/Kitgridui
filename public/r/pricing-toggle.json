@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pricing-toggle",
+  "type": "registry:ui",
+  "title": "Pricing Toggle",
+  "description": "Monthly / yearly billing switch with a savings tag on the yearly option.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/segmented-control.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/pricing-toggle/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  PricingToggle,\n  type PricingToggleBilling,\n  type PricingToggleLabels,\n  type PricingToggleProps,\n} from \"./pricing-toggle\"\n",
+      "target": "components/kitgrid/pricing-toggle/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/pricing-toggle/pricing-toggle.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport {\n  SegmentedControl,\n  type SegmentedControlSize,\n} from \"../segmented-control/segmented-control\"\n\nexport type PricingToggleBilling = \"monthly\" | \"yearly\"\n\nexport interface PricingToggleLabels {\n  /** Accessible name of the group. */\n  group?: string\n  monthly?: string\n  yearly?: string\n}\n\nexport interface PricingToggleProps extends Omit<\n  HTMLAttributes<HTMLDivElement>,\n  \"defaultValue\" | \"onChange\"\n> {\n  value?: PricingToggleBilling\n  defaultValue?: PricingToggleBilling\n  onValueChange?: (value: PricingToggleBilling) => void\n  /** Shown beside the yearly option, e.g. \"−20%\". Part of its accessible name. */\n  savings?: ReactNode\n  size?: SegmentedControlSize\n  labels?: PricingToggleLabels\n}\n\nconst defaultLabels: Required<PricingToggleLabels> = {\n  group: \"Billing period\",\n  monthly: \"Monthly\",\n  yearly: \"Yearly\",\n}\n\n/** Monthly / yearly billing switch with a savings tag on the yearly option. */\nexport const PricingToggle = forwardRef<HTMLDivElement, PricingToggleProps>(\n  (\n    {\n      value: valueProp,\n      defaultValue = \"monthly\",\n      onValueChange,\n      savings,\n      size = \"md\",\n      labels,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const text = { ...defaultLabels, ...labels }\n    const [value, setValue] = useControllableState<PricingToggleBilling>({\n      value: valueProp,\n      defaultValue,\n      onChange: onValueChange,\n    })\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-pricing-toggle inline-flex\", className)}\n        data-value={value}\n        {...props}\n      >\n        <SegmentedControl<PricingToggleBilling>\n          aria-label={text.group}\n          variant=\"pill\"\n          size={size}\n          value={value}\n          onValueChange={setValue}\n          options={[\n            { value: \"monthly\", label: text.monthly },\n            {\n              value: \"yearly\",\n              label: (\n                <span className=\"kg-pricing-toggle__yearly inline-flex items-center gap-1.5\">\n                  {text.yearly}\n                  {savings != null && (\n                    <span className=\"kg-pricing-toggle__savings py-[0.1em] px-[0.5em] rounded-full bg-kg-paper-sage text-kg-xs font-[650] leading-[1.4] text-kg-fg\">{savings}</span>\n                  )}\n                </span>\n              ),\n            },\n          ]}\n        />\n      </div>\n    )\n  },\n)\n\nPricingToggle.displayName = \"PricingToggle\"\n",
+      "target": "components/kitgrid/pricing-toggle/pricing-toggle.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

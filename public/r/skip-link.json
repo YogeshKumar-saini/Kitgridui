@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "skip-link",
+  "type": "registry:ui",
+  "title": "Skip Link",
+  "description": "The first stop for keyboard users: hidden until focused, then jumps past the navigation. Focus is moved by hand so the link also works under hash routers, where following `#main` would change the route.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/skip-link/index.ts",
+      "type": "registry:ui",
+      "content": "export { SkipLink, type SkipLinkProps } from \"./skip-link\"\n",
+      "target": "components/kitgrid/skip-link/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/skip-link/skip-link.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type AnchorHTMLAttributes, forwardRef, type MouseEvent } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface SkipLinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {\n  /** The id of the landmark to jump to, with or without the leading `#`. */\n  target?: string\n}\n\n/**\n * The first stop for keyboard users: hidden until focused, then jumps past the navigation.\n * Focus is moved by hand so the link also works under hash routers, where following\n * `#main` would change the route.\n */\nexport const SkipLink = forwardRef<HTMLAnchorElement, SkipLinkProps>(\n  (\n    { target = \"main\", className, children = \"Skip to content\", onClick, ...props },\n    ref,\n  ) => {\n    const id = target.replace(/^#/, \"\")\n    const handleClick = (event: MouseEvent<HTMLAnchorElement>) => {\n      onClick?.(event)\n      const node = document.getElementById(id)\n      if (event.defaultPrevented || !node) return\n      event.preventDefault()\n      if (!node.hasAttribute(\"tabindex\")) node.setAttribute(\"tabindex\", \"-1\")\n      node.focus({ preventScroll: true })\n      node.scrollIntoView?.({ block: \"start\" })\n    }\n    return (\n      <a\n        ref={ref}\n        href={`#${id}`}\n        className={cx(\n          \"kg-skip-link absolute top-2 start-2 z-kg-toast px-3.5 py-2 text-kg-sm font-semibold no-underline\",\n          \"text-kg-accent-fg bg-kg-accent border-2 border-kg-ink rounded-kg-md shadow-[3px_3px_0_var(--kg-paper-sage)]\",\n          \"-translate-y-[calc(100%+var(--kg-space)*4)] opacity-0 pointer-events-none\",\n          \"transition-[translate,opacity] duration-(--kg-duration-base) ease-kg-out motion-reduce:transition-none\",\n          \"focus:translate-y-0 focus:opacity-100 focus:pointer-events-auto\",\n          \"focus:outline-2 focus:outline-offset-2 focus:outline-kg-ring\",\n          className,\n        )}\n        onClick={handleClick}\n        {...props}\n      >\n        {children}\n      </a>\n    )\n  },\n)\n\nSkipLink.displayName = \"SkipLink\"\n",
+      "target": "components/kitgrid/skip-link/skip-link.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

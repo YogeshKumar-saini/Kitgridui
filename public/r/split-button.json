@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "split-button",
+  "type": "registry:ui",
+  "title": "Split Button",
+  "description": "A primary action fused with a menu button for its alternatives.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/button.json",
+    "https://kitgrid.dev/r/dropdown-menu.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/split-button/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  SplitButton,\n  type SplitButtonAction,\n  type SplitButtonProps,\n  type SplitButtonVariant,\n} from \"./split-button\"\n",
+      "target": "components/kitgrid/split-button/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/split-button/split-button.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type MouseEvent, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Button, type ButtonSize } from \"../button/button\"\nimport {\n  DropdownMenu,\n  DropdownMenuContent,\n  DropdownMenuItem,\n  DropdownMenuSeparator,\n  DropdownMenuTrigger,\n} from \"../dropdown-menu/dropdown-menu\"\n\nexport type SplitButtonVariant = \"solid\" | \"soft\" | \"outline\"\n\nexport interface SplitButtonAction {\n  label: string\n  onSelect?: () => void\n  icon?: ReactNode\n  shortcut?: ReactNode\n  destructive?: boolean\n  disabled?: boolean\n  /** Draw a separator above this item. */\n  separated?: boolean\n}\n\nexport interface SplitButtonProps {\n  /** The primary action's label. */\n  children: ReactNode\n  onClick?: (event: MouseEvent<HTMLButtonElement>) => void\n  /** Secondary actions in the attached menu. */\n  actions: SplitButtonAction[]\n  /** Accessible name of the menu half. */\n  menuLabel?: string\n  variant?: SplitButtonVariant\n  size?: ButtonSize\n  leading?: ReactNode\n  loading?: boolean\n  disabled?: boolean\n  className?: string\n}\n\n/*\n * The halves share one 2px ink edge. Selectors are qualified through the group so they\n * outrank Button's own radius and padding utilities.\n */\nconst groupClass = [\n  \"kg-split-button inline-flex isolate [&>*]:relative [&>*:focus-visible]:z-1\",\n  String.raw`[&>.kg-split-button\\_\\_main]:rounded-e-none`,\n  String.raw`[&>.kg-split-button\\_\\_menu]:-ms-[2px] [&>.kg-split-button\\_\\_menu]:min-w-0 [&>.kg-split-button\\_\\_menu]:px-2.5 [&>.kg-split-button\\_\\_menu]:rounded-s-none`,\n  String.raw`[&[data-variant=solid]>.kg-split-button\\_\\_menu]:border-s-[color-mix(in_oklab,var(--kg-accent-fg)_45%,var(--kg-accent))]`,\n  String.raw`[&[data-variant=soft]>.kg-split-button\\_\\_menu]:ms-px`,\n]\n\nconst Caret = () => (\n  <svg viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" strokeWidth=\"2.25\" aria-hidden=\"true\">\n    <path d=\"m6 9 6 6 6-6\" strokeLinecap=\"round\" strokeLinejoin=\"round\" />\n  </svg>\n)\n\n/** A primary action fused with a menu button for its alternatives. */\nexport const SplitButton = forwardRef<HTMLDivElement, SplitButtonProps>(\n  (\n    {\n      children,\n      onClick,\n      actions,\n      menuLabel = \"More options\",\n      variant = \"solid\",\n      size = \"md\",\n      leading,\n      loading,\n      disabled = false,\n      className,\n    },\n    ref,\n  ) => (\n    <div\n      ref={ref}\n      role=\"group\"\n      className={cx(groupClass, className)}\n      data-variant={variant}\n      data-size={size}\n    >\n      <Button\n        variant={variant}\n        size={size}\n        leading={leading}\n        loading={loading}\n        disabled={disabled}\n        onClick={onClick}\n        className=\"kg-split-button__main\"\n      >\n        {children}\n      </Button>\n      <DropdownMenu>\n        <DropdownMenuTrigger asChild>\n          <Button\n            variant={variant}\n            size={size}\n            disabled={disabled}\n            aria-label={menuLabel}\n            className=\"kg-split-button__menu\"\n          >\n            <span className=\"kg-split-button__caret grid size-4 transition-transform duration-(--kg-duration-base) ease-kg-out [[aria-expanded=true]>*>&]:rotate-180 [&_svg]:size-full\">\n              <Caret />\n            </span>\n          </Button>\n        </DropdownMenuTrigger>\n        <DropdownMenuContent align=\"end\">\n          {actions.map((action) => [\n            action.separated ? (\n              <DropdownMenuSeparator key={`${action.label}-separator`} />\n            ) : null,\n            <DropdownMenuItem\n              key={action.label}\n              icon={action.icon}\n              shortcut={action.shortcut}\n              destructive={action.destructive}\n              disabled={action.disabled}\n              onSelect={() => action.onSelect?.()}\n            >\n              {action.label}\n            </DropdownMenuItem>,\n          ])}\n        </DropdownMenuContent>\n      </DropdownMenu>\n    </div>\n  ),\n)\n\nSplitButton.displayName = \"SplitButton\"\n",
+      "target": "components/kitgrid/split-button/split-button.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

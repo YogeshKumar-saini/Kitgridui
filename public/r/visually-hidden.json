@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "visually-hidden",
+  "type": "registry:ui",
+  "title": "Visually Hidden",
+  "description": "Read by screen readers, invisible on screen: labels, live text and table captions.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/visually-hidden/index.ts",
+      "type": "registry:ui",
+      "content": "export { VisuallyHidden, type VisuallyHiddenProps } from \"./visually-hidden\"\n",
+      "target": "components/kitgrid/visually-hidden/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/visually-hidden/visually-hidden.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface VisuallyHiddenProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  asChild?: boolean\n  /** Shows the content while something inside has focus, as a skip link does. */\n  focusable?: boolean\n}\n\n/** Read by screen readers, invisible on screen: labels, live text and table captions. */\nexport const VisuallyHidden = forwardRef<HTMLElement, VisuallyHiddenProps>(\n  ({ as: Tag = \"span\", asChild = false, focusable = false, className, ...props }, ref) => {\n    const Component: ElementType = asChild ? Slot : Tag\n    return (\n      <Component\n        ref={ref}\n        className={cx(\n          \"kg-visually-hidden sr-only\",\n          focusable && \"focus:not-sr-only focus-within:not-sr-only\",\n          className,\n        )}\n        data-focusable={focusable || undefined}\n        {...props}\n      />\n    )\n  },\n)\n\nVisuallyHidden.displayName = \"VisuallyHidden\"\n",
+      "target": "components/kitgrid/visually-hidden/visually-hidden.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "currency-selector",
+  "type": "registry:ui",
+  "title": "Currency Selector",
+  "description": "Store currency picker built on Select, with localized names and a symbol badge per option.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/select.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/currency-selector/currency-selector.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { getMoneyFormatter } from \"../lib/utils/money\"\nimport { Select, type SelectProps } from \"../select/select\"\n\nexport interface CurrencySelectorCurrency {\n  /** ISO 4217 code, e.g. \"EUR\". */\n  code: string\n  /** Defaults to the localized currency name. */\n  label?: string\n}\n\nexport interface CurrencySelectorProps extends Omit<SelectProps, \"options\"> {\n  currencies: readonly (CurrencySelectorCurrency | string)[]\n  /** Locale for names and symbols. */\n  locale?: string\n  /** Show only the code in each option, for tight headers. */\n  compact?: boolean\n}\n\nconst symbolFor = (code: string, locale?: string) =>\n  getMoneyFormatter({ currency: code, locale, display: \"narrowSymbol\" })\n    .formatToParts(0)\n    .find((part) => part.type === \"currency\")?.value ?? code\n\nconst nameFor = (code: string, locale?: string) => {\n  try {\n    return new Intl.DisplayNames(locale ? [locale] : undefined, { type: \"currency\" }).of(code) ?? code\n  } catch {\n    return code\n  }\n}\n\n/** Store currency picker built on Select, with localized names and a symbol badge per option. */\nexport const CurrencySelector = forwardRef<HTMLButtonElement, CurrencySelectorProps>(\n  (\n    {\n      currencies,\n      locale,\n      compact = false,\n      className,\n      \"aria-label\": ariaLabel = \"Currency\",\n      ...props\n    },\n    ref,\n  ) => (\n    <Select\n      ref={ref}\n      aria-label={ariaLabel}\n      className={cx(\"kg-currency-selector\", className)}\n      data-compact={compact || undefined}\n      options={currencies.map((entry) => {\n        const currency = typeof entry === \"string\" ? { code: entry } : entry\n        const name = currency.label ?? nameFor(currency.code, locale)\n        return {\n          value: currency.code,\n          label: compact ? currency.code : `${currency.code} · ${name}`,\n          icon: (\n            <span\n              className=\"kg-currency-selector__symbol inline-grid place-items-center min-w-6 h-6 px-1 rounded-full bg-kg-paper-sage text-kg-xs font-bold leading-none text-kg-fg\"\n              aria-hidden=\"true\"\n            >\n              {symbolFor(currency.code, locale)}\n            </span>\n          ),\n        }\n      })}\n      {...props}\n    />\n  ),\n)\n\nCurrencySelector.displayName = \"CurrencySelector\"\n",
+      "target": "components/kitgrid/currency-selector/currency-selector.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/currency-selector/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  type CurrencySelectorCurrency,\n  CurrencySelector,\n  type CurrencySelectorProps,\n} from \"./currency-selector\"\n",
+      "target": "components/kitgrid/currency-selector/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

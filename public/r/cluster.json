@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "cluster",
+  "type": "registry:ui",
+  "title": "Cluster",
+  "description": "Items of any width that wrap as they need to, such as tags, buttons or meta.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/cluster/cluster.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { cx } from \"../lib/utils/cx\"\nimport {\n  type BoxAlign,\n  type BoxJustify,\n  type BoxSpace,\n  alignValue,\n  justifyValue,\n  space,\n  vars,\n} from \"../box/space\"\n\nexport interface ClusterProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  asChild?: boolean\n  /** Space between items on a line. */\n  gap?: BoxSpace\n  /** Space between wrapped lines. Same as `gap` when omitted. */\n  rowGap?: BoxSpace\n  align?: BoxAlign\n  justify?: BoxJustify\n}\n\n/** Items of any width that wrap as they need to, such as tags, buttons or meta. */\nexport const Cluster = forwardRef<HTMLElement, ClusterProps>(\n  (\n    {\n      as: Tag = \"div\",\n      asChild = false,\n      gap = 2,\n      rowGap,\n      align = \"center\",\n      justify = \"start\",\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const Component: ElementType = asChild ? Slot : Tag\n    return (\n      <Component\n        ref={ref}\n        className={cx(\n          \"kg-cluster m-0 flex min-w-0 list-none flex-wrap p-0\",\n          \"[align-items:var(--_align,center)] [justify-content:var(--_justify,flex-start)]\",\n          \"gap-x-[var(--_gap,calc(var(--kg-space)*2))] gap-y-[var(--_row-gap,var(--_gap,calc(var(--kg-space)*2)))]\",\n          className,\n        )}\n        style={{\n          ...vars({\n            \"--_gap\": space(gap),\n            \"--_row-gap\": space(rowGap),\n            \"--_align\": alignValue(align),\n            \"--_justify\": justifyValue(justify),\n          }),\n          ...style,\n        }}\n        {...props}\n      />\n    )\n  },\n)\n\nCluster.displayName = \"Cluster\"\n",
+      "target": "components/kitgrid/cluster/cluster.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/cluster/index.ts",
+      "type": "registry:ui",
+      "content": "export { Cluster, type ClusterProps } from \"./cluster\"\n",
+      "target": "components/kitgrid/cluster/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "status-dot",
+  "type": "registry:ui",
+  "title": "Status Dot",
+  "description": "A status marker that always carries its meaning in text and shape, never in colour alone.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/status-dot/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  StatusDot,\n  type StatusDotProps,\n  type StatusDotSize,\n  type StatusDotStatus,\n} from \"./status-dot\"\n",
+      "target": "components/kitgrid/status-dot/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/status-dot/status-dot.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: the marker's shape carries the status as well as its colour, so it reads\n * without colour vision: circle (ok), square (busy/danger), diamond (away/warning), ring\n * (offline), bullseye (info).\n */\nconst statusDotVariants = variants({\n  base: \"kg-status-dot inline-flex items-center gap-1.5 align-middle leading-[1.3] text-kg-fg-muted\",\n  variants: {\n    status: {\n      online: \"[--_tone:var(--kg-success)]\",\n      success: \"[--_tone:var(--kg-success)]\",\n      busy: \"[--_tone:var(--kg-danger)]\",\n      danger: \"[--_tone:var(--kg-danger)]\",\n      away: \"[--_tone:var(--kg-warning)]\",\n      warning: \"[--_tone:var(--kg-warning)]\",\n      offline: \"[--_tone:var(--kg-fg-faint)]\",\n      info: \"[--_tone:var(--kg-info)]\",\n    },\n    size: {\n      sm: \"text-kg-xs [--_size:0.4375rem]\",\n      md: \"text-kg-sm [--_size:0.5625rem]\",\n      lg: \"text-kg-base [--_size:0.6875rem]\",\n    },\n  },\n  defaults: { status: \"online\", size: \"md\" },\n})\n\nconst shapes: Record<StatusDotStatus, string> = {\n  online: \"rounded-full bg-(--_tone)\",\n  success: \"rounded-full bg-(--_tone)\",\n  busy: \"rounded-[2px] bg-(--_tone)\",\n  danger: \"rounded-[2px] bg-(--_tone)\",\n  away: \"scale-[0.85] rotate-45 rounded-[1px] bg-(--_tone)\",\n  warning: \"scale-[0.85] rotate-45 rounded-[1px] bg-(--_tone)\",\n  offline: \"rounded-full border-2 border-(--_tone) bg-transparent\",\n  info: \"m-[2.5px] scale-75 rounded-full bg-(--_tone) outline-[1.5px] outline-offset-[1.5px] outline-solid outline-(--_tone)\",\n}\n\ntype StatusDotVariantProps = VariantProps<typeof statusDotVariants>\nexport type StatusDotStatus = NonNullable<StatusDotVariantProps[\"status\"]>\nexport type StatusDotSize = NonNullable<StatusDotVariantProps[\"size\"]>\n\nexport interface StatusDotProps extends HTMLAttributes<HTMLSpanElement> {\n  status?: StatusDotStatus\n  /** Visible text beside the dot. Without it, pass `label` so the state is still announced. */\n  children?: ReactNode\n  /** Accessible name for a dot shown on its own. */\n  label?: string\n  /** A slow ripple for live states. Removed under reduced motion. */\n  pulse?: boolean\n  size?: StatusDotSize\n}\n\n/** A status marker that always carries its meaning in text and shape, never in colour alone. */\nexport const StatusDot = forwardRef<HTMLSpanElement, StatusDotProps>(\n  (\n    { status = \"online\", children, label, pulse = false, size = \"md\", className, ...props },\n    ref,\n  ) => {\n    const standalone = children == null\n    return (\n      <span\n        ref={ref}\n        className={statusDotVariants({ status, size, className })}\n        data-status={status}\n        data-size={size}\n        data-pulse={pulse || undefined}\n        role={standalone ? \"img\" : undefined}\n        aria-label={standalone ? (label ?? status) : undefined}\n        {...props}\n      >\n        <span\n          className={`kg-status-dot__dot relative size-(--_size) flex-none ${shapes[status]}${\n            pulse\n              ? \" before:absolute before:-inset-[2px] before:rounded-[inherit] before:bg-(--_tone) before:opacity-40 before:animate-ping before:[animation-duration:2.4s] motion-reduce:before:hidden [[data-kg-motion=reduce]_&]:before:hidden\"\n              : \"\"\n          }`}\n          aria-hidden=\"true\"\n        />\n        {!standalone && <span className=\"kg-status-dot__label text-kg-fg\">{children}</span>}\n      </span>\n    )\n  },\n)\nStatusDot.displayName = \"StatusDot\"\n",
+      "target": "components/kitgrid/status-dot/status-dot.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

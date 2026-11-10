@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pricing-table",
+  "type": "registry:ui",
+  "title": "Pricing Table",
+  "description": "A row of plan cards driven by a monthly / yearly toggle that shows the best yearly saving.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/button.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/pricing-card.json",
+    "https://kitgrid.dev/r/pricing-toggle.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/pricing-table/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  PricingTable,\n  type PricingTableLabels,\n  type PricingTablePlan,\n  type PricingTableProps,\n} from \"./pricing-table\"\n",
+      "target": "components/kitgrid/pricing-table/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/pricing-table/pricing-table.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport { discountPercent, formatMoney } from \"../lib/utils/money\"\nimport { Button } from \"../button/button\"\nimport { PricingCard, type PricingCardFeature } from \"../pricing-card/pricing-card\"\nimport {\n  type PricingToggleBilling,\n  type PricingToggleLabels,\n  PricingToggle,\n} from \"../pricing-toggle/pricing-toggle\"\n\nexport interface PricingTablePlan {\n  id: string\n  name: ReactNode\n  tagline?: ReactNode\n  /** Price per month when billed monthly. `null` for custom-quoted tiers. */\n  monthly: number | null\n  /** Price per month when billed yearly. Defaults to `monthly`. */\n  yearly?: number | null\n  features?: readonly (PricingCardFeature | string)[]\n  highlighted?: boolean\n  badge?: ReactNode\n  /** Button text. Defaults to `labels.cta`. */\n  cta?: string\n  customPrice?: ReactNode\n}\n\nexport interface PricingTableLabels extends PricingToggleLabels {\n  cta?: string\n  period?: string\n  /** Small print under a yearly price. Receives the formatted yearly total. */\n  billedYearly?: (total: string) => string\n}\n\nexport interface PricingTableProps extends Omit<\n  HTMLAttributes<HTMLDivElement>,\n  \"onSelect\"\n> {\n  plans: readonly PricingTablePlan[]\n  billing?: PricingToggleBilling\n  defaultBilling?: PricingToggleBilling\n  onBillingChange?: (billing: PricingToggleBilling) => void\n  onSelect?: (planId: string, billing: PricingToggleBilling) => void\n  /** Hide the monthly / yearly switch, e.g. when every plan bills one way. */\n  hideToggle?: boolean\n  currency?: string\n  locale?: string\n  labels?: PricingTableLabels\n}\n\nconst defaultLabels = {\n  cta: \"Get started\",\n  period: \"/ mo\",\n  billedYearly: (total: string) => `Billed ${total} yearly`,\n}\n\n/** A row of plan cards driven by a monthly / yearly toggle that shows the best yearly saving. */\nexport const PricingTable = forwardRef<HTMLDivElement, PricingTableProps>(\n  (\n    {\n      plans,\n      billing: billingProp,\n      defaultBilling = \"monthly\",\n      onBillingChange,\n      onSelect,\n      hideToggle = false,\n      currency = \"USD\",\n      locale,\n      labels,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const text = { ...defaultLabels, ...labels }\n    const [billing, setBilling] = useControllableState<PricingToggleBilling>({\n      value: billingProp,\n      defaultValue: defaultBilling,\n      onChange: onBillingChange,\n    })\n    const bestSaving = Math.max(\n      0,\n      ...plans.map((plan) =>\n        plan.monthly && plan.yearly != null ? discountPercent(plan.yearly, plan.monthly) : 0,\n      ),\n    )\n    const money = { currency, locale, trimZeros: true }\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-pricing-table grid w-full justify-items-center gap-8\", className)}\n        data-billing={billing}\n        style={style}\n        {...props}\n      >\n        {!hideToggle && (\n          <PricingToggle\n            className=\"kg-pricing-table__toggle\"\n            value={billing}\n            onValueChange={setBilling}\n            savings={bestSaving > 0 ? `−${bestSaving}%` : undefined}\n            labels={labels}\n          />\n        )}\n        <div\n          className={cx(\n            \"kg-pricing-table__grid grid w-full grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] items-stretch gap-4\",\n            \"[&>[data-highlighted]]:z-1 lg:[&>[data-highlighted]]:-translate-y-2\",\n          )}\n        >\n          {plans.map((plan) => {\n            const price =\n              billing === \"yearly\" && plan.yearly !== undefined ? plan.yearly : plan.monthly\n            const note =\n              billing === \"yearly\" && price !== null && price > 0\n                ? text.billedYearly(formatMoney(price * 12, money))\n                : undefined\n            return (\n              <PricingCard\n                key={plan.id}\n                name={plan.name}\n                tagline={plan.tagline}\n                price={price}\n                customPrice={plan.customPrice}\n                currency={currency}\n                locale={locale}\n                period={price !== null ? text.period : undefined}\n                note={note}\n                features={plan.features}\n                highlighted={plan.highlighted}\n                badge={plan.badge}\n                action={\n                  <Button\n                    variant={plan.highlighted ? \"solid\" : \"outline\"}\n                    fullWidth\n                    onClick={() => onSelect?.(plan.id, billing)}\n                  >\n                    {plan.cta ?? text.cta}\n                  </Button>\n                }\n              />\n            )\n          })}\n        </div>\n      </div>\n    )\n  },\n)\n\nPricingTable.displayName = \"PricingTable\"\n",
+      "target": "components/kitgrid/pricing-table/pricing-table.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "metric-compare",
+  "type": "registry:ui",
+  "title": "Metric Compare",
+  "description": "Two periods of one metric, with paired bars and the change between them.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/metric-compare/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  MetricCompare,\n  type MetricCompareProps,\n  type MetricCompareSide,\n} from \"./metric-compare\"\n",
+      "target": "components/kitgrid/metric-compare/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/metric-compare/metric-compare.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface MetricCompareSide {\n  label: ReactNode\n  value: number\n}\n\nexport interface MetricCompareProps extends HTMLAttributes<HTMLDivElement> {\n  label: ReactNode\n  current: MetricCompareSide\n  previous: MetricCompareSide\n  format?: (value: number) => string\n  /** For metrics where lower is better, such as latency or churn. */\n  invert?: boolean\n}\n\nconst changeTones = {\n  positive: \"bg-kg-paper-sage\",\n  negative: \"bg-kg-paper-rose\",\n  neutral: \"bg-kg-muted\",\n} as const\n\nconst defaultFormat = (n: number) => new Intl.NumberFormat(\"en-US\").format(n)\n\n/** Two periods of one metric, with paired bars and the change between them. */\nexport const MetricCompare = forwardRef<HTMLDivElement, MetricCompareProps>(\n  (\n    { label, current, previous, format = defaultFormat, invert = false, className, ...props },\n    ref,\n  ) => {\n    const max = Math.max(Math.abs(current.value), Math.abs(previous.value), 1e-9)\n    const change =\n      previous.value === 0 ? null : ((current.value - previous.value) / Math.abs(previous.value)) * 100\n    const direction =\n      change === null || Math.abs(change) < 0.05 ? \"flat\" : change > 0 ? \"up\" : \"down\"\n    const tone =\n      direction === \"flat\" ? \"neutral\" : (direction === \"up\") !== invert ? \"positive\" : \"negative\"\n    const changeText =\n      change === null\n        ? \"new\"\n        : `${direction === \"up\" ? \"+\" : direction === \"down\" ? \"-\" : \"\"}${Math.abs(change).toFixed(1)}%`\n\n    return (\n      <div ref={ref} className={cx(\"kg-metric-compare grid min-w-0 gap-3\", className)} {...props}>\n        <div className=\"kg-metric-compare__head flex items-center justify-between gap-3\">\n          <span className=\"kg-metric-compare__label text-kg-sm font-medium text-kg-fg-muted\">{label}</span>\n          <span className={`kg-metric-compare__change rounded-full px-[0.4375rem] py-0.5 text-kg-xs font-semibold text-kg-fg tabular-nums ${changeTones[tone]}`} data-tone={tone} data-trend={direction}>\n            {changeText}\n          </span>\n        </div>\n        <dl className=\"kg-metric-compare__rows m-0 grid gap-2.5\">\n          {[\n            { side: current, key: \"current\" },\n            { side: previous, key: \"previous\" },\n          ].map(({ side, key }) => (\n            <div key={key} className=\"kg-metric-compare__row grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 gap-y-1\" data-side={key}>\n              <dt className=\"kg-metric-compare__period text-kg-xs text-kg-fg-faint\">{side.label}</dt>\n              <dd className={`kg-metric-compare__value m-0 font-semibold tracking-[-0.01em] tabular-nums ${key === \"current\" ? \"text-(length:--kg-text-xl) text-kg-fg\" : \"text-kg-base text-kg-fg-muted\"}`}>{format(side.value)}</dd>\n              <dd className=\"kg-metric-compare__bar col-span-full m-0 h-1.5 overflow-hidden rounded-full bg-kg-muted\" aria-hidden=\"true\">\n                <span\n                  className={`block size-full origin-left scale-x-(--_size) rounded-[inherit] transition-transform duration-(--kg-duration-slower) ease-kg-spring ${key === \"current\" ? \"bg-kg-ink\" : \"bg-kg-fg-faint\"}`}\n                  style={{ \"--_size\": Math.abs(side.value) / max } as CSSProperties} />\n              </dd>\n            </div>\n          ))}\n        </dl>\n      </div>\n    )\n  },\n)\nMetricCompare.displayName = \"MetricCompare\"\n",
+      "target": "components/kitgrid/metric-compare/metric-compare.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

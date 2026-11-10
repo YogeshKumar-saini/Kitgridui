@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stroke-text",
+  "type": "registry:ui",
+  "title": "Stroke Text",
+  "description": "Outlined display type that fills with ink from left to right: on hover, once in view, or scrubbed by scroll. The fill is a pseudo element, so the text is never duplicated in the DOM.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/text-reveal.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/stroke-text/index.ts",
+      "type": "registry:ui",
+      "content": "export { StrokeText, type StrokeTextProps, type StrokeTextTrigger } from \"./stroke-text\"\n",
+      "target": "components/kitgrid/stroke-text/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/stroke-text/stroke-text.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type ElementType,\n  forwardRef,\n  type HTMLAttributes,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useInView } from \"../lib/hooks/use-in-view\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport type { TextEffectElement } from \"../text-reveal/split-text\"\n\nexport type StrokeTextTrigger = \"hover\" | \"view\" | \"scroll\"\n\nexport interface StrokeTextProps extends Omit<HTMLAttributes<HTMLElement>, \"children\"> {\n  children: string\n  as?: TextEffectElement\n  /** `scroll` ties the fill to the element crossing the viewport. */\n  trigger?: StrokeTextTrigger\n}\n\n/**\n * Outlined display type that fills with ink from left to right: on hover, once in view, or\n * scrubbed by scroll. The fill is a pseudo element, so the text is never duplicated in the DOM.\n */\nexport const StrokeText = forwardRef<HTMLElement, StrokeTextProps>(\n  ({ children, as = \"span\", trigger = \"hover\", className, ...props }, forwardedRef) => {\n    const local = useRef<HTMLElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const reduced = useReducedMotion()\n    const inView = useInView(local, { once: true, amount: 0.6 })\n    const scrubbing = trigger === \"scroll\" && !reduced\n\n    useEffect(() => {\n      const node = local.current\n      if (!node || !scrubbing) return\n      let frame = 0\n      const update = () => {\n        frame = 0\n        const rect = node.getBoundingClientRect()\n        const vh = window.innerHeight || 1\n        // 0 as the element enters at the bottom, 1 by the time it reaches 40% from the top.\n        const p = (vh - rect.top) / (vh * 0.6 + rect.height)\n        node.style.setProperty(\"--_p\", Math.min(Math.max(p, 0), 1).toFixed(3))\n      }\n      const schedule = () => {\n        if (!frame) frame = requestAnimationFrame(update)\n      }\n      update()\n      window.addEventListener(\"scroll\", schedule, { passive: true })\n      window.addEventListener(\"resize\", schedule)\n      return () => {\n        cancelAnimationFrame(frame)\n        window.removeEventListener(\"scroll\", schedule)\n        window.removeEventListener(\"resize\", schedule)\n        node.style.removeProperty(\"--_p\")\n      }\n    }, [scrubbing])\n\n    const Tag = as as ElementType\n    const filled = reduced || (trigger === \"view\" && inView)\n\n    return (\n      <Tag\n        ref={ref}\n        className={cx(\n          \"kg-stroke-text relative inline-block text-transparent [--_ink:var(--kg-stroke-text-fill,var(--kg-ink))] [--_p:0] [--_stroke:var(--kg-stroke-text-color,var(--kg-fg-muted))] [-webkit-text-fill-color:transparent] [-webkit-text-stroke:var(--kg-stroke-text-width,1.5px)_var(--_stroke)] data-filled:[--_p:1] data-[trigger=hover]:hover:[--_p:1] [@media(scripting:none)]:data-[trigger=view]:[--_p:1] after:pointer-events-none after:absolute after:inset-0 after:text-(--_ink) after:[-webkit-text-fill-color:var(--_ink)] after:[-webkit-text-stroke:var(--kg-stroke-text-width,1.5px)_var(--_ink)] after:[clip-path:inset(0_calc((1_-_var(--_p))_*_100%)_0_0)] after:content-[attr(data-text)] data-[trigger=hover]:after:[transition:clip-path_var(--kg-duration-bounce)_var(--kg-ease-out)] data-[trigger=view]:after:[transition:clip-path_var(--kg-duration-bounce)_var(--kg-ease-out)]\",\n          className,\n        )}\n        data-text={children}\n        data-trigger={trigger}\n        data-filled={filled || undefined}\n        {...props}\n      >\n        {children}\n      </Tag>\n    )\n  },\n)\n\nStrokeText.displayName = \"StrokeText\"\n",
+      "target": "components/kitgrid/stroke-text/stroke-text.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "reel",
+  "type": "registry:ui",
+  "title": "Reel",
+  "description": "A horizontal strip that scrolls instead of wrapping, with snap points and a thin bar.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/reel/index.ts",
+      "type": "registry:ui",
+      "content": "export { Reel, type ReelProps } from \"./reel\"\n",
+      "target": "components/kitgrid/reel/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/reel/reel.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"../box/space\"\n\nexport interface ReelProps extends HTMLAttributes<HTMLDivElement> {\n  /** Names the scroll region so keyboard users know what they are scrolling. */\n  label: string\n  /** Width of each item: any CSS length. Items keep their own width otherwise. */\n  itemWidth?: string\n  gap?: BoxSpace\n  /** Snaps items to the start edge as the reel scrolls. On by default. */\n  snap?: boolean\n  /** Hides the scrollbar. Scrolling still works by touch, wheel and keyboard. */\n  hideScrollbar?: boolean\n}\n\n/** A horizontal strip that scrolls instead of wrapping, with snap points and a thin bar. */\nexport const Reel = forwardRef<HTMLDivElement, ReelProps>(\n  (\n    {\n      label,\n      itemWidth,\n      gap = 3,\n      snap = true,\n      hideScrollbar = false,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => (\n    // Focusable, so the strip scrolls with arrow keys when its items are not interactive.\n    <div\n      ref={ref}\n      role=\"region\"\n      aria-label={label}\n      tabIndex={0}\n      className={cx(\n        \"kg-reel flex min-w-0 overflow-x-auto overflow-y-hidden overscroll-x-contain rounded-kg-sm\",\n        \"gap-[var(--_gap,calc(var(--kg-space)*3))] *:min-w-0 *:shrink-0 *:grow-0 *:basis-[var(--_item,auto)]\",\n        \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n        \"motion-safe:scroll-smooth [[data-kg-motion=reduce]_&]:scroll-auto\",\n        snap && \"snap-x snap-mandatory *:snap-start\",\n        hideScrollbar\n          ? \"pb-0 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden\"\n          : \"pb-2 [scrollbar-color:var(--kg-border-strong)_transparent] [scrollbar-width:thin]\",\n        className,\n      )}\n      data-snap={snap || undefined}\n      data-hide-scrollbar={hideScrollbar || undefined}\n      style={{ ...vars({ \"--_item\": itemWidth, \"--_gap\": space(gap) }), ...style }}\n      {...props}\n    />\n  ),\n)\n\nReel.displayName = \"Reel\"\n",
+      "target": "components/kitgrid/reel/reel.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

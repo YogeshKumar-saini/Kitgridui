@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "dot-pagination",
+  "type": "registry:ui",
+  "title": "Dot Pagination",
+  "description": "Compact page dots for carousels and onboarding. A single bead glides between dots; arrow keys move and select, so the group is one tab stop.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/dot-pagination/dot-pagination.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type CSSProperties, forwardRef, type HTMLAttributes } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { useRovingFocus } from \"../lib/hooks/use-roving-focus\"\nimport { cx } from \"../lib/utils/cx\"\n\n/* A 0.5rem dot every 1.25rem (dot plus 0.75rem gap); the bead slides by that pitch. */\nconst rootClass =\n  \"kg-dot-pagination relative inline-flex items-center gap-[0.75rem] px-3 py-2 bg-kg-surface border-2 border-kg-ink rounded-full\"\n\nconst dotClass = [\n  \"kg-dot-pagination__dot relative size-[0.5rem] p-0 border-0 rounded-full bg-kg-fg-faint cursor-pointer\",\n  \"transition-[background-color,scale] duration-(--kg-duration-base) ease-kg-out\",\n  \"before:absolute before:-inset-[8px] before:content-['']\",\n  \"hover:bg-kg-fg-muted hover:scale-125\",\n  \"focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-kg-ring\",\n]\n\nconst beadClass = [\n  \"kg-dot-pagination__bead pointer-events-none absolute top-1/2 left-3 z-1 -mt-[0.25rem] size-[0.5rem] rounded-full bg-kg-accent\",\n  \"shadow-[0_0_0_2px_var(--kg-surface),0_0_0_4px_var(--kg-ink)]\",\n  \"[transform:translateX(calc(var(--_index)*1.25rem))_scale(1.35)] transition-transform duration-(--kg-duration-slow) ease-kg-out\",\n]\n\nexport interface DotPaginationProps\n  extends Omit<HTMLAttributes<HTMLDivElement>, \"defaultValue\" | \"onChange\"> {\n  count: number\n  /** Zero-based current page. */\n  value?: number\n  defaultValue?: number\n  onValueChange?: (index: number) => void\n  /** Accessible name for each dot. */\n  getLabel?: (index: number, count: number) => string\n}\n\n/**\n * Compact page dots for carousels and onboarding. A single bead glides between dots; arrow\n * keys move and select, so the group is one tab stop.\n */\nexport const DotPagination = forwardRef<HTMLDivElement, DotPaginationProps>(\n  (\n    {\n      count,\n      value: valueProp,\n      defaultValue = 0,\n      onValueChange,\n      getLabel = (index, total) => `Page ${index + 1} of ${total}`,\n      className,\n      style,\n      onKeyDown,\n      \"aria-label\": ariaLabel = \"Pages\",\n      ...props\n    },\n    ref,\n  ) => {\n    const [value, setValue] = useControllableState({\n      value: valueProp,\n      defaultValue,\n      onChange: onValueChange,\n    })\n    const rove = useRovingFocus({ orientation: \"horizontal\", loop: false })\n    const current = Math.min(Math.max(0, value), Math.max(0, count - 1))\n\n    return (\n      <div\n        ref={ref}\n        role=\"group\"\n        aria-label={ariaLabel}\n        className={cx(rootClass, className)}\n        style={{ \"--_index\": current, ...style } as CSSProperties}\n        onKeyDown={(event) => {\n          onKeyDown?.(event)\n          if (event.defaultPrevented) return\n          const next = rove(event)\n          const index = next ? Number(next.dataset.index) : Number.NaN\n          if (!Number.isNaN(index)) setValue(index)\n        }}\n        {...props}\n      >\n        <span className={cx(beadClass)} aria-hidden=\"true\" />\n        {Array.from({ length: count }, (_, index) => (\n          <button\n            key={index}\n            type=\"button\"\n            className={cx(dotClass)}\n            aria-label={getLabel(index, count)}\n            aria-current={index === current || undefined}\n            tabIndex={index === current ? 0 : -1}\n            data-index={index}\n            data-kg-item=\"\"\n            onClick={() => setValue(index)}\n          />\n        ))}\n      </div>\n    )\n  },\n)\n\nDotPagination.displayName = \"DotPagination\"\n",
+      "target": "components/kitgrid/dot-pagination/dot-pagination.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/dot-pagination/index.ts",
+      "type": "registry:ui",
+      "content": "export { DotPagination, type DotPaginationProps } from \"./dot-pagination\"\n",
+      "target": "components/kitgrid/dot-pagination/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

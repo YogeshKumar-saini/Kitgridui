@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "mesh-gradient",
+  "type": "registry:ui",
+  "title": "Mesh Gradient",
+  "description": "A multi-point gradient mesh: each control point is a soft pool of color that blends with its neighbours and wanders slowly around its anchor. Pure CSS, server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/mesh-gradient/index.ts",
+      "type": "registry:ui",
+      "content": "export { MeshGradient, type MeshGradientProps, type MeshGradientPoint } from \"./mesh-gradient\"\n",
+      "target": "components/kitgrid/mesh-gradient/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/mesh-gradient/mesh-gradient.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-mesh-gradient__point {\n    background: radial-gradient(\n      closest-side,\n      var(--_c),\n      color-mix(in oklab, var(--_c) 55%, transparent) 40%,\n      color-mix(in oklab, var(--_c) 15%, transparent) 72%,\n      transparent\n    );\n  }\n\n  .kg-mesh-gradient[data-animated] .kg-mesh-gradient__point {\n    animation: kg-mesh-gradient-a calc((20s + var(--_i) * 3s) / var(--kg-mesh-gradient-speed, 1))\n      var(--kg-ease-in-out) infinite alternate;\n\n    &[data-drift=\"2\"] {\n      animation-name: kg-mesh-gradient-b;\n    }\n\n    &[data-drift=\"3\"] {\n      animation-name: kg-mesh-gradient-c;\n    }\n\n    &[data-drift=\"4\"] {\n      animation-name: kg-mesh-gradient-d;\n    }\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-mesh-gradient[data-animated] .kg-mesh-gradient__point {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-mesh-gradient[data-animated] .kg-mesh-gradient__point {\n    animation: none;\n  }\n\n  @keyframes kg-mesh-gradient-a {\n    to {\n      transform: translate3d(14cqw, 10cqh, 0) scale(1.1);\n    }\n  }\n\n  @keyframes kg-mesh-gradient-b {\n    to {\n      transform: translate3d(-16cqw, 12cqh, 0) scale(0.9);\n    }\n  }\n\n  @keyframes kg-mesh-gradient-c {\n    to {\n      transform: translate3d(-10cqw, -14cqh, 0) scale(1.15);\n    }\n  }\n\n  @keyframes kg-mesh-gradient-d {\n    to {\n      transform: translate3d(12cqw, -10cqh, 0) scale(0.92);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/mesh-gradient/mesh-gradient.css"
+    },
+    {
+      "path": "kitgrid/src/components/mesh-gradient/mesh-gradient.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport interface MeshGradientPoint {\n  /** 0–1 across the section. */\n  x: number\n  /** 0–1 down the section. */\n  y: number\n  /** Any CSS color. */\n  color: string\n  /** Diameter relative to the larger side of the section, 0.1–2. Defaults to 0.9. */\n  size?: number\n}\n\nexport interface MeshGradientProps extends HTMLAttributes<HTMLDivElement> {\n  /** Control points of the mesh, up to 8. Defaults to the five paper colors. */\n  points?: readonly MeshGradientPoint[]\n  /** Any CSS color painted under the mesh. Defaults to the page background. */\n  base?: string\n  /** Each point wanders around its position. */\n  animated?: boolean\n  /** Drift speed multiplier. */\n  speed?: number\n  children?: ReactNode\n}\n\nconst DEFAULT_POINTS: readonly MeshGradientPoint[] = [\n  { x: 0.12, y: 0.18, color: \"var(--kg-paper-sage)\", size: 0.95 },\n  {\n    x: 0.86,\n    y: 0.12,\n    color: \"var(--kg-paper-peach)\",\n    size: 0.8,\n  },\n  {\n    x: 0.72,\n    y: 0.88,\n    color: \"var(--kg-paper-sky)\",\n    size: 1.1,\n  },\n  {\n    x: 0.2,\n    y: 0.92,\n    color: \"var(--kg-paper-butter)\",\n    size: 0.9,\n  },\n  {\n    x: 0.5,\n    y: 0.45,\n    color: \"var(--kg-paper-rose)\",\n    size: 0.6,\n  },\n]\n\n/**\n * A multi-point gradient mesh: each control point is a soft pool of color that blends with its\n * neighbours and wanders slowly around its anchor. Pure CSS, server-component safe.\n */\nexport const MeshGradient = forwardRef<HTMLDivElement, MeshGradientProps>(\n  (\n    {\n      points = DEFAULT_POINTS,\n      base,\n      animated = true,\n      speed = 1,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-mesh-gradient absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\",\n          className,\n          wrapper,\n        )}\n        data-animated={animated || undefined}\n        style={\n          {\n            ...(base ? { \"--kg-mesh-gradient-base\": base } : null),\n            \"--kg-mesh-gradient-speed\": Math.max(speed, 0.01),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-mesh-gradient__layer pointer-events-none absolute inset-0 z-0 overflow-hidden [container-type:size] bg-[color:var(--kg-mesh-gradient-base,var(--kg-bg))]\" aria-hidden=\"true\">\n          {points.slice(0, 8).map((point, index) => (\n            <span\n              key={index}\n              className=\"kg-mesh-gradient__point absolute aspect-square w-[calc(var(--_size)*100cqmax)] -translate-1/2 rounded-full will-change-transform\"\n              data-drift={(index % 4) + 1}\n              style={\n                {\n                  left: `${Math.min(Math.max(point.x, 0), 1) * 100}%`,\n                  top: `${Math.min(Math.max(point.y, 0), 1) * 100}%`,\n                  \"--_c\": point.color,\n                  \"--_size\": Math.min(Math.max(point.size ?? 0.9, 0.1), 2),\n                  \"--_i\": index,\n                } as CSSProperties\n              }\n            />\n          ))}\n        </div>\n        {wrapper && <div className=\"kg-mesh-gradient__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nMeshGradient.displayName = \"MeshGradient\"\n",
+      "target": "components/kitgrid/mesh-gradient/mesh-gradient.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

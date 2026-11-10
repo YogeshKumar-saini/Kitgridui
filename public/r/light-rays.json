@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "light-rays",
+  "type": "registry:ui",
+  "title": "Light Rays",
+  "description": "Soft shafts of light falling from above, each swaying and breathing on its own loop like light through moving leaves. Seeded, transform and opacity only. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/light-rays/index.ts",
+      "type": "registry:ui",
+      "content": "export { LightRays, type LightRaysProps, type LightRaysOrigin } from \"./light-rays\"\n",
+      "target": "components/kitgrid/light-rays/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/light-rays/light-rays.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-light-rays__layer {\n    mask-image: linear-gradient(to bottom, #000 30%, transparent 100%);\n  }\n\n  .kg-light-rays__source {\n    background: radial-gradient(\n      closest-side,\n      color-mix(in oklab, var(--_c) 55%, transparent),\n      transparent\n    );\n  }\n\n  .kg-light-rays__ray {\n    background: linear-gradient(\n      90deg,\n      transparent,\n      color-mix(in oklab, var(--_c) calc(var(--_alpha) * 70%), transparent),\n      transparent\n    );\n    mask-image: linear-gradient(to bottom, #000, transparent 92%);\n    animation: kg-light-rays-sway calc(var(--_dur) / var(--_speed)) var(--kg-ease-in-out)\n      var(--_delay) infinite alternate;\n    animation-play-state: var(--kg-light-rays-state, running);\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-light-rays__ray {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-light-rays__ray {\n    animation: none;\n  }\n\n  @keyframes kg-light-rays-sway {\n    from {\n      transform: rotate(-2.5deg) scaleX(0.8);\n      opacity: calc(var(--_alpha) * 0.45);\n    }\n    to {\n      transform: rotate(2.5deg) scaleX(1.2);\n      opacity: var(--_alpha);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/light-rays/light-rays.css"
+    },
+    {
+      "path": "kitgrid/src/components/light-rays/light-rays.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { createRandom, round } from \"../aurora/internal/random\"\n\nexport type LightRaysOrigin = \"top\" | \"top-left\" | \"top-right\"\n\nexport interface LightRaysProps extends HTMLAttributes<HTMLDivElement> {\n  /** Number of rays, 3–24. */\n  count?: number\n  /** Any CSS color. Defaults to ink. */\n  color?: string\n  /** Fan width, in degrees. */\n  spread?: number\n  /** Where the light enters. */\n  origin?: LightRaysOrigin\n  /** How far the rays reach, as a fraction of the section height. */\n  length?: number\n  /** Sway speed multiplier; 0 holds them still. */\n  speed?: number\n  /** Overall strength, 0–1. */\n  intensity?: number\n  /** Same seed, same rays. */\n  seed?: number\n  children?: ReactNode\n}\n\nconst ANGLES: Record<LightRaysOrigin, number> = { top: 0, \"top-left\": -38, \"top-right\": 38 }\n\n/**\n * Soft shafts of light falling from above, each swaying and breathing on its own loop like\n * light through moving leaves. Seeded, transform and opacity only. Server-component safe.\n */\nexport const LightRays = forwardRef<HTMLDivElement, LightRaysProps>(\n  (\n    {\n      count = 9,\n      color,\n      spread = 70,\n      origin = \"top\",\n      length = 1.2,\n      speed = 1,\n      intensity = 0.7,\n      seed = 3,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const total = Math.round(Math.min(Math.max(count, 3), 24))\n    const random = createRandom(seed)\n    const centre = ANGLES[origin]\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-light-rays absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-light-rays-color,var(--kg-ink))] [--_speed:var(--kg-light-rays-speed,1)] [--_x:50%] data-[origin=top-left]:[--_x:8%] data-[origin=top-right]:[--_x:92%]\",\n          className,\n          wrapper,\n        )}\n        data-origin={origin}\n        style={\n          {\n            ...(color ? { \"--kg-light-rays-color\": color } : null),\n            \"--kg-light-rays-speed\": Math.max(speed, 0.001),\n            \"--kg-light-rays-state\": speed === 0 ? \"paused\" : \"running\",\n            \"--kg-light-rays-length\": `${Math.max(length, 0.2) * 100}%`,\n            \"--kg-light-rays-intensity\": Math.min(Math.max(intensity, 0), 1),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-light-rays__layer pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-[var(--kg-light-rays-intensity,0.7)]\" aria-hidden=\"true\">\n          <div className=\"kg-light-rays__source absolute top-[-18%] left-(--_x) aspect-2/1 w-3/5 -translate-x-1/2\" />\n          {Array.from({ length: total }, (_, index) => {\n            const t = total === 1 ? 0.5 : index / (total - 1)\n            const angle = centre + (t - 0.5) * spread + (random() - 0.5) * (spread / total)\n            return (\n              <span\n                key={index}\n                className=\"kg-light-rays__ray absolute top-[-4%] left-(--_x) ml-[calc(var(--_width)/-2)] h-[var(--kg-light-rays-length,120%)] w-(--_width) origin-top rotate-(--_angle) opacity-(--_alpha)\"\n                style={\n                  {\n                    \"--_angle\": `${round(angle, 2)}deg`,\n                    \"--_width\": `${round(2 + random() * 7, 2)}%`,\n                    \"--_alpha\": round(0.35 + random() * 0.65),\n                    \"--_dur\": `${round(6 + random() * 8, 2)}s`,\n                    \"--_delay\": `${round(-random() * 12, 2)}s`,\n                  } as CSSProperties\n                }\n              />\n            )\n          })}\n        </div>\n        {wrapper && <div className=\"kg-light-rays__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nLightRays.displayName = \"LightRays\"\n",
+      "target": "components/kitgrid/light-rays/light-rays.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "halftone",
+  "type": "registry:ui",
+  "title": "Halftone",
+  "description": "A print halftone screen: a rotated grid of dots whose size follows soft pools of light drifting underneath, plus one under the pointer. Canvas, DPR-capped, paused offscreen.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/backdrop-kit.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/halftone/halftone.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-halftone {\n    &[data-mask=\"radial\"] > .kg-halftone__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-halftone__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-halftone__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-halftone__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/halftone/halftone.css"
+    },
+    {
+      "path": "kitgrid/src/components/halftone/halftone.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { rgba, useCanvasStage } from \"../backdrop-kit/stage\"\n\nexport type HalftoneMask = BackdropMask\n\nexport interface HalftoneProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color for the dots. Defaults to ink. */\n  color?: string\n  /** Distance between dot centres, in px. */\n  spacing?: number\n  /** Screen angle, in degrees. */\n  angle?: number\n  /** Drift speed multiplier; 0 holds the light still. */\n  speed?: number\n  /** Add a pool of light under the pointer. */\n  interactive?: boolean\n  mask?: HalftoneMask\n  children?: ReactNode\n}\n\nconst TAU = Math.PI * 2\n\n/**\n * A print halftone screen: a rotated grid of dots whose size follows soft pools of light drifting\n * underneath, plus one under the pointer. Canvas, DPR-capped, paused offscreen.\n */\nexport const Halftone = forwardRef<HTMLDivElement, HalftoneProps>(\n  (\n    {\n      color = \"var(--kg-ink)\",\n      spacing = 14,\n      angle = 18,\n      speed = 1,\n      interactive = true,\n      mask = \"none\",\n      className,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const wrapper = hasChildren(children)\n\n    useCanvasStage(root, canvasRef, {\n      pointer: interactive,\n      draw: ({ ctx, width, height, time, pointer, color: resolve }) => {\n        const gap = Math.max(spacing, 5)\n        const t = (time / 1000) * speed * 0.25\n        const theta = (angle * Math.PI) / 180\n        const cos = Math.cos(theta)\n        const sin = Math.sin(theta)\n        const span = Math.hypot(width, height)\n        const lights = [\n          [0.3 + 0.18 * Math.sin(t * 1.1), 0.35 + 0.2 * Math.cos(t * 0.8), 0.42],\n          [0.72 + 0.16 * Math.cos(t * 0.9), 0.6 + 0.18 * Math.sin(t * 1.3), 0.36],\n          [0.5 + 0.3 * Math.sin(t * 0.5 + 2), 0.9 + 0.1 * Math.cos(t * 0.7), 0.3],\n        ] as const\n        const reach = (Math.min(width, height) * 0.3) ** 2\n        ctx.clearRect(0, 0, width, height)\n        ctx.fillStyle = rgba(resolve(color), 0.72)\n        ctx.beginPath()\n        const cx = width / 2\n        const cy = height / 2\n        for (let gy = -span / 2; gy <= span / 2; gy += gap) {\n          for (let gx = -span / 2; gx <= span / 2; gx += gap) {\n            const x = cx + gx * cos - gy * sin\n            const y = cy + gx * sin + gy * cos\n            if (x < -gap || x > width + gap || y < -gap || y > height + gap) continue\n            let value = 0\n            for (const [lx, ly, size] of lights) {\n              const dx = x / width - lx\n              const dy = (y / height - ly) * (height / width)\n              value += Math.exp(-(dx * dx + dy * dy) / (size * size * 0.18))\n            }\n            if (pointer.inside) {\n              const dx = x - pointer.x\n              const dy = y - pointer.y\n              value += 0.9 * Math.exp(-(dx * dx + dy * dy) / reach)\n            }\n            const radius = Math.min(value, 1) * gap * 0.42\n            if (radius < 0.35) continue\n            ctx.moveTo(x + radius, y)\n            ctx.arc(x, y, radius, 0, TAU)\n          }\n        }\n        ctx.fill()\n      },\n    })\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\"kg-halftone absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\", className, wrapper)}\n        data-mask={mask}\n        {...props}\n      >\n        <div className=\"kg-halftone__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <canvas ref={canvasRef} className=\"kg-halftone__canvas block size-full\" />\n        </div>\n        {wrapper && <div className=\"kg-halftone__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nHalftone.displayName = \"Halftone\"\n",
+      "target": "components/kitgrid/halftone/halftone.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/halftone/index.ts",
+      "type": "registry:ui",
+      "content": "export { Halftone, type HalftoneProps, type HalftoneMask } from \"./halftone\"\n",
+      "target": "components/kitgrid/halftone/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

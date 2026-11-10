@@ -1,0 +1,46 @@
+@import "kitgrid/tailwind.css";
+@import "tailwindcss";
+
+@theme inline {
+  --font-display: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-bricolage), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+@layer base {
+  html {
+    background: var(--kg-bg);
+    color: var(--kg-fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :root {
+    --kg-font-mono: var(--font-mono);
+    --pg-mono: var(--font-mono);
+  }
+}
+
+/* Layout helpers the demo files use for their example markup. */
+@layer components {
+  .pg-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .pg-row--between {
+    justify-content: space-between;
+  }
+  .pg-stack {
+    display: grid;
+    gap: 1rem;
+  }
+  .pg-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "checkbox-card",
+  "type": "registry:ui",
+  "title": "Checkbox Card",
+  "description": "A native checkbox drawn as a selectable card, for add-ons and multi-choice settings. The whole card is the label, so it keeps form submission, reset and autofill. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/checkbox-card/checkbox-card.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type ChangeEvent,\n  type CSSProperties,\n  forwardRef,\n  type InputHTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface CheckboxCardProps\n  extends Omit<InputHTMLAttributes<HTMLInputElement>, \"type\" | \"size\"> {\n  label: ReactNode\n  description?: ReactNode\n  /** Decorative, shown in a tile before the text. */\n  icon?: ReactNode\n  /** Trailing detail such as a price or a count. */\n  aside?: ReactNode\n  onCheckedChange?: (checked: boolean) => void\n  /** Applied to the card, not the input. */\n  className?: string\n  style?: CSSProperties\n}\n\n/**\n * A native checkbox drawn as a selectable card, for add-ons and multi-choice settings. The\n * whole card is the label, so it keeps form submission, reset and autofill. Server-safe.\n */\nexport const CheckboxCard = forwardRef<HTMLInputElement, CheckboxCardProps>(\n  (\n    { label, description, icon, aside, onCheckedChange, onChange, className, style, disabled, ...props },\n    ref,\n  ) => (\n    <label\n      className={cx(\n        \"kg-checkbox-card group/card relative isolate flex items-center gap-3 px-4 py-3.5\",\n        \"rounded-kg-xl border-2 border-kg-ink bg-kg-surface text-kg-fg cursor-pointer\",\n        \"transition-[translate,scale,box-shadow,background-color] duration-(--kg-duration-fast) ease-kg-out\",\n        // Checked is lifted onto sage; hover previews the lift.\n        \"has-checked:bg-kg-paper-sage has-checked:shadow-[3px_3px_0_var(--kg-ink)]\",\n        \"hover:not-data-disabled:-translate-px hover:not-data-disabled:shadow-[3px_3px_0_var(--kg-ink)]\",\n        \"active:not-data-disabled:scale-[0.99]\",\n        \"has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-kg-ring\",\n        \"data-disabled:cursor-not-allowed data-disabled:opacity-50\",\n        className,\n      )}\n      style={style}\n      data-disabled={disabled || undefined}\n    >\n      <input\n        ref={ref}\n        type=\"checkbox\"\n        className=\"kg-checkbox-card__input absolute inset-0 -z-1 m-0 opacity-0 cursor-[inherit]\"\n        disabled={disabled}\n        onChange={(event: ChangeEvent<HTMLInputElement>) => {\n          onChange?.(event)\n          onCheckedChange?.(event.target.checked)\n        }}\n        {...props}\n      />\n      {icon != null && (\n        <span\n          className={cx(\n            \"kg-checkbox-card__icon inline-grid place-items-center shrink-0 size-9 rounded-kg-md\",\n            \"bg-kg-muted text-kg-fg-muted [&_svg]:size-[1.125rem]\",\n            \"transition-[background-color,color] duration-(--kg-duration-fast) ease-kg-out\",\n            \"group-has-checked/card:bg-kg-accent group-has-checked/card:text-kg-accent-fg\",\n          )}\n          aria-hidden=\"true\"\n        >\n          {icon}\n        </span>\n      )}\n      <span className=\"kg-checkbox-card__text grid flex-1 min-w-0 gap-[0.2em]\">\n        <span className=\"kg-checkbox-card__label text-kg-base font-semibold\">{label}</span>\n        {description != null && (\n          <span className=\"kg-checkbox-card__description text-kg-sm text-kg-fg-muted\">{description}</span>\n        )}\n      </span>\n      {aside != null && <span className=\"kg-checkbox-card__aside shrink-0 text-kg-sm font-semibold tabular-nums text-kg-fg-muted\">{aside}</span>}\n      <span\n        className={cx(\n          \"kg-checkbox-card__box inline-grid place-items-center shrink-0 size-5 rounded-kg-xs\",\n          \"border-2 border-kg-ink bg-kg-surface text-kg-accent-fg\",\n          \"transition-[background-color,border-color] duration-(--kg-duration-fast) ease-kg-out\",\n          \"group-has-checked/card:border-kg-accent group-has-checked/card:bg-kg-accent\",\n        )}\n        aria-hidden=\"true\"\n      >\n        <svg\n          viewBox=\"0 0 16 16\"\n          fill=\"none\"\n          stroke=\"currentColor\"\n          strokeWidth=\"2.25\"\n          className={cx(\n            \"size-[0.8rem] [stroke-dasharray:16] [stroke-dashoffset:16]\",\n            \"transition-[stroke-dashoffset] duration-(--kg-duration-base) ease-kg-out\",\n            \"group-has-checked/card:[stroke-dashoffset:0]\",\n          )}\n        >\n          <path d=\"m3.5 8.5 3 3 6-7\" strokeLinecap=\"round\" strokeLinejoin=\"round\" />\n        </svg>\n      </span>\n    </label>\n  ),\n)\n\nCheckboxCard.displayName = \"CheckboxCard\"\n",
+      "target": "components/kitgrid/checkbox-card/checkbox-card.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/checkbox-card/index.ts",
+      "type": "registry:ui",
+      "content": "export { CheckboxCard, type CheckboxCardProps } from \"./checkbox-card\"\n",
+      "target": "components/kitgrid/checkbox-card/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

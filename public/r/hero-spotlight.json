@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "hero-spotlight",
+  "type": "registry:ui",
+  "title": "Hero Spotlight",
+  "description": "A large, soft beam of light that sweeps in from a corner on mount and settles into a static glow. Its resting styles are the final frame, so reduced motion simply shows the settled light. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/hero-spotlight/hero-spotlight.css",
+      "type": "registry:file",
+      "content": "/* The beam gradients and the sweep keyframes, which read the transform from a private property. */\n@layer kg.components {\n  /*\n   * Each beam is a soft ellipse whose axis is pinned to the origin corner, with its first third\n   * tucked off-canvas so the light appears to enter from outside the frame.\n   */\n  .kg-hero-spotlight__beam,\n  .kg-hero-spotlight__core {\n    --_angle: var(--kg-hero-spotlight-angle, 28deg);\n    --_delay: var(--kg-hero-spotlight-delay, 0.25s);\n    --_rest: rotate(var(--_angle)) translate(-30%, -50%) scale(1);\n\n    transform: var(--_rest);\n    animation: kg-hero-spotlight-in var(--kg-hero-spotlight-duration, 2s) var(--kg-ease-out)\n      var(--_delay) both;\n  }\n\n  .kg-hero-spotlight__beam {\n    background: radial-gradient(\n      ellipse 64% 50% at 36% 50%,\n      var(--_color),\n      color-mix(in oklab, var(--_color) 42%, transparent) 38%,\n      color-mix(in oklab, var(--_color) 12%, transparent) 70%,\n      transparent\n    );\n  }\n\n  .kg-hero-spotlight__core {\n    --_rest: rotate(calc(var(--_angle) + 3deg)) translate(-30%, -50%) scale(1);\n\n    background: radial-gradient(\n      ellipse 60% 50% at 38% 50%,\n      var(--_fill),\n      color-mix(in oklab, var(--_fill) 30%, transparent) 55%,\n      transparent\n    );\n    animation-delay: calc(var(--_delay) + 0.15s);\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-hero-spotlight__layer > * {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-hero-spotlight__layer > * {\n    animation: none;\n  }\n\n  @keyframes kg-hero-spotlight-in {\n    from {\n      opacity: 0;\n      transform: rotate(calc(var(--_angle) - 22deg)) translate(-62%, -50%) scale(0.55);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/hero-spotlight/hero-spotlight.css"
+    },
+    {
+      "path": "kitgrid/src/components/hero-spotlight/hero-spotlight.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport type HeroSpotlightOrigin = \"top-left\" | \"top-right\" | \"top\"\n\nexport interface HeroSpotlightProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color for the main beam. Defaults to the sage paper. */\n  color?: string\n  /** Color of the narrower, brighter core beam, or `false` to drop it. */\n  fill?: string | false\n  /** Corner the light comes from. */\n  origin?: HeroSpotlightOrigin\n  /**\n   * Beam direction in degrees, clockwise from pointing right (mirrored for `top-right`).\n   * Defaults to 28 from a corner and 90 from the top.\n   */\n  angle?: number\n  /** Seconds before the sweep starts. */\n  delay?: number\n  /** Length of the sweep, in seconds. */\n  duration?: number\n  /** Optional content, painted above the light. */\n  children?: ReactNode\n}\n\n/**\n * A large, soft beam of light that sweeps in from a corner on mount and settles into a static\n * glow. Its resting styles are the final frame, so reduced motion simply shows the settled light.\n * Server-component safe.\n */\nexport const HeroSpotlight = forwardRef<HTMLDivElement, HeroSpotlightProps>(\n  (\n    {\n      color,\n      fill,\n      origin = \"top-left\",\n      angle,\n      delay = 0.25,\n      duration = 2,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const direction = angle ?? (origin === \"top\" ? 90 : 28)\n    const beam = cx(\n      \"absolute top-0 origin-top-left rounded-full will-change-[transform,opacity]\",\n      origin === \"top\" ? \"left-1/2\" : \"left-0\",\n    )\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-hero-spotlight absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:overflow-visible data-wrapper:isolate data-wrapper:pointer-events-auto [--_color:var(--kg-hero-spotlight-color,var(--kg-paper-sage))] [--_fill:var(--kg-hero-spotlight-fill,color-mix(in_oklab,var(--kg-ink)_18%,transparent))]\",\n          className,\n          wrapper,\n        )}\n        data-origin={origin}\n        style={\n          {\n            ...(color ? { \"--kg-hero-spotlight-color\": color } : null),\n            ...(fill ? { \"--kg-hero-spotlight-fill\": fill } : null),\n            \"--kg-hero-spotlight-angle\": `${direction}deg`,\n            \"--kg-hero-spotlight-delay\": `${Math.max(delay, 0)}s`,\n            \"--kg-hero-spotlight-duration\": `${Math.max(duration, 0)}s`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div\n          className={cx(\n            \"kg-hero-spotlight__layer pointer-events-none absolute inset-0 z-0 overflow-hidden [container-type:size]\",\n            origin === \"top-right\" && \"[scale:-1_1]\",\n          )}\n          aria-hidden=\"true\"\n        >\n          <div className={cx(beam, \"kg-hero-spotlight__beam h-[38cqmax] w-[135cqmax]\")} />\n          {fill !== false && (\n            <div className={cx(beam, \"kg-hero-spotlight__core h-[13cqmax] w-[110cqmax]\")} />\n          )}\n        </div>\n        {wrapper && <div className=\"kg-hero-spotlight__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nHeroSpotlight.displayName = \"HeroSpotlight\"\n",
+      "target": "components/kitgrid/hero-spotlight/hero-spotlight.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/hero-spotlight/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  HeroSpotlight,\n  type HeroSpotlightOrigin,\n  type HeroSpotlightProps,\n} from \"./hero-spotlight\"\n",
+      "target": "components/kitgrid/hero-spotlight/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

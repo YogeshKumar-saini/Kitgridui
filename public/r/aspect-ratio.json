@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "aspect-ratio",
+  "type": "registry:ui",
+  "title": "Aspect Ratio",
+  "description": "Holds a width-to-height ratio; its child fills the box, so embeds and maps never jump.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/aspect-ratio/aspect-ratio.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface AspectRatioProps extends HTMLAttributes<HTMLDivElement> {\n  /** Width over height: `16 / 9`, `1`, `4 / 5`. */\n  ratio?: number\n}\n\n/** Holds a width-to-height ratio; its child fills the box, so embeds and maps never jump. */\nexport const AspectRatio = forwardRef<HTMLDivElement, AspectRatioProps>(\n  ({ ratio = 16 / 9, className, style, ...props }, ref) => (\n    <div\n      ref={ref}\n      className={cx(\n        \"kg-aspect-ratio relative w-full overflow-hidden\",\n        \"*:absolute *:inset-0 *:size-full [&>:is(img,video)]:object-cover [&>iframe]:border-0\",\n        className,\n      )}\n      style={{ aspectRatio: String(ratio > 0 ? ratio : 1), ...style }}\n      {...props}\n    />\n  ),\n)\n\nAspectRatio.displayName = \"AspectRatio\"\n",
+      "target": "components/kitgrid/aspect-ratio/aspect-ratio.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/aspect-ratio/index.ts",
+      "type": "registry:ui",
+      "content": "export { AspectRatio, type AspectRatioProps } from \"./aspect-ratio\"\n",
+      "target": "components/kitgrid/aspect-ratio/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

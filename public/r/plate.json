@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "plate",
+  "type": "registry:ui",
+  "title": "Plate",
+  "description": "An inset, framed area inside a surface: a chart well, a preview or a placeholder. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/plate/index.ts",
+      "type": "registry:ui",
+      "content": "export { Plate, type PlatePadding, type PlateProps, type PlateVariant } from \"./plate\"\n",
+      "target": "components/kitgrid/plate/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/plate/plate.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: a plate is a recess cut into the sheet, so it sits flat with a hairline edge and\n * no shadow. Registration marks are two ink corners drawn by the pseudo-elements.\n */\nconst plateVariants = variants({\n  base: [\n    \"kg-plate relative min-w-0 rounded-kg-lg border p-(--_pad) text-kg-fg\",\n    \"data-marks:before:pointer-events-none data-marks:before:absolute data-marks:before:start-1.5 data-marks:before:top-1.5 data-marks:before:size-[7px] data-marks:before:border-s data-marks:before:border-t data-marks:before:border-kg-fg-faint\",\n    \"data-marks:after:pointer-events-none data-marks:after:absolute data-marks:after:end-1.5 data-marks:after:bottom-1.5 data-marks:after:size-[7px] data-marks:after:border-e data-marks:after:border-b data-marks:after:border-kg-fg-faint\",\n  ],\n  variants: {\n    variant: {\n      sunken: \"border-kg-border bg-kg-surface-sunken\",\n      dashed: \"border-dashed border-kg-border-strong bg-kg-surface-sunken\",\n      grid: [\n        \"border-kg-border bg-kg-surface-sunken [background-size:14px_14px]\",\n        \"bg-[radial-gradient(circle_at_1px_1px,color-mix(in_oklab,var(--kg-fg)_18%,transparent)_1px,transparent_1.5px)]\",\n      ],\n    },\n    padding: {\n      none: \"[--_pad:0px]\",\n      sm: \"[--_pad:calc(var(--kg-space)*2.5)]\",\n      md: \"[--_pad:calc(var(--kg-space)*4)]\",\n      lg: \"[--_pad:calc(var(--kg-space)*6)]\",\n    },\n  },\n  defaults: { variant: \"sunken\", padding: \"md\" },\n})\n\ntype PlateVariantProps = VariantProps<typeof plateVariants>\nexport type PlatePadding = NonNullable<PlateVariantProps[\"padding\"]>\nexport type PlateVariant = NonNullable<PlateVariantProps[\"variant\"]>\n\nexport interface PlateProps extends HTMLAttributes<HTMLDivElement> {\n  /** `sunken` is a recessed well, `dashed` a drop or placeholder zone, `grid` a dotted canvas. */\n  variant?: PlateVariant\n  padding?: PlatePadding\n  /** Two corner registration marks. */\n  marks?: boolean\n}\n\n/** An inset, framed area inside a surface: a chart well, a preview or a placeholder. Server-safe. */\nexport const Plate = forwardRef<HTMLDivElement, PlateProps>(\n  ({ variant = \"sunken\", padding = \"md\", marks = false, className, ...props }, ref) => (\n    <div\n      ref={ref}\n      className={plateVariants({ variant, padding, className })}\n      data-variant={variant}\n      data-padding={padding}\n      data-marks={marks || undefined}\n      {...props}\n    />\n  ),\n)\n\nPlate.displayName = \"Plate\"\n",
+      "target": "components/kitgrid/plate/plate.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

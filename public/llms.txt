@@ -1,0 +1,402 @@
+# kitgrid
+
+> Accessible React components written in Tailwind v4 on the kg theme. Copy editable source into a project with `npx @kitgrid/cli add <name>`; every item below is a shadcn-compatible registry item.
+
+## Components
+
+- [accent-picker](https://kitgrid.dev/r/accent-picker.json): Accent swatches as a native radio group, plus an optional custom color.
+- [accordion](https://kitgrid.dev/r/accordion.json): Single or multiple disclosure panels.
+- [action-bar](https://kitgrid.dev/r/action-bar.json): A floating toolbar for bulk actions on a selection, turning up from the bottom edge.
+- [activity-feed](https://kitgrid.dev/r/activity-feed.json): A timeline of events: who did what to which thing, and when, grouped under a heading per day. Times are real `<time>` elements. Server-safe; pass `now` so server and client agree on which day is "Today".
+- [add-to-cart-button](https://kitgrid.dev/r/add-to-cart-button.json): A primary "Add to cart" that morphs idle → spinner → check → idle around an async `onAdd`. Every label is stacked in one grid cell, so the button keeps its width through the morph.
+- [address-form](https://kitgrid.dev/r/address-form.json): Address fields that relabel and reorder for the chosen country (ZIP, postcode or PIN code, state or county, postal code before city), with full autocomplete tokens and the second address line tucked behind a link.
+- [agent-trace](https://kitgrid.dev/r/agent-trace.json): How an agent reached its answer: each tool call with its status, its time and, on demand, its result.
+- [alert](https://kitgrid.dev/r/alert.json): A prominent message. Danger and warning interrupt as role="alert"; other tones wait their turn as role="status". Server-safe.
+- [alert-dialog](https://kitgrid.dev/r/alert-dialog.json): A modal that interrupts for a decision. It never closes on a backdrop click.
+- [anchor-nav](https://kitgrid.dev/r/anchor-nav.json): A horizontal in-page section bar: scrollspy, a pill that slides to the current section, and the current link kept in view when the bar overflows on small screens.
+- [animated-beam](https://kitgrid.dev/r/animated-beam.json): A pulse of light that travels along a curved path between two elements, for integration diagrams and data flow. The path is measured from the elements and re-measured on resize. Decorative: hidden from assistive tech, and the pulse stops under reduced motion.
+- [animated-list](https://kitgrid.dev/r/animated-list.json): Items arrive one at a time and spring into place while the list opens room for them, like a live feed. Starts once the list scrolls into view; under reduced motion all items show.
+- [announcement-bar](https://kitgrid.dev/r/announcement-bar.json): Site-wide promo strip following the APG carousel pattern: rotation pauses on hover and focus, a visible pause control satisfies WCAG 2.2.2, and messages slide vertically.
+- [api-key-field](https://kitgrid.dev/r/api-key-field.json): An API key row: masked value, reveal, copy and a confirmed regenerate.
+- [app-shell](https://kitgrid.dev/r/app-shell.json): Sidebar, header and main region with a skip link.
+- [appearance-preview](https://kitgrid.dev/r/appearance-preview.json): A working miniature of an app, drawn entirely in the library's tokens, so it shows what a theme, accent, radius, density or font choice will look like before it is applied. Server-component safe.
+- [aspect-ratio](https://kitgrid.dev/r/aspect-ratio.json): Holds a width-to-height ratio; its child fills the box, so embeds and maps never jump.
+- [audit-log](https://kitgrid.dev/r/audit-log.json): Who did what, when: security and admin events grouped by day. Server-safe.
+- [aurora](https://kitgrid.dev/r/aurora.json): Slow, heavily blurred ribbons of light. Each layer drifts on its own transform-only loop, so the compositor does the work and the page never repaints. Pure CSS: server-component safe.
+- [autocomplete](https://kitgrid.dev/r/autocomplete.json): A free-text field with suggestions. Unlike Combobox the value is whatever is typed; a suggestion only fills it in.
+- [avatar](https://kitgrid.dev/r/avatar.json): Initials from a name, with status and groups.
+- [avatar-upload](https://kitgrid.dev/r/avatar-upload.json): A round photo with a change button over it and a remove button beside it.
+- [back-in-stock-form](https://kitgrid.dev/r/back-in-stock-form.json): Sold-out replacement for the buy button: reveals an email field and confirms the alert.
+- [back-to-top](https://kitgrid.dev/r/back-to-top.json): Appears after scrolling, rings its edge with reading progress, and returns to the top.
+- [backdrop-kit](https://kitgrid.dev/r/backdrop-kit.json)
+- [background-beams](https://kitgrid.dev/r/background-beams.json): Gently curved beams with light running along them: each light is a single dash on a path normalised with `pathLength`, travelling through a gradient that spans the frame. CSS keyframes only, server-component safe; under reduced motion each light rests at a seeded point.
+- [badge](https://kitgrid.dev/r/badge.json): A compact label for status, counts and merchandising flags such as “New” or “−20%”.
+- [ball-pit](https://kitgrid.dev/r/ball-pit.json): A small physics toy: balls fall, stack and collide, and the pointer shoves them around. Plain canvas 2D with a fixed-step solver. Under reduced motion it renders the settled pile once.
+- [barcode](https://kitgrid.dev/r/barcode.json): A Code 128 barcode as crisp SVG, encoded without dependencies. Server-safe.
+- [bento-light](https://kitgrid.dev/r/bento-light.json): A bento grid lit by one light that travels across it: every cell knows where the pointer is in its own box, so edges glow on whichever cells the pointer nears, neighbours included. A single listener on the grid, one write per cell per frame, no re-renders.
+- [billing-usage](https://kitgrid.dev/r/billing-usage.json): Metered usage for the current billing period, with a ring for time left. Server-safe.
+- [bleed](https://kitgrid.dev/r/bleed.json): Lets a child escape its container's padding, for edge-to-edge images and bands.
+- [bokeh](https://kitgrid.dev/r/bokeh.json): Out-of-focus discs of light floating in front of the lens. Seeded positions, sizes and drift, all on transform and opacity loops. Server-component safe.
+- [border-beam](https://kitgrid.dev/r/border-beam.json): A beam of ink that travels around the border of its nearest positioned ancestor. Place it as the last child of any `position: relative` container; it inherits the container's radius.
+- [bottom-navigation](https://kitgrid.dev/r/bottom-navigation.json): A mobile tab bar: three to five destinations with a sliding active pill.
+- [bottom-sheet](https://kitgrid.dev/r/bottom-sheet.json): Owns the open state. Renders no element of its own.
+- [bounce-cards](https://kitgrid.dev/r/bounce-cards.json): A fanned hand of cards that bounce in one by one. Hovering or focusing a card straightens and lifts it while its neighbours lean away to make room.
+- [box](https://kitgrid.dev/r/box.json): The base layout block: padding, surface, radius, border and shadow from tokens.
+- [breadcrumb](https://kitgrid.dev/r/breadcrumb.json): Server-safe: only a collapsed breadcrumb hydrates its small expand button.
+- [breadcrumb-menu](https://kitgrid.dev/r/breadcrumb-menu.json): A breadcrumb trail whose middle crumbs fold into a dropdown menu once the trail is long. The last crumb is the current page.
+- [bundle-builder](https://kitgrid.dev/r/bundle-builder.json): "Frequently bought together": product thumbnails joined by plus signs, tick boxes and a live total.
+- [button](https://kitgrid.dev/r/button.json): Six variants, three sizes and a stable loading state.
+- [button-group](https://kitgrid.dev/r/button-group.json): Groups related buttons under one accessible name. Pass `aria-label` to name the group.
+- [calendar](https://kitgrid.dev/r/calendar.json): A month grid following the APG date picker pattern: one tab stop, arrows move by day and week, Page keys by month (Shift for year), Home and End to the week's edges.
+- [calendar-view](https://kitgrid.dev/r/calendar-view.json): A month grid (WAI-ARIA grid: arrows move by day and week, Page Up/Down by month, Home/End to the week's edges) and a week agenda, both fed by one list of events.
+- [card](https://kitgrid.dev/r/card.json): A composable surface with header, media and footer.
+- [card-swap](https://kitgrid.dev/r/card-swap.json): A skewed 3D stack that drops its front card out of view and slides it in at the back, on a loop. Only the front card is interactive; the stack is one tab stop whose arrow keys deal the next or previous card. The loop idles offscreen and stops under reduced motion.
+- [carousel](https://kitgrid.dev/r/carousel.json): Product rails with real physics: native scroll-snap with mouse drag and momentum, a 3D coverflow driven by scroll-timeline (with a JS fallback), or a fanned stack. Follows the APG carousel pattern, including a pause control for autoplay.
+- [cart](https://kitgrid.dev/r/cart.json): Headless cart state with persistence and undo.
+- [cart-button](https://kitgrid.dev/r/cart-button.json): The header cart icon. It is the `[data-cart-target]` that fly-to-cart animations land on, its badge pops when the count goes up, and inside a `CartProvider` it opens the cart.
+- [cart-drawer](https://kitgrid.dev/r/cart-drawer.json): The slide-out cart. Inside a `CartProvider` it needs no props; every piece of state can also be passed explicitly to drive it from your own store.
+- [cascader](https://kitgrid.dev/r/cascader.json): Picks a path through nested options one column at a time, like region, city and district. Right or Enter opens a branch, Left steps back, Enter on a leaf picks the whole path.
+- [center](https://kitgrid.dev/r/center.json): A column centred horizontally with a readable maximum width.
+- [changelog-list](https://kitgrid.dev/r/changelog-list.json): Product updates, newest first, with the date on a rail and typed change tags. Server-safe.
+- [charts](https://kitgrid.dev/r/charts.json)
+- [chat-message](https://kitgrid.dev/r/chat-message.json): One user, assistant or system turn.
+- [chat-thread](https://kitgrid.dev/r/chat-thread.json): The scrolling conversation. It sticks to the bottom while new messages and streamed words arrive, stops following the moment the reader scrolls up, and offers a way back down.
+- [checkbox](https://kitgrid.dev/r/checkbox.json): A checkbox with an indeterminate state and groups.
+- [checkbox-card](https://kitgrid.dev/r/checkbox-card.json): A native checkbox drawn as a selectable card, for add-ons and multi-choice settings. The whole card is the label, so it keeps form submission, reset and autofill. Server-safe.
+- [checkout-form](https://kitgrid.dev/r/checkout-form.json): One-page checkout in numbered sections: contact, shipping address, delivery speed and payment. Errors are shown inline after a submit attempt and focus moves to the first one.
+- [checkout-steps](https://kitgrid.dev/r/checkout-steps.json): A checkout progress stepper with animated connectors and a compact mobile summary.
+- [chip-list](https://kitgrid.dev/r/chip-list.json): A read-only set of chips that folds the overflow into an expandable “+N”.
+- [choice-list](https://kitgrid.dev/r/choice-list.json): A single choice presented as cards: plans, report periods, export formats. Native radio inputs underneath, so arrow keys, forms and validation behave as the platform does.
+- [circular-gallery](https://kitgrid.dev/r/circular-gallery.json): Panels arranged on a 3D ring that turns slowly, can be flung by dragging, and steps one panel at a time with the arrow keys. The ring's radius comes from CSS trigonometry, so it always fits the panel count.
+- [circular-text](https://kitgrid.dev/r/circular-text.json): Text set on a circle that turns slowly and speeds up or reverses under the pointer. The text is stretched to exactly one circumference (`textLength`), so it closes seamlessly whatever the font. Server-safe: rotation and hover are pure CSS, and screen readers get the text once.
+- [clamp](https://kitgrid.dev/r/clamp.json): Clamps content to a number of lines with a soft fade, and offers a toggle only when the content actually overflows.
+- [click-spark](https://kitgrid.dev/r/click-spark.json): Wraps any content and throws a small burst of sparks from every press, drawn on a canvas that sits above the content without intercepting events. Off under reduced motion.
+- [cluster](https://kitgrid.dev/r/cluster.json): Items of any width that wrap as they need to, such as tags, buttons or meta.
+- [code](https://kitgrid.dev/r/code.json): Inline code: a mono run on a soft paper chip that scales with the text around it.
+- [code-block](https://kitgrid.dev/r/code-block.json): A code sample with copy, line numbers and highlighted lines. The scroll region is focusable so keyboard users can scroll long lines.
+- [code-tabs](https://kitgrid.dev/r/code-tabs.json): One code sample in several flavours (npm, pnpm, yarn; or file per tab), with a shared copy.
+- [collapsible](https://kitgrid.dev/r/collapsible.json): A single disclosure: one trigger shows and hides one region.
+- [color-picker](https://kitgrid.dev/r/color-picker.json): A dependency-free color picker: a saturation and brightness area, hue and opacity sliders, a hex field and optional presets. Every part is a keyboard slider with spoken values.
+- [columns](https://kitgrid.dev/r/columns.json): A side column and a main column that stack on their own when space runs out, with no media queries: the layout reacts to its own width.
+- [combobox](https://kitgrid.dev/r/combobox.json): An APG editable combobox with list autocomplete. Focus stays in the input; the active option is conveyed with `aria-activedescendant`. The value is always one of the options.
+- [command-palette](https://kitgrid.dev/r/command-palette.json): Grouped, searchable commands in a dialog.
+- [comment-thread](https://kitgrid.dev/r/comment-thread.json): A discussion with nested replies on a rail, inline reply boxes and collapsible branches.
+- [comparison-table](https://kitgrid.dev/r/comparison-table.json): Features down, options across, with yes/no marks that read as words. Server-safe.
+- [confetti](https://kitgrid.dev/r/confetti.json): Physics confetti on a top-layer canvas.
+- [confirm-button](https://kitgrid.dev/r/confirm-button.json): Press twice or hold to confirm.
+- [container](https://kitgrid.dev/r/container.json): The page column: a centred maximum width with side padding. It is also a size container, so a `Grid` or `Show` inside responds to its width.
+- [context-menu](https://kitgrid.dev/r/context-menu.json): Owns the open state and the pointer position the menu opens at. Renders no element.
+- [cookie-banner](https://kitgrid.dev/r/cookie-banner.json): Consent banner with Accept and Reject given equal weight on the first layer, as EU regulators expect, and a preferences view with one switch per category.
+- [copy-field](https://kitgrid.dev/r/copy-field.json): A read-only value with a copy button: install commands, IDs, URLs.
+- [countdown](https://kitgrid.dev/r/countdown.json): A sale or shipping-cutoff timer. The server and first client render show a stable placeholder; ticking starts after mount, aligned to whole seconds, and pauses while the tab is hidden.
+- [counter](https://kitgrid.dev/r/counter.json): A live figure that tweens from its previous value whenever `value` changes, for KPIs that refresh in place. Built on `NumberTicker`, so it formats with Intl, reserves its width and exposes only the final value to assistive tech. Snaps under reduced motion.
+- [coupon-input](https://kitgrid.dev/r/coupon-input.json): Discount-code field with async validation, a removable applied tag and announced results.
+- [credit-card-input](https://kitgrid.dev/r/credit-card-input.json): Card number, expiry and security code in one field. The number groups by brand, fails the Luhn check visibly, and focus moves on as each part fills.
+- [crosshair](https://kitgrid.dev/r/crosshair.json): Hairlines that track the pointer across an area, like a measuring tool. The lines are moved by CSS variables written once per frame, so the area never re-renders.
+- [cube-field](https://kitgrid.dev/r/cube-field.json): An isometric field of CSS 3D cubes with a slow wave rising through it, diagonal by diagonal. Three faces per cube, `transform` only. Server-component safe.
+- [currency-input](https://kitgrid.dev/r/currency-input.json): An amount field: the symbol sits outside the editable text, digits follow the currency's minor units, and the amount is grouped in the user's locale once they leave the field.
+- [currency-selector](https://kitgrid.dev/r/currency-selector.json): Store currency picker built on Select, with localized names and a symbol badge per option.
+- [curved-loop](https://kitgrid.dev/r/curved-loop.json): A phrase that travels along a curved SVG path like a ribbon, repeating seamlessly. The offset is written to the textPath attribute per frame, never through React state.
+- [data-table](https://kitgrid.dev/r/data-table.json): A native table with sortable headers (`aria-sort`), optional row selection, sticky header, three densities and zebra rows. Columns are plain data with optional render functions, and sorting runs on the client unless `manualSort` is set.
+- [date-input](https://kitgrid.dev/r/date-input.json): The browser's own date field, themed: native keyboard entry, locale order and picker on every platform, plus a clear button.
+- [date-picker](https://kitgrid.dev/r/date-picker.json): A field that opens a Calendar in a popover. Single days or ranges.
+- [date-range-picker](https://kitgrid.dev/r/date-range-picker.json): Two native date fields and one-tap presets. Typing a date never emits a half-finished or backwards range: a change is reported only once both ends are set and in order.
+- [date-time-field](https://kitgrid.dev/r/date-time-field.json): Typed date and time segments in the locale's order, plus an optional calendar popup.
+- [delivery-estimate](https://kitgrid.dev/r/delivery-estimate.json): "Get it by Thu, Oct 30" with cutoff urgency, business-day math and a mini timeline.
+- [delta](https://kitgrid.dev/r/delta.json): A signed change: arrow, magnitude and a spoken direction, toned by whether the move is good. Colour is never the only channel. Server-safe and locale-free, so SSR and hydration agree.
+- [deploy-status](https://kitgrid.dev/r/deploy-status.json): Build and deploy steps as a pipeline: each node turns as its step runs. Server-safe.
+- [description-list](https://kitgrid.dev/r/description-list.json): Labelled values in a semantic `<dl>`, grouped per pair so each term stays with its value.
+- [deviation-rows](https://kitgrid.dev/r/deviation-rows.json): Signed gaps as bars that grow from zero, one row per item, with the figure in words beside each bar. When every gap falls on one side the zero line moves to that edge, so the rail is used in full. Server-safe.
+- [dialog](https://kitgrid.dev/r/dialog.json): Owns the open state. Renders no element of its own.
+- [diff-view](https://kitgrid.dev/r/diff-view.json): A line-level diff of two strings, unified or side by side, computed in the browser.
+- [dither](https://kitgrid.dev/r/dither.json): A flowing gradient field rendered through an ordered (Bayer) dither at a coarse pixel size, like a print or an early screen. Three tones, written straight into an ImageData buffer at the dither resolution, so it costs a fraction of a full-resolution canvas.
+- [dock](https://kitgrid.dev/r/dock.json): A macOS-style dock. Items grow with pointer proximity through springs; neighbours are pushed aside with transforms, and the backdrop widens with a clip-path, so nothing triggers layout.
+- [dot-field](https://kitgrid.dev/r/dot-field.json): A field of dots that swell, light up and part around the pointer, then spring back. Canvas, DPR-capped, paused offscreen; under reduced motion the dots still respond, without easing.
+- [dot-pagination](https://kitgrid.dev/r/dot-pagination.json): Compact page dots for carousels and onboarding. A single bead glides between dots; arrow keys move and select, so the group is one tab stop.
+- [dot-pattern](https://kitgrid.dev/r/dot-pattern.json): An SVG dot grid. Static by default and server-component safe; `glow` mounts a small client part that lights the dots around the pointer through CSS variables, without re-rendering.
+- [drawer](https://kitgrid.dev/r/drawer.json): Owns the open state. Renders no element of its own.
+- [dropdown-menu](https://kitgrid.dev/r/dropdown-menu.json): Owns the open state of an APG menu button. Renders no element.
+- [dynamic-island](https://kitgrid.dev/r/dynamic-island.json): A pill that morphs between live states.
+- [elastic-slider](https://kitgrid.dev/r/elastic-slider.json): A slider whose track stretches like a rubber band when dragged past either end and springs back on release. Keyboard follows the WAI-ARIA slider pattern; the stretch is off under reduced motion.
+- [empty-state](https://kitgrid.dev/r/empty-state.json): What a list, table or cart shows when there is nothing in it yet. Server-safe.
+- [environment-switcher](https://kitgrid.dev/r/environment-switcher.json): A radio group for the environment a view targets. A sliding thumb carries the selection and each environment keeps its tone, so production always reads as production.
+- [falling-text](https://kitgrid.dev/r/falling-text.json): Words that drop out of a sentence and pile up at the bottom of their box with a little bounce. A column-height model stands in for a physics engine, so landed words stack.
+- [feature-comparison](https://kitgrid.dev/r/feature-comparison.json): Plan-by-feature matrix with grouped rows, a sticky header and a highlighted column.
+- [feature-flag-list](https://kitgrid.dev/r/feature-flag-list.json): Feature flags with one switch for the environment in view and a tag per environment, so drift between staging and production is visible at a glance.
+- [fetch-progress](https://kitgrid.dev/r/fetch-progress.json): A hairline progress bar along the top edge, for background fetches and route changes.
+- [field](https://kitgrid.dev/r/field.json): Label, description and error for any control.
+- [file-dropzone](https://kitgrid.dev/r/file-dropzone.json): A drop target with a real button for browsing, type and size checks, image previews and a progress row per file. Drive `items` to show upload progress from your own uploader.
+- [file-tree](https://kitgrid.dev/r/file-tree.json): A file explorer built on `TreeView`: give it paths, get folders, icons and git markers.
+- [filter-bar](https://kitgrid.dev/r/filter-bar.json): The filters a view is drawn under: a scope menu, one removable chip per applied filter and a reset. Chips are a labelled list, each remove button names the filter it clears.
+- [filter-chips](https://kitgrid.dev/r/filter-chips.json): Toggle-button filters for collection pages, with counts, a check animation and Clear all.
+- [filter-sheet](https://kitgrid.dev/r/filter-sheet.json): A side sheet of filter fields with a sticky apply and reset footer, built on Drawer.
+- [flip-card](https://kitgrid.dev/r/flip-card.json): A two-faced card that flips in 3D on a spring. Its height follows the taller face, the hidden face is inert, and under reduced motion the faces crossfade instead of rotating.
+- [floating-action-button](https://kitgrid.dev/r/floating-action-button.json): The screen's primary action, pinned to a corner.
+- [flowing-menu](https://kitgrid.dev/r/flowing-menu.json): Full-width menu rows. Hovering a row floods it from the edge the pointer came through with an accent band carrying a marquee of the label, and drains it toward the edge it leaves by.
+- [folder](https://kitgrid.dev/r/folder.json): A folder that tips its front flap open and fans its papers up. It is a toggle button; hovering lets the papers peek out first.
+- [font-picker](https://kitgrid.dev/r/font-picker.json): Typefaces as a native radio list, each previewed in its own face.
+- [form-wizard](https://kitgrid.dev/r/form-wizard.json): A multi-step form: a step rail, one panel at a time, and Back and Continue that run each step's `validate` first. Focus moves to the new step's heading so the change is announced.
+- [formatted-number](https://kitgrid.dev/r/formatted-number.json): A number formatted with `Intl.NumberFormat`, wrapped in `<data>` with the raw value.
+- [frame](https://kitgrid.dev/r/frame.json): A media frame: crops any image or video to a ratio, with a radius and an inner ink edge.
+- [free-shipping-progress](https://kitgrid.dev/r/free-shipping-progress.json): Cart nudge toward a free-shipping threshold. Server-safe; the bar animates with CSS only.
+- [getting-started-cards](https://kitgrid.dev/r/getting-started-cards.json): Next-step cards for an empty workspace, numbered on an orbit and linking out. Server-safe.
+- [gift-card](https://kitgrid.dev/r/gift-card.json): A physical-looking gift card with a masked code you can reveal and copy.
+- [glare-hover](https://kitgrid.dev/r/glare-hover.json): A surface that catches a band of light sweeping across it when hovered or focused within. Pure CSS on a pseudo element, so it is server-safe and never covers the content's events.
+- [glass-panel](https://kitgrid.dev/r/glass-panel.json): A frosted glass surface: backdrop blur with saturation, a surface tint, a hairline edge that catches light along the top and an optional grain. The building block for panels laid over any of the backgrounds. Server-component safe.
+- [glitch-text](https://kitgrid.dev/r/glitch-text.json): Text torn into shifting horizontal slices by two offset copies. The copies are pseudo elements, so the accessible text is the plain string. Pure CSS: server-safe, and the loop stops under reduced motion.
+- [glow-grid](https://kitgrid.dev/r/glow-grid.json): A quiet hairline grid that lights up around the pointer, as if a torch were held over it. The pointer only moves two CSS variables once per frame; the light is a masked copy of the grid. Touch and keyboard users see the light at its resting point.
+- [gradient-border](https://kitgrid.dev/r/gradient-border.json): A card surface whose edge is a conic gradient that orbits the border. The fill and the edge are two backgrounds on one element (`padding-box` over `border-box`), so there is no extra markup and content needs no z-index. Server-component safe.
+- [gradient-text](https://kitgrid.dev/r/gradient-text.json): Text filled with a slowly drifting multi-stop gradient. Pure CSS, server component safe.
+- [grainient](https://kitgrid.dev/r/grainient.json): A drifting, grainy colour field. Soft colour fields wander on transform-only loops under a film-grain SVG tile, so the compositor does the work: no canvas, no WebGL, no JavaScript. Server-component safe.
+- [grid](https://kitgrid.dev/r/grid.json): Equal columns that respond to the grid's own width through container queries, so the same grid works in a sidebar, a dialog or a full page without breakpoints tied to the viewport.
+- [grid-pattern](https://kitgrid.dev/r/grid-pattern.json): A crisp SVG line grid. The static grid ships no JavaScript; only the animated flat mode mounts a small client part that moves lit cells around between flashes.
+- [halftone](https://kitgrid.dev/r/halftone.json): A print halftone screen: a rotated grid of dots whose size follows soft pools of light drifting underneath, plus one under the pointer. Canvas, DPR-capped, paused offscreen.
+- [heading](https://kitgrid.dev/r/heading.json): A heading whose outline level and visual size are chosen separately.
+- [hero-spotlight](https://kitgrid.dev/r/hero-spotlight.json): A large, soft beam of light that sweeps in from a corner on mount and settles into a static glow. Its resting styles are the final frame, so reduced motion simply shows the settled light. Server-component safe.
+- [highlight](https://kitgrid.dev/r/highlight.json): Marks every occurrence of a search term with `<mark>`, longest terms first.
+- [hint-layer](https://kitgrid.dev/r/hint-layer.json): One hint surface for a whole app, ported from the dashboard: anything with `data-hint` (or a `title`) shows a styled hint that follows the pointer, and a keyboard focus shows it under the element. Lines split on newlines; the first is bold when there are several.
+- [holo-card](https://kitgrid.dev/r/holo-card.json): A holographic foil card for gift cards, loyalty tiers and limited drops. It tilts on springs, shifts an iridescent foil with the viewing angle, lets glitter catch the light around the reflection, and lifts children marked `data-depth="<px>"` off the surface.
+- [hover-card](https://kitgrid.dev/r/hover-card.json): A preview card for sighted pointer and keyboard users. It supplements a link that already works on its own, so it never holds content that is unreachable elsewhere.
+- [icon-button](https://kitgrid.dev/r/icon-button.json): An icon control with a required accessible name.
+- [image-compare](https://kitgrid.dev/r/image-compare.json): A before/after reveal. The divider is a `slider`: drag it, click anywhere, or use arrows, Page keys, Home and End. Position is written to a CSS variable, not React state.
+- [image-trail](https://kitgrid.dev/r/image-trail.json): A region where moving the pointer leaves a trail of images that pop in and fade along the path. A fixed pool of image elements is recycled through WAAPI animations, so a long session never grows the DOM or touches React state. Touch scrolling stays untouched: a tap drops an image instead.
+- [inbox-list](https://kitgrid.dev/r/inbox-list.json): A triage list in the style of a product inbox: one selectable row per thread, with unread weight and a dot. A single-select listbox, so arrow keys move and Enter or Space selects.
+- [incident-timeline](https://kitgrid.dev/r/incident-timeline.json): The updates posted for one incident, newest first, on a single rail. Server-safe.
+- [infinite-list](https://kitgrid.dev/r/infinite-list.json): Loads the next page when a sentinel scrolls into view. Loading is announced politely, and a button keeps the list usable without scrolling.
+- [inline-edit](https://kitgrid.dev/r/inline-edit.json): Text that becomes an input when activated. Enter saves, Escape cancels and focus always returns to the text, so keyboard users never lose their place.
+- [input](https://kitgrid.dev/r/input.json): A text field with adornments and a clear button.
+- [input-group](https://kitgrid.dev/r/input-group.json): The surface of a text field without the input: hosts chips, segments, buttons and native inputs side by side and shows one focus halo for all of them. Server-component safe.
+- [insight-list](https://kitgrid.dev/r/insight-list.json): A stream of findings, "what changed", each with a direction, a written severity and a bar for the size of its impact. Long lists fold behind a disclosure button.
+- [integration-card](https://kitgrid.dev/r/integration-card.json): One integration in a directory: logo, name, a line of copy and a connect toggle.
+- [invite-members](https://kitgrid.dev/r/invite-members.json): Email chips plus a role and a send button: the invite row of a members page.
+- [iridescence](https://kitgrid.dev/r/iridescence.json): A pearlescent surface whose sheen slides as if the light source moved. Stacked gradients in the paper colors, animated through `background-position`. Pure CSS, server safe.
+- [json-viewer](https://kitgrid.dev/r/json-viewer.json): Collapsible, syntax-colored view of any JSON-like value. Each container is a native toggle.
+- [kanban-board](https://kitgrid.dev/r/kanban-board.json): Columns of cards that move by pointer drag or keyboard (Space to lift, arrows to move, Space to drop, Escape to cancel), with every step announced.
+- [kbd](https://kitgrid.dev/r/kbd.json): A keyboard key or shortcut. Server-safe; only platform-aware keys hydrate a tiny client part.
+- [key-value](https://kitgrid.dev/r/key-value.json): A single labelled value on one row, with an optional copy action.
+- [keyboard-shortcuts-dialog](https://kitgrid.dev/r/keyboard-shortcuts-dialog.json): A searchable cheat sheet of keyboard shortcuts, summoned with `?`.
+- [knob](https://kitgrid.dev/r/knob.json): A rotary control on the WAI-ARIA slider pattern. Drag up or down to turn it, or use the arrow, Page, Home and End keys. The arc fills along a 270 degree sweep.
+- [kpi-strip](https://kitgrid.dev/r/kpi-strip.json): A row of readouts separated by hairlines. Items wrap when space runs out and the dividers follow the wrap, so no row starts with a stray rule. Server-safe.
+- [leaderboard](https://kitgrid.dev/r/leaderboard.json): A ranked list with value bars, podium rings for the top three and movement markers.
+- [lens](https://kitgrid.dev/r/lens.json): A round magnifier that follows the pointer over an image or any content. The magnified copy is a clipped, scaled clone driven by pointer CSS variables, so it costs no re-renders; the clone is inert and hidden from assistive tech.
+- [light-cone](https://kitgrid.dev/r/light-cone.json): A stage light: a thin glowing bar near the top casts a soft cone of light down onto the content. Opens once on mount, then rests; its resting styles are the final frame. Server-component safe.
+- [light-rays](https://kitgrid.dev/r/light-rays.json): Soft shafts of light falling from above, each swaying and breathing on its own loop like light through moving leaves. Seeded, transform and opacity only. Server-component safe.
+- [lightbox](https://kitgrid.dev/r/lightbox.json): A full-screen image viewer on the native <dialog>: wheel, double-click and keyboard zoom around the pointer, drag to pan while zoomed, swipe or arrow keys between images.
+- [lightning](https://kitgrid.dev/r/lightning.json): Seeded SVG bolts that strike in turn with a double flicker and a sky flash. The flashes are CSS opacity keyframes, so nothing runs in JavaScript. Server-component safe.
+- [link](https://kitgrid.dev/r/link.json): An inline link with an underline that sits clear of descenders, and a safe external mode.
+- [liquid-glass](https://kitgrid.dev/r/liquid-glass.json): A web approximation of Apple's Liquid Glass: a surface that refracts what sits behind it through a curved rim, splits colour at the edge, and catches a light that orbits toward the pointer. Chromium gets true refraction through an SVG displacement filter in `backdrop-filter`; other browsers get frosted glass; `prefers-reduced-transparency` gets an opaque surface.
+- [live-cursor-badge](https://kitgrid.dev/r/live-cursor-badge.json): A collaborator's pointer with a name flag, for multiplayer canvases. Position updates glide on a spring; the colour is derived from the name so it stays stable per person. Server-safe.
+- [log-viewer](https://kitgrid.dev/r/log-viewer.json): A windowed log stream with level filters, search highlighting and tail-follow.
+- [logo-cloud](https://kitgrid.dev/r/logo-cloud.json): A quiet strip or grid of customer marks.
+- [loyalty-meter](https://kitgrid.dev/r/loyalty-meter.json): Reward points with the current tier, markers for every tier and the gap to the next one.
+- [magnet-lines](https://kitgrid.dev/r/magnet-lines.json): A grid of short strokes that all turn to face the pointer, like iron filings around a magnet. Decorative: hidden from assistive tech, and frozen under reduced motion.
+- [magnetic](https://kitgrid.dev/r/magnetic.json): Pulls its child toward a nearby pointer and springs it home when the pointer moves away.
+- [markdown-text](https://kitgrid.dev/r/markdown-text.json): A tiny, safe markdown renderer for assistant answers: paragraphs, headings, emphasis, inline and fenced code, lists, quotes, tables and links. It builds React elements from a small parser, never HTML strings, and survives half-streamed input. Server-component safe.
+- [marquee](https://kitgrid.dev/r/marquee.json): An infinite, seamless strip of content. Runs on the compositor via the Web Animations API, eases to a stop on hover, and becomes a plain scrollable strip under reduced motion.
+- [mask-reveal](https://kitgrid.dev/r/mask-reveal.json): A surface with a second layer hidden beneath it, uncovered through a soft circular window that follows the pointer and swells open on hover.
+- [masonry](https://kitgrid.dev/r/masonry.json): Packs items into the shortest column while keeping DOM order, so Tab and screen readers move through items as authored. Until measured (and on the server) it falls back to CSS columns.
+- [member-list](https://kitgrid.dev/r/member-list.json): People with access: avatar, name, email, role and status, with room for row actions. Status is always written out, never colour alone. Server-safe.
+- [mention-input](https://kitgrid.dev/r/mention-input.json): A textarea that suggests people after `@`. Known mentions are tinted in place through a mirrored backdrop, so the text stays a plain, editable string.
+- [menubar](https://kitgrid.dev/r/menubar.json): An APG menubar: one tab stop, arrow keys between menus, menus that follow the pointer.
+- [mesh-gradient](https://kitgrid.dev/r/mesh-gradient.json): A multi-point gradient mesh: each control point is a soft pool of color that blends with its neighbours and wanders slowly around its anchor. Pure CSS, server-component safe.
+- [meteors](https://kitgrid.dev/r/meteors.json): Meteors streaking across the frame on CSS keyframes alone. Every meteor passes a seeded point halfway through its flight, so coverage is even at any angle, and that midpoint is the static frame shown under reduced motion. Server-component safe.
+- [metric-compare](https://kitgrid.dev/r/metric-compare.json): Two periods of one metric, with paired bars and the change between them.
+- [mini-cart](https://kitgrid.dev/r/mini-cart.json): Header cart button with a count, opening a compact popover of lines, subtotal and checkout.
+- [mobile-nav-sheet](https://kitgrid.dev/r/mobile-nav-sheet.json): A hamburger that opens a side sheet with drill-down navigation. Each nested level turns in from the edge; Back returns focus to the item that opened it.
+- [modal-stack](https://kitgrid.dev/r/modal-stack.json): A dialog that can open another dialog on top of itself. Nest a ModalStack inside a ModalStackContent: the parent recedes, the child takes focus, and Escape peels one layer off.
+- [mode-toggle](https://kitgrid.dev/r/mode-toggle.json): Light, dark or follow the system. It only reports the choice; apply it with `data-theme` on the root. The cycle button turns its glyph in on every change.
+- [moire](https://kitgrid.dev/r/moire.json): Two identical hairline patterns drifting against each other, so large interference fringes bloom and dissolve between them. Two gradients, transform only. Server-component safe.
+- [morph-dialog](https://kitgrid.dev/r/morph-dialog.json): A card that becomes its own dialog. The trigger's container, image and title travel to their places in the dialog and back, through the View Transitions API where available and a FLIP animation elsewhere. Underneath it is a native modal <dialog>: focus is trapped and returned, the page is inert and its scroll locked, Escape closes. Reduced motion crossfades instead.
+- [morphing-text](https://kitgrid.dev/r/morphing-text.json): Melts one word into the next: two layers cross-blur while an SVG alpha-threshold filter fuses their edges into one liquid shape. Under reduced motion the first text stays put.
+- [multi-select](https://kitgrid.dev/r/multi-select.json): A filterable multi-select: chips in the field, a multi-selectable listbox below. Enter toggles the active option and keeps the list open for the next pick.
+- [navigation-menu](https://kitgrid.dev/r/navigation-menu.json): Site navigation with disclosure panels (not an ARIA menu: links stay links). Panels open on hover intent or click, slide in from the direction of travel, and an indicator follows the open trigger.
+- [nested-drawer](https://kitgrid.dev/r/nested-drawer.json): A drawer that can push further drawers over itself, for drill-in flows (cart, then address, then a map). Each parent slides back and dims while a child is open.
+- [newsletter-form](https://kitgrid.dev/r/newsletter-form.json): Email capture with inline validation, a busy state and an announced confirmation.
+- [noise](https://kitgrid.dev/r/noise.json): Film grain from an inline SVG turbulence tile: no network request, no canvas, no JavaScript. Server-component safe.
+- [notification-center](https://kitgrid.dev/r/notification-center.json): A bell that opens a non-modal panel of notifications with All and Unread views. Opening an item marks it read; the header can clear everything at once.
+- [number-field](https://kitgrid.dev/r/number-field.json): A spinbutton that formats with Intl in the user's locale and steps from the keyboard, the wheel-free buttons, or press-and-hold.
+- [number-ticker](https://kitgrid.dev/r/number-ticker.json): Counts up to a number when it scrolls into view, and animates every later change. `count` rewrites a single text node through a spring; `roll` spins per-digit wheels like an odometer. Both reserve their final width, use tabular figures and expose only the final value to assistive tech.
+- [onboarding-checklist](https://kitgrid.dev/r/onboarding-checklist.json): A setup checklist with a progress ring. The first unfinished step starts open; each step is a disclosure, so its detail and action stay one keypress away.
+- [option-tile](https://kitgrid.dev/r/option-tile.json): A native radio drawn as a tile with a preview. Give tiles the same `name` inside a `role="radiogroup"` and the browser supplies arrow-key selection and form submission. Server-component safe.
+- [orb](https://kitgrid.dev/r/orb.json): A lit sphere with a slow inner swirl and an orbit light sweeping its rim. Layers of radial and conic gradients turned on transform-only loops. Pure CSS, server safe.
+- [orbit-rings](https://kitgrid.dev/r/orbit-rings.json): Hairline concentric rings, each with a conic light sweeping around it at its own pace, alternating direction. Transform-only. Server safe.
+- [orbiting-circles](https://kitgrid.dev/r/orbiting-circles.json): Satellites circling a centre on an orbit, each kept upright by a counter-rotation. Stack several with different radii for a system. Pure CSS: server-safe, and still under reduced motion.
+- [order-summary](https://kitgrid.dev/r/order-summary.json): Checkout line items and totals, collapsible on small screens.
+- [order-tracker](https://kitgrid.dev/r/order-tracker.json): Ordered → shipped → delivered progress, with the current step ringed.
+- [page-header](https://kitgrid.dev/r/page-header.json): The title block of a page: breadcrumb, title, description, meta and page actions. Server-safe.
+- [pager](https://kitgrid.dev/r/pager.json): Previous and next links at the end of an article or docs page.
+- [pagination](https://kitgrid.dev/r/pagination.json): Server-safe in link mode: with `getHref` it renders plain anchors and ships no JavaScript.
+- [panel](https://kitgrid.dev/r/panel.json): A dashboard surface: header, body and footer parts on one of three materials. It names itself after its `PanelTitle`, and lays itself out in a `PanelGrid` through `span`.
+- [panel-grid](https://kitgrid.dev/r/panel-grid.json): A 12-column dashboard grid that responds to its own width, not the viewport's, so it works the same in a sidebar layout, a dialog or a full page. Children choose their columns with `data-span` (wide containers) and `data-span-md` (medium); `Panel` sets both from its `span` props. Below 40rem every child takes the full row. Server-safe.
+- [parallax-layers](https://kitgrid.dev/r/parallax-layers.json): A scene of stacked layers that drift at different speeds as it scrolls through the viewport (and optionally as the pointer moves), for depth without WebGL. Progress is written to CSS variables once per frame, only while the scene is on screen.
+- [particles](https://kitgrid.dev/r/particles.json): A canvas particle field: drifting, twinkling dots with optional links and pointer magnetism. DPR-aware, sized by ResizeObserver, paused offscreen and in hidden tabs, and drawn as one still frame under reduced motion. Colors are read from CSS, so the field follows theme changes.
+- [password-field](https://kitgrid.dev/r/password-field.json): A password input with a reveal toggle, an optional strength meter, live requirement checks and a Caps Lock hint.
+- [payment-method-selector](https://kitgrid.dev/r/payment-method-selector.json): Payment options as a stack of radio rows. The chosen row expands to reveal its fields, the way Shopify and Stripe present cards, wallets and pay-later side by side.
+- [permission-matrix](https://kitgrid.dev/r/permission-matrix.json): Roles across, permissions down, a checkbox or switch in every cell. A WAI-ARIA grid: one Tab stop, arrows move between cells, Home and End go to the row ends, Ctrl+Home and Ctrl+End to the corners, Space toggles. Each cell is named by its permission and role headers.
+- [phone-input](https://kitgrid.dev/r/phone-input.json): A national number field with a searchable country code. It formats as you type, accepts pasted international numbers and reports E.164. No phone metadata is bundled.
+- [pin-input](https://kitgrid.dev/r/pin-input.json): One-time code entry with paste and autofill.
+- [pixel-transition](https://kitgrid.dev/r/pixel-transition.json): Swaps two faces of a card through a field of pixels that flicker on in random order, then off again over the new face. Tapping toggles on touch screens; reduced motion swaps instantly.
+- [plan-badge](https://kitgrid.dev/r/plan-badge.json): The plan a workspace is on, for menus, headers and settings rows. Server-safe.
+- [plan-summary](https://kitgrid.dev/r/plan-summary.json): The plan a workspace is on today, for the billing settings page. Server-safe.
+- [plasma](https://kitgrid.dev/r/plasma.json): Classic sum-of-sines plasma, computed into a buffer one eighth the size of the section and smoothed by the browser on the way up, so it is soft, cheap and on-palette.
+- [plate](https://kitgrid.dev/r/plate.json): An inset, framed area inside a surface: a chart well, a preview or a placeholder. Server-safe.
+- [pointer-light](https://kitgrid.dev/r/pointer-light.json): A light that follows the cursor over any surface: an image, a chart, a panel. Unlike a spotlight card it brings no styling of its own and sits over the content, not behind it. One style write per frame, no re-renders.
+- [pointer-trail](https://kitgrid.dev/r/pointer-trail.json): A ribbon of light that follows the pointer across the area and tapers away behind it. Drawn on a canvas only while there is a trail, so an idle area costs nothing. Off under reduced motion and for touch.
+- [poll](https://kitgrid.dev/r/poll.json): A single-choice poll: radios and a Vote button, then animated result bars.
+- [popconfirm](https://kitgrid.dev/r/popconfirm.json): A small anchored confirmation for low-stakes destructive actions on a single item.
+- [popover](https://kitgrid.dev/r/popover.json): Owns the open state of a non-modal dialog anchored to its trigger. Renders no element.
+- [presence-avatars](https://kitgrid.dev/r/presence-avatars.json): Who else is viewing: overlapping faces with a live ring for the active ones and a +N chip. Every face carries its name and state as text. Server-safe.
+- [price](https://kitgrid.dev/r/price.json): Locale-aware money with compare-at and savings.
+- [price-range-slider](https://kitgrid.dev/r/price-range-slider.json): A two-thumb price filter with synced inputs and an optional price histogram.
+- [pricing-card](https://kitgrid.dev/r/pricing-card.json): One marketing pricing tier: name, big price, call to action and feature list.
+- [pricing-table](https://kitgrid.dev/r/pricing-table.json): A row of plan cards driven by a monthly / yearly toggle that shows the best yearly saving.
+- [pricing-toggle](https://kitgrid.dev/r/pricing-toggle.json): Monthly / yearly billing switch with a savings tag on the yearly option.
+- [prism](https://kitgrid.dev/r/prism.json): A glass prism splitting a single beam into a fan of paper-colored light. The glass carries a slowly turning conic caustic; each band of the fan breathes on its own loop. Server safe.
+- [product-badge](https://kitgrid.dev/r/product-badge.json): Merchandising label for product tiles: New, Sale, Bestseller, Sold out and friends.
+- [product-banner](https://kitgrid.dev/r/product-banner.json): An inline banner inside the product: a plan limit, a migration, a beta. Not a page-top announcement bar; it sits in the content flow and can carry an action.
+- [product-card](https://kitgrid.dev/r/product-card.json): A merchandising tile. Server-safe: the hover image, quick-add reveal and stretched link are CSS, and only the wishlist and quick-add buttons hydrate.
+- [product-compare](https://kitgrid.dev/r/product-compare.json): Side-by-side spec table. Rows where every product matches can be hidden, and rows that differ are tinted so the eye lands on what actually separates the options.
+- [product-gallery](https://kitgrid.dev/r/product-gallery.json): Product media: a scroll-snap stage (swipe on touch), arrows, thumbnails, keyboard support, hover zoom on fine pointers and a fullscreen lightbox built on Dialog.
+- [product-spin](https://kitgrid.dev/r/product-spin.json): A 360° product viewer built from an image sequence. Drag, fling, scroll, scrub the dial or use the arrow keys to turn it; frames stream in coarse-to-fine behind an orbit progress ring.
+- [product-tabs](https://kitgrid.dev/r/product-tabs.json): Product details, shipping and returns as tabs, or as an accordion of native disclosures.
+- [progress](https://kitgrid.dev/r/progress.json): A linear progress bar. The fill moves with a transform, so value changes glide without layout. `useId` is available in Server Components, so this stays RSC-safe.
+- [progressive-blur](https://kitgrid.dev/r/progressive-blur.json): An edge that blurs what scrolls under it more and more toward the side, like a lens falling out of focus. Stacked backdrop filters, each masked to its own band. Place it in a positioned container; server-safe and static.
+- [project-card](https://kitgrid.dev/r/project-card.json): A project tile for a dashboard home: identity, domain, and the last deploy. Server-safe.
+- [prompt-input](https://kitgrid.dev/r/prompt-input.json): The box a question is typed into. Enter sends, Shift+Enter adds a line, and Enter while an IME is composing picks the candidate instead. While an answer streams, send turns into stop.
+- [prose](https://kitgrid.dev/r/prose.json): Typesets rendered HTML you do not control, such as Markdown or CMS output: headings, lists, quotes, code, tables and media, with vertical rhythm.
+- [qr-code](https://kitgrid.dev/r/qr-code.json): An SVG QR Code from a dependency-free encoder (byte mode, versions 1-40, all ECC levels).
+- [quantity-stepper](https://kitgrid.dev/r/quantity-stepper.json): An APG spinbutton flanked by − / + buttons that auto-repeat, accelerating, while held.
+- [quick-view](https://kitgrid.dev/r/quick-view.json): A product preview dialog: compact gallery, SKU-aware options, quantity and add to cart.
+- [quota-bar](https://kitgrid.dev/r/quota-bar.json): A usage meter against a plan limit, turning amber near it and red past it. Server-safe.
+- [radial-burst](https://kitgrid.dev/r/radial-burst.json): A slow-turning sunburst: a repeating conic gradient on an oversized disc, faded toward its rim so it reads as light rather than a pattern. Server-component safe.
+- [radio-group](https://kitgrid.dev/r/radio-group.json): Native radios sharing one `name`, so arrow keys, Tab-to-selected and form submission come from the browser. Pass a string union as `T` to type `value` and `onValueChange`.
+- [rating](https://kitgrid.dev/r/rating.json): Star rating. Without `onValueChange` it is a server-safe display; with it, a native radio group with arrow-key selection and hover preview.
+- [reactions-bar](https://kitgrid.dev/r/reactions-bar.json): Emoji counts under a comment or update. Each pill is a toggle; the add button picks more.
+- [readout](https://kitgrid.dev/r/readout.json): A labelled figure: label, big value, delta and caption. Rendered as a description list so the label stays paired with the value for screen readers. Server-safe.
+- [recently-viewed](https://kitgrid.dev/r/recently-viewed.json): A compact, scroll-snapping rail of products the shopper looked at, with paging buttons.
+- [reel](https://kitgrid.dev/r/reel.json): A horizontal strip that scrolls instead of wrapping, with snap points and a thin bar.
+- [referral-card](https://kitgrid.dev/r/referral-card.json): Give-and-get offer with a copyable personal link and the native share sheet where available.
+- [relative-time](https://kitgrid.dev/r/relative-time.json): “3 minutes ago”, kept fresh while mounted, with the absolute time as a tooltip.
+- [responsive-dialog](https://kitgrid.dev/r/responsive-dialog.json): One dialog API, two surfaces: a centred dialog on wide screens and a draggable bottom sheet on narrow ones. The open state survives crossing the breakpoint.
+- [reveal](https://kitgrid.dev/r/reveal.json): Reveals its content as it scrolls into view. The server always renders the content visible: the hidden pre-state is applied on the client before first paint, and only to elements that start offscreen, so nothing flashes, and nothing stays hidden without JavaScript.
+- [review-card](https://kitgrid.dev/r/review-card.json): A single customer review: stars, short title, body, purchase details and a helpful vote.
+- [review-form](https://kitgrid.dev/r/review-form.json): Star rating, optional title and body with validation, a busy state and confirmation.
+- [review-summary](https://kitgrid.dev/r/review-summary.json): Average, total and a 5→1 star distribution whose rows can filter the review list.
+- [ribbons](https://kitgrid.dev/r/ribbons.json): Soft ribbons that chase the pointer through the section and coil on a slow figure-eight when it leaves. Each ribbon is a spring chain drawn with a tapering stroke. Canvas, DPR-capped.
+- [ripple](https://kitgrid.dev/r/ripple.json): Adds material ink to its child: a wave from the pointer on press, or from the centre on Enter and Space. Waves live outside React and remove themselves once they fade.
+- [ripple-grid](https://kitgrid.dev/r/ripple-grid.json): A grid of hairline cells with a ring of light rippling out from one point. Every cell runs the same keyframes, delayed by its distance from the origin, so the wave is pure CSS. Server safe.
+- [roadmap-board](https://kitgrid.dev/r/roadmap-board.json): A public roadmap in three columns: now, next, later. Server-safe.
+- [rotating-text](https://kitgrid.dev/r/rotating-text.json): Cycles through words in a fixed-width slot with a slide, blur or 3D flip. Only one state update per word; the motion itself is CSS. Pauses on hover, on focus, offscreen and in hidden tabs.
+- [row-splitter](https://kitgrid.dev/r/row-splitter.json): Two panes with a draggable, keyboard-operable separator between them (the WAI-ARIA window splitter pattern). Arrows move it, Home and End jump to the limits, Enter or a double-click restores the default. Dragging writes to a CSS variable, so the panes re-layout without a React render per frame.
+- [scale-input](https://kitgrid.dev/r/scale-input.json): A numbered rating scale (NPS, Likert, 1 to 5) built on native radios, so arrow keys, forms and required validation work as they do for any radio group.
+- [scramble-text](https://kitgrid.dev/r/scramble-text.json): Decodes text from random glyphs, left to right. Every original character stays in place (transparent while scrambled) with its stand-in painted over it, so the width never changes and line breaks never move. Frames are written to attributes, not React state.
+- [scroll-area](https://kitgrid.dev/r/scroll-area.json): Native scrolling with slim, themeable overlay scrollbars. The viewport keeps wheel, touch, keyboard and find-in-page behaviour; only the visual bar is replaced, so it is aria-hidden.
+- [scroll-progress](https://kitgrid.dev/r/scroll-progress.json): A hairline bar that fills as the page, or one scroll container, is read. The fill is a `scaleX` written once per scroll frame. It never animates on its own: the fill follows the reader's scroll one to one with no easing, so it reads the same under reduced motion. Decorative, so hidden from assistive tech.
+- [scroll-stack](https://kitgrid.dev/r/scroll-stack.json): Cards that pin one after another as you scroll, each settling a few pixels below the last so the edges of the deck peek out, while buried cards recede: smaller, darker, tipped back. Scroll-driven CSS animations do the work where supported; elsewhere a passive scroll listener writes the same progress variable once per frame. Children must be `ScrollStackItem`s.
+- [scroll-text](https://kitgrid.dev/r/scroll-text.json): A paragraph whose words fill in from faint to full as it scrolls through the viewport. Runs on CSS scroll-driven animations where supported, with zero JavaScript per frame; elsewhere a passive scroll listener writes a single progress variable while the paragraph is on screen.
+- [search-field](https://kitgrid.dev/r/search-field.json): A searchbox with clear, shortcut and debounce.
+- [search-select](https://kitgrid.dev/r/search-select.json): A select for long lists: the popup opens with a search box that filters as you type.
+- [secret-input](https://kitgrid.dev/r/secret-input.json): A password-style field for tokens and secrets, with reveal and optional copy.
+- [section](https://kitgrid.dev/r/section.json): A full-width band of the page with vertical rhythm. Pair with `aria-labelledby` pointing at its heading so it is announced as a named region.
+- [segmented-control](https://kitgrid.dev/r/segmented-control.json): A single-choice radiogroup with a thumb that springs between options. Built on native radios, so arrow keys select and the value submits with a form.
+- [segmented-nav](https://kitgrid.dev/r/segmented-nav.json): Page-level navigation styled as a segmented track. Unlike SegmentedControl (a radio group that changes a value), items here are links to places, marked with `aria-current="page"`.
+- [select](https://kitgrid.dev/r/select.json): An APG select-only combobox: focus stays on the trigger and the active option is conveyed with `aria-activedescendant`, so screen readers announce it without moving focus.
+- [separator](https://kitgrid.dev/r/separator.json): A hairline divider, horizontal or vertical.
+- [series-swatch](https://kitgrid.dev/r/series-swatch.json): Carries a series' identity beside its label, so the label itself stays in the text colour. The mark is decorative; the children are the accessible label. Server-safe.
+- [session-list](https://kitgrid.dev/r/session-list.json): Past conversations, newest first, grouped by day, with the open one marked.
+- [settings-nav](https://kitgrid.dev/r/settings-nav.json): The section list beside a settings page. Vertical in wide layouts; in a narrow container it turns into a scrolling row of pills. Server-safe.
+- [shimmer-button](https://kitgrid.dev/r/shimmer-button.json): A call-to-action whose border carries a travelling light, with a sheen sweeping across the surface. CSS-only animation that pauses offscreen and turns static under reduced motion.
+- [shiny-text](https://kitgrid.dev/r/shiny-text.json): A band of light that sweeps across text through `background-clip: text`. Pure CSS, server component safe, and still under reduced motion.
+- [shipment-timeline](https://kitgrid.dev/r/shipment-timeline.json): Carrier scan history, newest first, with the latest event emphasised.
+- [shortcut-table](https://kitgrid.dev/r/shortcut-table.json): A reference sheet of keyboard shortcuts. Server-safe.
+- [show](https://kitgrid.dev/r/show.json): Renders its children only within a width range, in CSS alone, so it works on the server and never flashes. The wrapper has `display: contents` and adds no box.
+- [shuffle-text](https://kitgrid.dev/r/shuffle-text.json): Each character is a tiny slot-machine reel that spins through random glyphs and lands on its letter, staggered across the word. The reels are CSS transitions on `transform`.
+- [sidebar-nav](https://kitgrid.dev/r/sidebar-nav.json): Sections, items, groups and a current-page mark.
+- [signature-pad](https://kitgrid.dev/r/signature-pad.json): A canvas for signing with a mouse, pen or finger. Strokes are smoothed and thin out with speed; Undo and Clear are real buttons. Ink follows the theme's text color.
+- [silk](https://kitgrid.dev/r/silk.json): Soft folds of light sliding over each other like draped fabric. Three blurred, repeating gradient sheets drift at different speeds, with a slow sheen on top. Pure CSS, server safe.
+- [size-guide](https://kitgrid.dev/r/size-guide.json): A "Size guide" link that opens the measurement table in a dialog.
+- [skeleton](https://kitgrid.dev/r/skeleton.json): A placeholder for content that is still loading. Purely visual and hidden from assistive technology: wrap a set of them in `SkeletonGroup` to announce the loading state once.
+- [skip-link](https://kitgrid.dev/r/skip-link.json): The first stop for keyboard users: hidden until focused, then jumps past the navigation. Focus is moved by hand so the link also works under hash routers, where following `#main` would change the route.
+- [slider](https://kitgrid.dev/r/slider.json): Single or multi-thumb with marks.
+- [spacer](https://kitgrid.dev/r/spacer.json): Empty room: a fixed gap, or a flexible one that pushes siblings apart.
+- [speed-dial](https://kitgrid.dev/r/speed-dial.json): A floating action button that expands into a few related actions.
+- [spinner](https://kitgrid.dev/r/spinner.json): An indeterminate loading indicator. Keeps turning under reduced motion, only slower.
+- [split-button](https://kitgrid.dev/r/split-button.json): A primary action fused with a menu button for its alternatives.
+- [split-flap](https://kitgrid.dev/r/split-flap.json): A split-flap departure board. Each cell is two halves and two hinged flaps; on change the upper flap falls while the lower one swings down behind it, one glyph at a time.
+- [spotlight-card](https://kitgrid.dev/r/spotlight-card.json): A paper sheet lit by a soft light that follows the pointer, edge included. CSS-driven, no re-renders.
+- [squares-grid](https://kitgrid.dev/r/squares-grid.json): A hairline grid that scrolls steadily in one direction, lighting the cell under the pointer as it passes. Canvas, DPR-capped, paused offscreen and still under reduced motion.
+- [stack](https://kitgrid.dev/r/stack.json): Children in one column or one row, evenly spaced.
+- [star-border](https://kitgrid.dev/r/star-border.json): A pill whose edge is lit by two soft points of light travelling in opposite directions along its top and bottom. Pure CSS and server-safe; the light stops under reduced motion.
+- [starfield](https://kitgrid.dev/r/starfield.json): Flying through a field of stars: points stream outward from the centre and stretch into warp streaks as they pass. Canvas, DPR-capped, paused offscreen, a still sky under reduced motion.
+- [starry-sky](https://kitgrid.dev/r/starry-sky.json): A quiet night sky: seeded stars that twinkle at their own pace, crossed now and then by a shooting star with a fading tail. Canvas, DPR-capped, paused offscreen.
+- [stat](https://kitgrid.dev/r/stat.json): A KPI: label, value, a signed change and an optional sparkline. Rendered as a description list so the label and value stay paired for screen readers.
+- [state-panel](https://kitgrid.dev/r/state-panel.json): What a panel shows instead of its content: empty, loading, error, unavailable or no access. Announced as a status, busy while loading, with an icon, a title and the way forward. Server-safe.
+- [status-dot](https://kitgrid.dev/r/status-dot.json): A status marker that always carries its meaning in text and shape, never in colour alone.
+- [status-indicator](https://kitgrid.dev/r/status-indicator.json): Service health for one system: a shaped dot plus words. Server-safe.
+- [stepper](https://kitgrid.dev/r/stepper.json): Progress through a sequence of steps, horizontally or as a vertical timeline.
+- [sticky](https://kitgrid.dev/r/sticky.json): Sticks to an edge of its scroll container and reports when it is stuck, so a header can gain a surface and shadow only once content scrolls beneath it.
+- [sticky-add-to-cart](https://kitgrid.dev/r/sticky-add-to-cart.json): A slim bar that keeps the buy button in reach once the shopper scrolls past the real one.
+- [sticky-reveal](https://kitgrid.dev/r/sticky-reveal.json): A section that pins while you scroll through it, opening a framed media window to full bleed and then fading its overlay in. Under reduced motion it renders the open state.
+- [stock-indicator](https://kitgrid.dev/r/stock-indicator.json): Availability as a colored dot plus words, so color is never the only signal. Server-safe.
+- [store-locator-list](https://kitgrid.dev/r/store-locator-list.json): Pickup-store chooser: distance, opening status and per-store stock, sorted by the caller.
+- [stripes](https://kitgrid.dev/r/stripes.json): Hairline diagonal stripes that scroll along their own axis, like a caution band or a loading surface. One repeating gradient whose position slides by exactly one period per loop. Server-component safe.
+- [stroke-text](https://kitgrid.dev/r/stroke-text.json): Outlined display type that fills with ink from left to right: on hover, once in view, or scrubbed by scroll. The fill is a pseudo element, so the text is never duplicated in the DOM.
+- [subscription-selector](https://kitgrid.dev/r/subscription-selector.json): One-time versus subscribe-and-save, following Shopify's selling-plan guidance: one-time is the default, savings are shown as a percentage, each option carries its per-delivery price, and frequency uses radios up to four choices and a select beyond that.
+- [suggestion-chips](https://kitgrid.dev/r/suggestion-chips.json): Starter questions or follow-ups, one click from being asked. Server-component safe.
+- [swatch-picker](https://kitgrid.dev/r/swatch-picker.json): Round color swatches as native radios. The legend reads "Color: Sage" so the choice is never conveyed by color alone, and sold-out colors keep a diagonal strike but stay focusable.
+- [swipe-deck](https://kitgrid.dev/r/swipe-deck.json): A physical deck of cards to fling left (skip) or right (save). Rotation follows the grab point, releases carry their velocity, the next card rises from behind, and every swipe can be undone.
+- [switch](https://kitgrid.dev/r/switch.json): A native checkbox exposed as `role="switch"`: forms, reset and autofill keep working.
+- [switch-group](https://kitgrid.dev/r/switch-group.json): A settings list: one labelled switch per row, on a single card, reporting what is on.
+- [switcher](https://kitgrid.dev/r/switcher.json): Children side by side in equal columns, or all stacked once the container is narrower than `threshold`. No breakpoints: it reacts to its own width, wherever it is placed. Each child gets a huge positive basis below the threshold and a huge negative one above, so all wrap or none do.
+- [table-of-contents](https://kitgrid.dev/r/table-of-contents.json): "On this page" navigation with a scrollspy marker that glides along the rail.
+- [tabs](https://kitgrid.dev/r/tabs.json): Paper folder tabs, plus underline and pill styles.
+- [tag](https://kitgrid.dev/r/tag.json): A chip for selected filters, keywords and recipients. Server-safe: the remove button only exists when an `onRemove` handler is passed, which already implies a client tree.
+- [tag-input](https://kitgrid.dev/r/tag-input.json): Free-form tags. Enter or a delimiter commits, paste splits on commas and new lines, Backspace on an empty field marks the last tag and a second press removes it.
+- [team-switcher](https://kitgrid.dev/r/team-switcher.json): A menu button for the active team, listing the others as radio items.
+- [terminal](https://kitgrid.dev/r/terminal.json): Paper Layers: a fixed night-paper sheet; the keyframes live in terminal.css and each line's timing is composed here into --_show, --_type and --_caret. A terminal transcript that types its commands. The typing is pure CSS (`clip-path` stepped per character), so nothing re-renders per frame; screen readers get the full transcript.
+- [testimonial-card](https://kitgrid.dev/r/testimonial-card.json): A customer quote with attribution, optional stars and company mark.
+- [text](https://kitgrid.dev/r/text.json): Body text on the type scale, with tone, weight, truncation and line clamping.
+- [text-highlight](https://kitgrid.dev/r/text-highlight.json): Draws a marker stroke, underline or hand-drawn circle behind inline text when it scrolls into view. The marker and underline wrap across lines with `box-decoration-break: clone`.
+- [text-pressure](https://kitgrid.dev/r/text-pressure.json): A headline that swells under the pointer: characters near it gain weight and stretch upward, easing back as the pointer leaves. Values are eased per frame and written to CSS variables.
+- [text-reveal](https://kitgrid.dev/r/text-reveal.json): Reveals text word by word or character by character with a staggered CSS animation. The animation starts from server-rendered markup, so `trigger="mount"` plays before hydration and nothing runs per frame in JavaScript.
+- [textarea](https://kitgrid.dev/r/textarea.json): A textarea that grows with its content.
+- [theme-card](https://kitgrid.dev/r/theme-card.json): A theme choice as a radio tile: a miniature app rendered in that theme's real tokens, so even a faint tint registers before it is picked. Server-component safe.
+- [thought-line](https://kitgrid.dev/r/thought-line.json): The assistant's reasoning line: a breathing sparkle, the current step and a running clock while it works; settled, it reads "Thought for 4.1s" and the steps fold away. The clock writes straight to its node, so ticking never re-renders the conversation.
+- [threads](https://kitgrid.dev/r/threads.json): A loose bundle of hairline threads that pinch together and fan apart as they drift past. SVG strokes on a seamless, transform-only loop. Server-component safe.
+- [tilt-card](https://kitgrid.dev/r/tilt-card.json): A surface that tilts in 3D toward the pointer, with a spring-driven reset, an optional glare, and parallax depth for descendants marked `data-depth="<px>"`.
+- [time-picker](https://kitgrid.dev/r/time-picker.json): Typed hour and minute segments, each a spinbutton, with an AM/PM segment on 12-hour clocks.
+- [time-slot-picker](https://kitgrid.dev/r/time-slot-picker.json): Bookable times as a grid of native radios: arrow keys move, taken slots stay visible.
+- [timeline](https://kitgrid.dev/r/timeline.json): Ordered events along a line, with done, current and upcoming states. Server-safe. Paper Layers: done steps are solid dots on a toned rule, the current step sits in an ink-edged disc, upcoming steps are hollow.
+- [toast](https://kitgrid.dev/r/toast.json): Stacked notifications you can call from anywhere.
+- [toggle](https://kitgrid.dev/r/toggle.json): A two-state button (`aria-pressed`). For formatting bars, filters and view switches. Give icon-only toggles an `aria-label`; it stays the same in both states.
+- [toggle-group](https://kitgrid.dev/r/toggle-group.json): A set of toggle buttons with one tab stop and arrow-key navigation. `single` behaves like a radio set that can be cleared; `multiple` like a row of checkboxes.
+- [toolbar](https://kitgrid.dev/r/toolbar.json): An APG toolbar: one tab stop for the whole bar, arrow keys and Home/End between controls, and focus remembered when tabbing back in.
+- [tooltip](https://kitgrid.dev/r/tooltip.json): Short help text on hover and focus.
+- [topbar](https://kitgrid.dev/r/topbar.json): The bar along the top of an app. Server-safe: it only lays out the slots it's given.
+- [topo-lines](https://kitgrid.dev/r/topo-lines.json): A seeded topographic map: nested, organic contour lines around a few summits, with every fifth line drawn as an index contour. Static SVG, optionally turning very slowly. Server safe.
+- [tracing-beam](https://kitgrid.dev/r/tracing-beam.json): A rail beside long-form content whose beam grows as you read, its head held at a fixed height on screen. The fill eases behind the scroll with a spring; under reduced motion it tracks the scroll exactly.
+- [transfer-list](https://kitgrid.dev/r/transfer-list.json): Two multi-select lists with move buttons between them. Space checks, Enter moves the checked items across, Ctrl or Cmd+A checks everything visible. Double-click moves one item.
+- [tree-select](https://kitgrid.dev/r/tree-select.json): A select whose options are a tree, following the APG tree view pattern: arrows walk and fold branches, Enter picks, Escape closes.
+- [tree-view](https://kitgrid.dev/r/tree-view.json): A hierarchical list following the WAI-ARIA tree pattern: arrows move and open, Home/End jump, `*` expands siblings, typing finds a node, Space selects or checks.
+- [trial-countdown](https://kitgrid.dev/r/trial-countdown.json): Time left on a trial as a draining ring, with room for an upgrade action. Server-safe.
+- [true-focus](https://kitgrid.dev/r/true-focus.json): Blurs every word but one and frames the sharp word with four corner brackets that glide to the next. Under reduced motion every word stays sharp and nothing cycles.
+- [truncate-text](https://kitgrid.dev/r/truncate-text.json): Single-line truncation that responds to its container. In `middle` mode the head shrinks with an ellipsis while the tail stays whole, so `invoice-2026-03….pdf` keeps its extension. The DOM always holds the full string, so screen readers and copy-paste get all of it.
+- [trust-badges](https://kitgrid.dev/r/trust-badges.json): Short reassurance points (secure checkout, returns, shipping) for product and cart pages.
+- [typewriter](https://kitgrid.dev/r/typewriter.json): Types and deletes a list of words behind a cursor. Characters are written straight to a text node, so a running typewriter never re-renders. It idles while offscreen or in a hidden tab.
+- [upsell-card](https://kitgrid.dev/r/upsell-card.json): A one-tap add-on offer for cart drawers and order summaries.
+- [uptime-bars](https://kitgrid.dev/r/uptime-bars.json): A status page strip: one bar per day, worst state wins. Bars are a roving list, so arrow keys walk the days and the readout under the strip follows focus or hover.
+- [usage-meter](https://kitgrid.dev/r/usage-meter.json): Quota consumption as a `meter`, with thresholds and an optional per-category breakdown.
+- [user-menu](https://kitgrid.dev/r/user-menu.json): The account avatar in a top bar, opening a menu with a who-am-I header.
+- [variable-proximity](https://kitgrid.dev/r/variable-proximity.json): Inline text whose variable font axes respond to pointer distance character by character, so a sentence ripples in weight, width or slant as the pointer passes over it.
+- [variant-picker](https://kitgrid.dev/r/variant-picker.json): A single option of a product (color, size, material) as native radios inside a fieldset.
+- [virtual-list](https://kitgrid.dev/r/virtual-list.json): Renders thousands of fixed-height rows by mounting only the visible window. Rows keep `aria-setsize` and `aria-posinset`, so screen readers still announce the full length.
+- [visually-hidden](https://kitgrid.dev/r/visually-hidden.json): Read by screen readers, invisible on screen: labels, live text and table captions.
+- [vortex](https://kitgrid.dev/r/vortex.json): A slow whirlpool of light: particles spiral inward, faster near the eye, leaving fading trails, and are reborn at the rim. Canvas, DPR-capped, paused offscreen, a still spiral under reduced motion.
+- [watermark](https://kitgrid.dev/r/watermark.json): Tiles a faint, rotated text mark over its children. The mark is hidden from assistive tech.
+- [waves](https://kitgrid.dev/r/waves.json): Layered SVG swells that roll across the edge of a section. Each layer is a seamless double period that translates on its own compositor-only loop. Server-component safe.
+- [wavy-lines](https://kitgrid.dev/r/wavy-lines.json): Evenly spaced contour-like lines flowing on layered sine waves, bending apart around the pointer like water around a finger. Canvas, DPR-capped, paused offscreen.
+- [webhook-log](https://kitgrid.dev/r/webhook-log.json): Recent webhook deliveries; each row discloses its request and response bodies.
+- [wishlist-button](https://kitgrid.dev/r/wishlist-button.json): A heart toggle whose activation pops with a CSS-only ring and particle burst.
+- [workspace-switcher](https://kitgrid.dev/r/workspace-switcher.json): The workspace name at the top of a sidebar. Opens a searchable list: the field is an ARIA combobox, so arrows move through matches and Enter switches.
+- [kitgrid-lib](https://kitgrid.dev/r/kitgrid-lib.json): Shared utils, hooks, primitives and provider the kitgrid components import.
+- [kitgrid-theme](https://kitgrid.dev/r/kitgrid-theme.json): Design tokens, base styles and the Tailwind v4 kg theme. Import kitgrid.css before tailwindcss.

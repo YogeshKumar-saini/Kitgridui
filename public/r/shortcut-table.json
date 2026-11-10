@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shortcut-table",
+  "type": "registry:ui",
+  "title": "Shortcut Table",
+  "description": "A reference sheet of keyboard shortcuts. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kbd.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/shortcut-table/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  ShortcutTable,\n  type ShortcutTableItem,\n  type ShortcutTableProps,\n} from \"./shortcut-table\"\n",
+      "target": "components/kitgrid/shortcut-table/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/shortcut-table/shortcut-table.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Kbd } from \"../kbd/kbd\"\n\nexport interface ShortcutTableItem {\n  /** One combination in `Kbd` form, e.g. `[\"mod\", \"k\"]`, or several alternatives. */\n  keys: readonly string[] | readonly (readonly string[])[]\n  description: ReactNode\n  /** Rows sharing a group are listed together under its name, in first-seen order. */\n  group?: string\n}\n\nexport interface ShortcutTableProps extends HTMLAttributes<HTMLDivElement> {\n  shortcuts: readonly ShortcutTableItem[]\n  /** Joins alternative combinations. */\n  orLabel?: string\n}\n\nconst combos = (keys: ShortcutTableItem[\"keys\"]): (readonly string[])[] =>\n  keys.length > 0 && typeof keys[0] !== \"string\"\n    ? (keys as readonly (readonly string[])[]).slice()\n    : [keys as readonly string[]]\n\n/** A reference sheet of keyboard shortcuts. Server-safe. */\nexport const ShortcutTable = forwardRef<HTMLDivElement, ShortcutTableProps>(\n  ({ shortcuts, orLabel = \"or\", className, ...props }, ref) => {\n    const groups = [...new Set(shortcuts.map((item) => item.group ?? \"\"))]\n    return (\n      <div ref={ref} className={cx(\"kg-shortcut-table grid gap-6\", className)} {...props}>\n        {groups.map((group) => (\n          <table key={group} className=\"kg-shortcut-table__group w-full border-collapse\">\n            {group && (\n              <caption className=\"kg-shortcut-table__caption pb-1.5 text-kg-sm font-semibold text-kg-fg text-start\">{group}</caption>\n            )}\n            <tbody>\n              {shortcuts\n                .filter((item) => (item.group ?? \"\") === group)\n                .map((item, index) => (\n                  <tr key={index} className=\"kg-shortcut-table__row border-t border-kg-border last:border-b\">\n                    <th scope=\"row\" className=\"kg-shortcut-table__description py-2.5 pe-4 text-kg-base font-normal text-kg-fg-muted text-start\">\n                      {item.description}\n                    </th>\n                    <td className=\"kg-shortcut-table__keys py-2 text-end whitespace-nowrap\">\n                      {combos(item.keys).map((combo, at) => (\n                        <span\n                          key={combo.join(\"+\")}\n                          className=\"kg-shortcut-table__combo inline-flex items-center\"\n                        >\n                          {at > 0 && (\n                            <span className=\"kg-shortcut-table__or mx-2 text-kg-xs text-kg-fg-faint\">{orLabel}</span>\n                          )}\n                          <Kbd keys={[...combo]} />\n                        </span>\n                      ))}\n                    </td>\n                  </tr>\n                ))}\n            </tbody>\n          </table>\n        ))}\n      </div>\n    )\n  },\n)\n\nShortcutTable.displayName = \"ShortcutTable\"\n",
+      "target": "components/kitgrid/shortcut-table/shortcut-table.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

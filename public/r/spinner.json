@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spinner",
+  "type": "registry:ui",
+  "title": "Spinner",
+  "description": "An indeterminate loading indicator. Keeps turning under reduced motion, only slower.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/spinner/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Spinner,\n  type SpinnerProps,\n  type SpinnerSize,\n  type SpinnerTone,\n  type SpinnerVariant,\n} from \"./spinner\"\n",
+      "target": "components/kitgrid/spinner/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/spinner/spinner.css",
+      "type": "registry:file",
+      "content": "/* Keyframes only: the dots' rise and fall. */\n@layer kg.components {\n  @keyframes kg-spinner-dot {\n    0%,\n    80%,\n    100% {\n      opacity: 0.35;\n      scale: 0.65;\n    }\n    40% {\n      opacity: 1;\n      scale: 1;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/spinner/spinner.css"
+    },
+    {
+      "path": "kitgrid/src/components/spinner/spinner.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/* A loading indicator is information, so under reduced motion it keeps moving, just slower. */\nconst spinnerVariants = variants({\n  base: [\n    \"kg-spinner relative inline-flex size-(--_size) shrink-0 items-center justify-center align-middle\",\n    \"[--_thickness:max(2px,calc(var(--_size)*0.12))] [--_dots:1.1s]\",\n    \"motion-reduce:[--_dots:2.6s] [[data-kg-motion=reduce]_&]:[--_dots:2.6s]\",\n  ],\n  variants: {\n    size: {\n      xs: \"[--_size:0.875rem]\",\n      sm: \"[--_size:1rem]\",\n      md: \"[--_size:1.25rem]\",\n      lg: \"[--_size:1.75rem]\",\n      xl: \"[--_size:2.5rem]\",\n    },\n    tone: {\n      current: \"\",\n      neutral: \"text-kg-fg-muted\",\n      accent: \"text-kg-accent-strong\",\n      success: \"text-kg-success\",\n      warning: \"text-kg-warning\",\n      danger: \"text-kg-danger\",\n      info: \"text-kg-info\",\n    },\n    variant: {\n      ring: \"\",\n      dots: \"\",\n    },\n  },\n  defaults: { size: \"md\", tone: \"current\", variant: \"ring\" },\n})\n\ntype SpinnerVariantProps = VariantProps<typeof spinnerVariants>\nexport type SpinnerSize = NonNullable<SpinnerVariantProps[\"size\"]>\nexport type SpinnerTone = NonNullable<SpinnerVariantProps[\"tone\"]>\nexport type SpinnerVariant = NonNullable<SpinnerVariantProps[\"variant\"]>\n\nconst dot = [\n  \"aspect-square w-[calc(var(--_size)*0.24)] rounded-full bg-current\",\n  \"[animation-name:kg-spinner-dot] [animation-duration:var(--_dots)] [animation-timing-function:var(--kg-ease-in-out)]\",\n  \"[animation-iteration-count:infinite] [animation-fill-mode:both]\",\n].join(\" \")\n\nexport interface SpinnerProps extends Omit<\n  HTMLAttributes<HTMLSpanElement>,\n  \"children\"\n> {\n  size?: SpinnerSize\n  /** `current` inherits the surrounding text color, e.g. inside a button. */\n  tone?: SpinnerTone\n  variant?: SpinnerVariant\n  /** Announced to screen readers; never shown. */\n  label?: string\n}\n\n/** An indeterminate loading indicator. Keeps turning under reduced motion, only slower. */\nexport const Spinner = forwardRef<HTMLSpanElement, SpinnerProps>(\n  (\n    {\n      size = \"md\",\n      tone = \"current\",\n      variant = \"ring\",\n      label = \"Loading\",\n      className,\n      ...props\n    },\n    ref,\n  ) => (\n    <span\n      ref={ref}\n      role=\"status\"\n      className={spinnerVariants({ size, tone, variant, className })}\n      data-size={size}\n      data-tone={tone}\n      data-variant={variant}\n      {...props}\n    >\n      {variant === \"dots\" ? (\n        <span\n          className=\"kg-spinner__dots inline-flex w-full items-center justify-between\"\n          aria-hidden=\"true\"\n        >\n          <span className={dot} />\n          <span className={`${dot} [animation-delay:calc(var(--_dots)*0.15)]`} />\n          <span className={`${dot} [animation-delay:calc(var(--_dots)*0.3)]`} />\n        </span>\n      ) : (\n        <span\n          className={[\n            \"kg-spinner__ring size-full rounded-full border-solid border-(length:--_thickness)\",\n            \"border-[color-mix(in_oklab,currentColor_16%,transparent)] border-t-current\",\n            \"animate-spin [animation-duration:0.8s] motion-reduce:[animation-duration:2.4s] [[data-kg-motion=reduce]_&]:[animation-duration:2.4s]\",\n          ].join(\" \")}\n          aria-hidden=\"true\"\n        />\n      )}\n      <span className=\"kg-visually-hidden\">{label}</span>\n    </span>\n  ),\n)\n\nSpinner.displayName = \"Spinner\"\n",
+      "target": "components/kitgrid/spinner/spinner.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

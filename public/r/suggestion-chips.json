@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "suggestion-chips",
+  "type": "registry:ui",
+  "title": "Suggestion Chips",
+  "description": "Starter questions or follow-ups, one click from being asked. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/chat-message.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/suggestion-chips/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  SuggestionChips,\n  type SuggestionChipsLayout,\n  type SuggestionChipsOption,\n  type SuggestionChipsProps,\n} from \"./suggestion-chips\"\n",
+      "target": "components/kitgrid/suggestion-chips/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/suggestion-chips/suggestion-chips.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { variants } from \"../lib/utils/variants\"\nimport { SparkleIcon } from \"../chat-message/internal/icons\"\n\nexport interface SuggestionChipsOption {\n  value: string\n  /** Defaults to the value. */\n  label?: ReactNode\n  /** Replaces the sparkle. Pass `null` for none. */\n  icon?: ReactNode\n}\n\nexport type SuggestionChipsLayout = \"wrap\" | \"grid\" | \"list\"\n\nexport interface SuggestionChipsProps extends Omit<\n  HTMLAttributes<HTMLDivElement>,\n  \"onSelect\"\n> {\n  suggestions: readonly (string | SuggestionChipsOption)[]\n  onSelect?: (value: string) => void\n  /** `wrap` for short follow-ups, `grid` for two-up starter cards, `list` for a column. */\n  layout?: SuggestionChipsLayout\n  /** A visible title above the chips, which also names the group. */\n  title?: string\n  disabled?: boolean\n}\n\nconst listVariants = variants({\n  base: \"kg-suggestion-chips__list m-0 list-none gap-1.5 p-0 [&>li]:flex [&>li]:min-w-0\",\n  variants: {\n    layout: {\n      wrap: \"flex flex-wrap\",\n      list: \"flex flex-col\",\n      grid: \"grid grid-cols-[repeat(auto-fill,minmax(min(15rem,100%),1fr))]\",\n    },\n  },\n  defaults: { layout: \"wrap\" },\n})\n\n/* Paper Layers: each suggestion is an ink-edged sheet that lifts on hover and settles on press. */\nconst chipVariants = variants({\n  base: [\n    \"kg-suggestion-chips__chip group/chip inline-flex min-h-kg-sm min-w-0 flex-1 cursor-pointer gap-2 border-2 border-kg-ink bg-kg-surface\",\n    \"text-start [font:inherit] text-kg-sm leading-[1.35] text-kg-fg\",\n    \"transition-[translate,box-shadow,background-color] duration-(--kg-duration-fast) ease-kg-out\",\n    \"interactive:hover:-translate-px interactive:hover:bg-kg-paper-sage interactive:hover:shadow-kg-xs\",\n    \"interactive:active:translate-0 interactive:active:shadow-none\",\n    \"disabled:cursor-not-allowed disabled:opacity-50\",\n    \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n  ],\n  variants: {\n    layout: {\n      wrap: \"items-center rounded-full px-3 py-1.5\",\n      list: \"items-start rounded-kg-lg px-3 py-2.5\",\n      grid: \"items-start rounded-kg-lg px-3 py-2.5\",\n    },\n  },\n  defaults: { layout: \"wrap\" },\n})\n\n/** Starter questions or follow-ups, one click from being asked. Server-component safe. */\nexport const SuggestionChips = forwardRef<HTMLDivElement, SuggestionChipsProps>(\n  (\n    {\n      suggestions,\n      onSelect,\n      layout = \"wrap\",\n      title,\n      disabled = false,\n      className,\n      \"aria-label\": ariaLabel,\n      ...props\n    },\n    ref,\n  ) => (\n    <div\n      ref={ref}\n      role=\"group\"\n      aria-label={ariaLabel ?? title ?? \"Suggestions\"}\n      className={cx(\"kg-suggestion-chips flex min-w-0 flex-col gap-2\", className)}\n      data-layout={layout}\n      {...props}\n    >\n      {title && (\n        <span className=\"kg-suggestion-chips__title text-kg-xs font-semibold text-kg-fg-faint\" aria-hidden=\"true\">\n          {title}\n        </span>\n      )}\n      <ul className={listVariants({ layout })}>\n        {suggestions.map((item) => {\n          const option = typeof item === \"string\" ? { value: item } : item\n          const icon = option.icon === undefined ? <SparkleIcon /> : option.icon\n          return (\n            <li key={option.value}>\n              <button\n                type=\"button\"\n                className={chipVariants({ layout })}\n                disabled={disabled}\n                onClick={() => onSelect?.(option.value)}\n              >\n                {icon != null && (\n                  <span className={cx(\"kg-suggestion-chips__icon inline-flex shrink-0 text-[0.875rem] text-kg-fg-muted group-hover/chip:text-kg-fg\", layout !== \"wrap\" && \"mt-[0.15em]\")} aria-hidden=\"true\">\n                    {icon}\n                  </span>\n                )}\n                <span className=\"kg-suggestion-chips__label min-w-0\">\n                  {option.label ?? option.value}\n                </span>\n              </button>\n            </li>\n          )\n        })}\n      </ul>\n    </div>\n  ),\n)\n\nSuggestionChips.displayName = \"SuggestionChips\"\n",
+      "target": "components/kitgrid/suggestion-chips/suggestion-chips.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

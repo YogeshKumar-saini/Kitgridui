@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "click-spark",
+  "type": "registry:ui",
+  "title": "Click Spark",
+  "description": "Wraps any content and throws a small burst of sparks from every press, drawn on a canvas that sits above the content without intercepting events. Off under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/click-spark/click-spark.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, useEffect, useRef } from \"react\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface ClickSparkProps extends HTMLAttributes<HTMLDivElement> {\n  /** Lines per burst. */\n  count?: number\n  /** How far each line travels, in px. */\n  radius?: number\n  /** Length of each line at the start, in px. */\n  size?: number\n  /** Burst length, in ms. */\n  duration?: number\n}\n\ninterface Spark {\n  x: number\n  y: number\n  angle: number\n  born: number\n}\n\n/**\n * Wraps any content and throws a small burst of sparks from every press, drawn on a canvas\n * that sits above the content without intercepting events. Off under reduced motion.\n */\nexport const ClickSpark = forwardRef<HTMLDivElement, ClickSparkProps>(\n  (\n    { count = 8, radius = 22, size = 10, duration = 420, className, children, ...props },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const reduced = useReducedMotion()\n\n    useEffect(() => {\n      const root = local.current\n      const canvas = canvasRef.current\n      const ctx = canvas?.getContext?.(\"2d\")\n      if (!root || !canvas || !ctx || reduced) return\n      let sparks: Spark[] = []\n      let frame = 0\n      let color = \"\"\n\n      const resize = () => {\n        const rect = root.getBoundingClientRect()\n        const dpr = window.devicePixelRatio || 1\n        canvas.width = Math.max(1, Math.round(rect.width * dpr))\n        canvas.height = Math.max(1, Math.round(rect.height * dpr))\n        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)\n      }\n\n      const draw = (now: number) => {\n        ctx.clearRect(0, 0, canvas.width, canvas.height)\n        ctx.strokeStyle = color\n        ctx.lineWidth = 2\n        ctx.lineCap = \"round\"\n        sparks = sparks.filter((spark) => now - spark.born < duration)\n        for (const spark of sparks) {\n          const t = Math.max(now - spark.born, 0) / duration\n          const eased = 1 - (1 - t) ** 3\n          const distance = eased * radius\n          const length = size * (1 - eased)\n          const cos = Math.cos(spark.angle)\n          const sin = Math.sin(spark.angle)\n          ctx.beginPath()\n          ctx.moveTo(spark.x + distance * cos, spark.y + distance * sin)\n          ctx.lineTo(spark.x + (distance + length) * cos, spark.y + (distance + length) * sin)\n          ctx.stroke()\n        }\n        frame = sparks.length ? requestAnimationFrame(draw) : 0\n      }\n\n      const press = (event: PointerEvent) => {\n        if (event.button !== 0) return\n        resize()\n        color = getComputedStyle(canvas).color\n        const rect = root.getBoundingClientRect()\n        const born = performance.now()\n        for (let i = 0; i < count; i++) {\n          sparks.push({\n            x: event.clientX - rect.left,\n            y: event.clientY - rect.top,\n            angle: (Math.PI * 2 * i) / count,\n            born,\n          })\n        }\n        if (!frame) frame = requestAnimationFrame(draw)\n      }\n\n      root.addEventListener(\"pointerdown\", press)\n      return () => {\n        cancelAnimationFrame(frame)\n        root.removeEventListener(\"pointerdown\", press)\n        ctx.clearRect(0, 0, canvas.width, canvas.height)\n      }\n    }, [reduced, count, radius, size, duration])\n\n    return (\n      <div ref={ref} className={cx(\"kg-click-spark relative\", className)} {...props}>\n        {children}\n        <canvas ref={canvasRef} className=\"kg-click-spark__canvas pointer-events-none absolute inset-0 size-full text-[color:var(--kg-click-spark-color,var(--kg-ink))]\" aria-hidden=\"true\" />\n      </div>\n    )\n  },\n)\n\nClickSpark.displayName = \"ClickSpark\"\n",
+      "target": "components/kitgrid/click-spark/click-spark.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/click-spark/index.ts",
+      "type": "registry:ui",
+      "content": "export { ClickSpark, type ClickSparkProps } from \"./click-spark\"\n",
+      "target": "components/kitgrid/click-spark/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

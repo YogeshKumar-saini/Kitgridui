@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "trust-badges",
+  "type": "registry:ui",
+  "title": "Trust Badges",
+  "description": "Short reassurance points (secure checkout, returns, shipping) for product and cart pages.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/trust-badges/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  TrustBadges,\n  type TrustBadgesItem,\n  type TrustBadgesLayout,\n  type TrustBadgesPreset,\n  type TrustBadgesProps,\n} from \"./trust-badges\"\n",
+      "target": "components/kitgrid/trust-badges/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/trust-badges/trust-badges.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: each point is a sage paper disc with an ink edge; the grid layout sets every\n * point on its own ink-edged sheet.\n */\nexport const trustBadgesVariants = variants({\n  base: \"kg-trust-badges m-0 list-none p-0 text-kg-fg\",\n  variants: {\n    layout: {\n      row: \"flex flex-wrap gap-x-6 gap-y-3\",\n      grid: \"grid grid-cols-[repeat(auto-fit,minmax(10rem,1fr))] gap-2\",\n      stack: \"flex flex-col gap-3\",\n    },\n  },\n  defaults: { layout: \"row\" },\n})\n\nexport type TrustBadgesPreset = \"secure\" | \"returns\" | \"shipping\" | \"warranty\" | \"support\"\nexport type TrustBadgesLayout = NonNullable<VariantProps<typeof trustBadgesVariants>[\"layout\"]>\n\nexport interface TrustBadgesItem {\n  /** A preset picks a matching icon and default label. */\n  preset?: TrustBadgesPreset\n  label?: ReactNode\n  /** One short line, e.g. \"Within 30 days\". */\n  detail?: ReactNode\n  icon?: ReactNode\n}\n\nexport interface TrustBadgesProps extends HTMLAttributes<HTMLUListElement> {\n  items: readonly (TrustBadgesItem | TrustBadgesPreset)[]\n  layout?: TrustBadgesLayout\n  /** Override the default preset labels. */\n  presetLabels?: Partial<Record<TrustBadgesPreset, string>>\n}\n\nconst svg = (path: ReactNode) => (\n  <svg\n    viewBox=\"0 0 24 24\"\n    fill=\"none\"\n    stroke=\"currentColor\"\n    strokeWidth=\"1.7\"\n    strokeLinecap=\"round\"\n    strokeLinejoin=\"round\"\n    aria-hidden=\"true\"\n  >\n    {path}\n  </svg>\n)\n\nconst icons: Record<TrustBadgesPreset, ReactNode> = {\n  secure: svg(\n    <>\n      <rect x=\"4.5\" y=\"10.5\" width=\"15\" height=\"10\" rx=\"2.5\" />\n      <path d=\"M8 10.5V7.5a4 4 0 0 1 8 0v3M12 14.5v2\" />\n    </>,\n  ),\n  returns: svg(<path d=\"M4 9h11a5 5 0 0 1 0 10H9M4 9l4-4M4 9l4 4\" />),\n  shipping: svg(\n    <>\n      <path d=\"M2.5 6.5h11v9h-11zM13.5 9.5h4l3 3v3h-7\" />\n      <circle cx=\"6.5\" cy=\"17.5\" r=\"1.8\" />\n      <circle cx=\"16.5\" cy=\"17.5\" r=\"1.8\" />\n    </>,\n  ),\n  warranty: svg(<path d=\"M12 3 4.5 6v5.5c0 4.5 3.2 8 7.5 9.5 4.3-1.5 7.5-5 7.5-9.5V6zM9 12l2 2 4-4.5\" />),\n  support: svg(\n    <>\n      <path d=\"M4.5 13v-1a7.5 7.5 0 0 1 15 0v1\" />\n      <rect x=\"3.5\" y=\"13\" width=\"4\" height=\"6\" rx=\"1.5\" />\n      <rect x=\"16.5\" y=\"13\" width=\"4\" height=\"6\" rx=\"1.5\" />\n    </>,\n  ),\n}\n\nconst defaultPresetLabels: Record<TrustBadgesPreset, string> = {\n  secure: \"Secure checkout\",\n  returns: \"Free returns\",\n  shipping: \"Fast shipping\",\n  warranty: \"2-year warranty\",\n  support: \"Real support\",\n}\n\n/** Short reassurance points (secure checkout, returns, shipping) for product and cart pages. */\nexport const TrustBadges = forwardRef<HTMLUListElement, TrustBadgesProps>(\n  ({ items, layout = \"row\", presetLabels, className, ...props }, ref) => {\n    const names = { ...defaultPresetLabels, ...presetLabels }\n    return (\n      <ul\n        ref={ref}\n        className={trustBadgesVariants({ layout, className })}\n        data-layout={layout}\n        {...props}\n      >\n        {items.map((entry, index) => {\n          const item = typeof entry === \"string\" ? { preset: entry } : entry\n          const icon = item.icon ?? (item.preset ? icons[item.preset] : null)\n          const label = item.label ?? (item.preset ? names[item.preset] : null)\n          return (\n            <li\n              key={index}\n              className={`kg-trust-badges__item flex min-w-0 items-center gap-2.5 ${\n                layout === \"grid\"\n                  ? \"rounded-kg-lg border-2 border-kg-ink bg-kg-surface p-3 shadow-kg-xs\"\n                  : \"\"\n              }`}\n            >\n              {icon != null && (\n                <span\n                  className=\"kg-trust-badges__icon inline-grid size-9 shrink-0 place-items-center rounded-full border-2 border-kg-ink bg-kg-paper-sage text-kg-fg [&_svg]:size-[1.15rem]\"\n                  aria-hidden=\"true\"\n                >\n                  {icon}\n                </span>\n              )}\n              <span className=\"kg-trust-badges__text grid min-w-0\">\n                <span className=\"kg-trust-badges__label text-kg-sm font-semibold\">{label}</span>\n                {item.detail != null && (\n                  <span className=\"kg-trust-badges__detail text-kg-xs text-kg-fg-muted\">\n                    {item.detail}\n                  </span>\n                )}\n              </span>\n            </li>\n          )\n        })}\n      </ul>\n    )\n  },\n)\n\nTrustBadges.displayName = \"TrustBadges\"\n",
+      "target": "components/kitgrid/trust-badges/trust-badges.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

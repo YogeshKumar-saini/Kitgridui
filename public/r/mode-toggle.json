@@ -1,0 +1,37 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "mode-toggle",
+  "type": "registry:ui",
+  "title": "Mode Toggle",
+  "description": "Light, dark or follow the system. It only reports the choice; apply it with `data-theme` on the root. The cycle button turns its glyph in on every change.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/chat-message.json",
+    "https://kitgrid.dev/r/icon-button.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/segmented-control.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/mode-toggle/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  ModeToggle,\n  type ModeToggleLabels,\n  type ModeToggleProps,\n  type ModeToggleValue,\n  type ModeToggleVariant,\n} from \"./mode-toggle\"\n",
+      "target": "components/kitgrid/mode-toggle/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/mode-toggle/mode-toggle.css",
+      "type": "registry:file",
+      "content": "/* The glyph turns in like a dial. */\n@layer kg.components {\n  @keyframes kg-mode-toggle-turn {\n    from {\n      opacity: 0;\n      transform: rotate(-120deg) scale(0.5);\n    }\n  }\n\n  @keyframes kg-mode-toggle-turn-back {\n    from {\n      opacity: 0;\n      transform: rotate(120deg) scale(0.5);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/mode-toggle/mode-toggle.css"
+    },
+    {
+      "path": "kitgrid/src/components/mode-toggle/mode-toggle.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, type Ref } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport { IconButton } from \"../icon-button/icon-button\"\nimport { MonitorIcon, MoonIcon, SunIcon } from \"../chat-message/internal/icons\"\nimport { SegmentedControl } from \"../segmented-control/segmented-control\"\n\nexport type ModeToggleValue = \"light\" | \"dark\" | \"system\"\nexport type ModeToggleVariant = \"cycle\" | \"segmented\"\nexport type ModeToggleLabels = Record<ModeToggleValue, string>\n\nexport interface ModeToggleProps extends Omit<\n  HTMLAttributes<HTMLElement>,\n  \"defaultValue\" | \"onChange\"\n> {\n  value?: ModeToggleValue\n  defaultValue?: ModeToggleValue\n  onValueChange?: (value: ModeToggleValue) => void\n  /** `cycle` is one icon button that steps light, dark, system; `segmented` shows all three. */\n  variant?: ModeToggleVariant\n  labels?: Partial<ModeToggleLabels>\n  /** The name the cycle button announces before the current mode, e.g. \"Color mode: Dark\". */\n  label?: string\n  /** Segmented only: show the text beside each icon. */\n  showLabels?: boolean\n}\n\nconst ORDER: readonly ModeToggleValue[] = [\"light\", \"dark\", \"system\"]\n\nconst defaultLabels: ModeToggleLabels = {\n  light: \"Light\",\n  dark: \"Dark\",\n  system: \"System\",\n}\n\nconst glyphs: Record<ModeToggleValue, ReactNode> = {\n  light: <SunIcon />,\n  dark: <MoonIcon />,\n  system: <MonitorIcon />,\n}\n\n/**\n * Light, dark or follow the system. It only reports the choice; apply it with\n * `data-theme` on the root. The cycle button turns its glyph in on every change.\n */\nexport const ModeToggle = forwardRef<HTMLElement, ModeToggleProps>(\n  (\n    {\n      value: valueProp,\n      defaultValue = \"system\",\n      onValueChange,\n      variant = \"cycle\",\n      labels: labelsProp,\n      label = \"Color mode\",\n      showLabels = true,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const labels = { ...defaultLabels, ...labelsProp }\n    const [value, setValue] = useControllableState({\n      value: valueProp,\n      defaultValue,\n      onChange: onValueChange,\n    })\n\n    if (variant === \"segmented\")\n      return (\n        <SegmentedControl<ModeToggleValue>\n          ref={ref as Ref<HTMLDivElement>}\n          className={cx(\"kg-mode-toggle\", className)}\n          aria-label={label}\n          value={value}\n          onValueChange={setValue}\n          options={ORDER.map((mode) => ({\n            value: mode,\n            icon: glyphs[mode],\n            label: showLabels ? labels[mode] : undefined,\n            \"aria-label\": showLabels ? undefined : labels[mode],\n          }))}\n          {...(props as Omit<HTMLAttributes<HTMLDivElement>, \"defaultValue\">)}\n        />\n      )\n\n    const next = ORDER[(ORDER.indexOf(value) + 1) % ORDER.length] ?? \"light\"\n    return (\n      <IconButton\n        ref={ref as Ref<HTMLButtonElement>}\n        className={cx(\"kg-mode-toggle\", className)}\n        data-variant=\"cycle\"\n        data-mode={value}\n        label={`${label}: ${labels[value]}`}\n        title={`Switch to ${labels[next]}`}\n        onClick={() => setValue(next)}\n        icon={\n          <span\n            key={value}\n            className={cx(\n              \"kg-mode-toggle__glyph inline-grid size-[55%] place-items-center [--_icon-size:100%] text-[1.125rem] motion-reduce:animate-none\",\n              value === \"dark\"\n                ? \"animate-[kg-mode-toggle-turn-back_var(--kg-duration-spring)_var(--kg-ease-spring)]\"\n                : \"animate-[kg-mode-toggle-turn_var(--kg-duration-spring)_var(--kg-ease-spring)]\",\n            )}\n            aria-hidden=\"true\"\n          >\n            {glyphs[value]}\n          </span>\n        }\n        {...(props as HTMLAttributes<HTMLButtonElement>)}\n      />\n    )\n  },\n)\n\nModeToggle.displayName = \"ModeToggle\"\n",
+      "target": "components/kitgrid/mode-toggle/mode-toggle.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

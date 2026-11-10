@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "user-menu",
+  "type": "registry:ui",
+  "title": "User Menu",
+  "description": "The account avatar in a top bar, opening a menu with a who-am-I header.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/avatar.json",
+    "https://kitgrid.dev/r/dropdown-menu.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/user-menu/index.ts",
+      "type": "registry:ui",
+      "content": "export { UserMenu, type UserMenuProps } from \"./user-menu\"\n",
+      "target": "components/kitgrid/user-menu/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/user-menu/user-menu.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Avatar, type AvatarStatus } from \"../avatar/avatar\"\nimport {\n  DropdownMenu,\n  DropdownMenuContent,\n  type DropdownMenuContentProps,\n  DropdownMenuTrigger,\n} from \"../dropdown-menu/dropdown-menu\"\n\nexport interface UserMenuProps extends DropdownMenuContentProps {\n  name: string\n  email?: string\n  avatar?: string\n  status?: AvatarStatus\n  /** A badge beside the email in the header, such as a PlanBadge. */\n  badge?: ReactNode\n  /** Shows the name beside the avatar in the trigger. */\n  showName?: boolean\n  open?: boolean\n  defaultOpen?: boolean\n  onOpenChange?: (open: boolean) => void\n  /** Names the trigger. Defaults to \"Account menu for <name>\". */\n  triggerLabel?: string\n  triggerClassName?: string\n  /** DropdownMenuItem, DropdownMenuSeparator and friends. */\n  children?: ReactNode\n}\n\n/** The account avatar in a top bar, opening a menu with a who-am-I header. */\nexport const UserMenu = forwardRef<HTMLDivElement, UserMenuProps>(\n  (\n    {\n      name,\n      email,\n      avatar,\n      status,\n      badge,\n      showName = false,\n      open,\n      defaultOpen,\n      onOpenChange,\n      triggerLabel,\n      triggerClassName,\n      align = \"end\",\n      className,\n      children,\n      ...props\n    },\n    ref,\n  ) => (\n    <DropdownMenu open={open} defaultOpen={defaultOpen} onOpenChange={onOpenChange}>\n      <DropdownMenuTrigger\n        className={cx(\n          \"kg-user-menu__trigger group inline-flex h-kg-md items-center gap-2 rounded-full border-0 bg-transparent\",\n          \"[font-family:inherit] text-kg-sm font-medium text-kg-fg cursor-pointer\",\n          \"transition-colors duration-(--kg-duration-fast) ease-kg-out interactive:hover:bg-kg-muted aria-expanded:bg-kg-muted\",\n          \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n          showName ? \"ps-1 pe-2.5\" : \"px-1\",\n          triggerClassName,\n        )}\n        aria-label={showName ? undefined : (triggerLabel ?? `Account menu for ${name}`)}\n        data-show-name={showName || undefined}\n      >\n        <Avatar size=\"sm\" name={name} src={avatar} status={status} aria-hidden=\"true\" />\n        {showName && <span className=\"kg-user-menu__trigger-name\">{name}</span>}\n        {showName && (\n          <svg\n            className=\"kg-user-menu__chevron size-3.5 shrink-0 text-kg-fg-muted transition-transform duration-(--kg-duration-base) ease-kg-spring group-aria-expanded:rotate-180 motion-reduce:transition-none\"\n            viewBox=\"0 0 16 16\"\n            fill=\"none\"\n            aria-hidden=\"true\"\n          >\n            <path d=\"m4.5 6.5 3.5 3.5 3.5-3.5\" stroke=\"currentColor\" strokeWidth=\"1.6\" strokeLinecap=\"round\" strokeLinejoin=\"round\" />\n          </svg>\n        )}\n      </DropdownMenuTrigger>\n      <DropdownMenuContent\n        ref={ref}\n        align={align}\n        className={cx(\"kg-user-menu [--_menu-width:15rem]\", className)}\n        aria-label={triggerLabel ?? `Account menu for ${name}`}\n        {...props}\n      >\n        <div className=\"kg-user-menu__header -mx-1 -mt-1 mb-1 flex items-center gap-3 border-b-2 border-kg-ink p-3\">\n          <Avatar size=\"md\" name={name} src={avatar} status={status} aria-hidden=\"true\" />\n          <div className=\"kg-user-menu__who grid min-w-0 gap-0.5\">\n            <span className=\"kg-user-menu__name truncate text-kg-sm font-semibold text-kg-fg\">{name}</span>\n            {(email || badge) && (\n              <span className=\"kg-user-menu__line flex min-w-0 items-center gap-2\">\n                {email && <span className=\"kg-user-menu__email truncate text-kg-xs text-kg-fg-muted\">{email}</span>}\n                {badge}\n              </span>\n            )}\n          </div>\n        </div>\n        {children}\n      </DropdownMenuContent>\n    </DropdownMenu>\n  ),\n)\n\nUserMenu.displayName = \"UserMenu\"\n",
+      "target": "components/kitgrid/user-menu/user-menu.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

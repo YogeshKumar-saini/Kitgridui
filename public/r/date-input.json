@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "date-input",
+  "type": "registry:ui",
+  "title": "Date Input",
+  "description": "The browser's own date field, themed: native keyboard entry, locale order and picker on every platform, plus a clear button.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/input.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/date-input/date-input.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type ChangeEvent, forwardRef } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Input, type InputProps } from \"../input/input\"\n\nexport interface DateInputProps extends Omit<\n  InputProps,\n  \"type\" | \"value\" | \"defaultValue\" | \"onClear\"\n> {\n  /** `yyyy-mm-dd`, or `\"\"` for none. */\n  value?: string\n  defaultValue?: string\n  /** Called with `yyyy-mm-dd`, or `\"\"` once cleared. */\n  onValueChange?: (value: string) => void\n  /** Show a clear button while a date is set. */\n  clearable?: boolean\n}\n\nconst dateInputClass = cx(\n  \"tabular-nums\",\n  \"[&_.kg-input__control::-webkit-datetime-edit]:p-0 [&_.kg-input__control::-webkit-datetime-edit-fields-wrapper]:p-0\",\n  \"[&_.kg-input__control:invalid::-webkit-datetime-edit]:text-kg-fg-faint\",\n  \"[&_.kg-input__control[value='']::-webkit-datetime-edit]:text-kg-fg-faint\",\n  \"[&_.kg-input__control::-webkit-datetime-edit-day-field:focus]:text-kg-accent-fg [&_.kg-input__control::-webkit-datetime-edit-day-field:focus]:bg-kg-accent [&_.kg-input__control::-webkit-datetime-edit-day-field:focus]:rounded-kg-xs\",\n  \"[&_.kg-input__control::-webkit-datetime-edit-month-field:focus]:text-kg-accent-fg [&_.kg-input__control::-webkit-datetime-edit-month-field:focus]:bg-kg-accent [&_.kg-input__control::-webkit-datetime-edit-month-field:focus]:rounded-kg-xs\",\n  \"[&_.kg-input__control::-webkit-datetime-edit-year-field:focus]:text-kg-accent-fg [&_.kg-input__control::-webkit-datetime-edit-year-field:focus]:bg-kg-accent [&_.kg-input__control::-webkit-datetime-edit-year-field:focus]:rounded-kg-xs\",\n  \"[&_.kg-input__control::-webkit-calendar-picker-indicator]:m-0 [&_.kg-input__control::-webkit-calendar-picker-indicator]:p-0.5\",\n  \"[&_.kg-input__control::-webkit-calendar-picker-indicator]:cursor-pointer [&_.kg-input__control::-webkit-calendar-picker-indicator]:opacity-55\",\n  \"[&_.kg-input__control::-webkit-calendar-picker-indicator]:rounded-kg-xs\",\n  \"[&_.kg-input__control::-webkit-calendar-picker-indicator]:transition-opacity [&_.kg-input__control::-webkit-calendar-picker-indicator]:duration-(--kg-duration-fast)\",\n  \"[&_.kg-input__control::-webkit-calendar-picker-indicator:hover]:opacity-100\",\n  \"[&_.kg-input__control::-webkit-calendar-picker-indicator:hover]:bg-kg-muted\",\n)\n\n/**\n * The browser's own date field, themed: native keyboard entry, locale order and picker on\n * every platform, plus a clear button.\n */\nexport const DateInput = forwardRef<HTMLInputElement, DateInputProps>(\n  ({ onValueChange, onChange, clearable = true, className, ...props }, ref) => (\n    <Input\n      ref={ref}\n      type=\"date\"\n      className={cx(\"kg-date-input\", dateInputClass, className)}\n      onChange={(event: ChangeEvent<HTMLInputElement>) => {\n        onChange?.(event)\n        onValueChange?.(event.currentTarget.value)\n      }}\n      onClear={clearable ? () => {} : undefined}\n      {...props}\n    />\n  ),\n)\n\nDateInput.displayName = \"DateInput\"\n",
+      "target": "components/kitgrid/date-input/date-input.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/date-input/index.ts",
+      "type": "registry:ui",
+      "content": "export { DateInput, type DateInputProps } from \"./date-input\"\n",
+      "target": "components/kitgrid/date-input/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

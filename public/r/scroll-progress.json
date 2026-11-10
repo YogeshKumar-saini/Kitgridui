@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "scroll-progress",
+  "type": "registry:ui",
+  "title": "Scroll Progress",
+  "description": "A hairline bar that fills as the page, or one scroll container, is read. The fill is a `scaleX` written once per scroll frame. It never animates on its own: the fill follows the reader's scroll one to one with no easing, so it reads the same under reduced motion. Decorative, so hidden from assistive tech.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/scroll-progress/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  ScrollProgress,\n  type ScrollProgressPosition,\n  type ScrollProgressProps,\n} from \"./scroll-progress\"\n",
+      "target": "components/kitgrid/scroll-progress/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/scroll-progress/scroll-progress.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  forwardRef,\n  type HTMLAttributes,\n  type RefObject,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type ScrollProgressPosition = \"top\" | \"bottom\" | \"static\"\n\nexport interface ScrollProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, \"children\"> {\n  /** A scrolling element to track instead of the page. */\n  target?: RefObject<HTMLElement | null>\n  /** `top` and `bottom` pin the bar to the viewport edge; `static` leaves it in flow. */\n  position?: ScrollProgressPosition\n}\n\nconst placement: Record<ScrollProgressPosition, string> = {\n  top: \"fixed inset-x-0 top-0 z-[var(--kg-z-sticky)]\",\n  bottom: \"fixed inset-x-0 bottom-0 z-[var(--kg-z-sticky)]\",\n  static: \"\",\n}\n\n/**\n * A hairline bar that fills as the page, or one scroll container, is read. The fill is a\n * `scaleX` written once per scroll frame. It never animates on its own: the fill follows the\n * reader's scroll one to one with no easing, so it reads the same under reduced motion.\n * Decorative, so hidden from assistive tech.\n */\nexport const ScrollProgress = forwardRef<HTMLDivElement, ScrollProgressProps>(\n  ({ target, position = \"top\", className, ...props }, forwardedRef) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n\n    useEffect(() => {\n      const bar = local.current\n      if (!bar) return\n      const scroller = target?.current ?? null\n      const source: HTMLElement | Window = scroller ?? window\n      let frame = 0\n      const update = () => {\n        frame = 0\n        const el = scroller ?? document.documentElement\n        const max = el.scrollHeight - el.clientHeight\n        const top = scroller ? scroller.scrollTop : window.scrollY\n        const p = max > 0 ? Math.min(Math.max(top / max, 0), 1) : 0\n        bar.style.setProperty(\"--_p\", p.toFixed(4))\n      }\n      const schedule = () => {\n        if (!frame) frame = requestAnimationFrame(update)\n      }\n      update()\n      source.addEventListener(\"scroll\", schedule, { passive: true })\n      window.addEventListener(\"resize\", schedule)\n      return () => {\n        cancelAnimationFrame(frame)\n        source.removeEventListener(\"scroll\", schedule)\n        window.removeEventListener(\"resize\", schedule)\n      }\n    }, [target])\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\n          \"kg-scroll-progress pointer-events-none h-[var(--kg-scroll-progress-height,3px)] overflow-hidden [--_p:0]\",\n          placement[position],\n          className,\n        )}\n        data-position={position}\n        aria-hidden=\"true\"\n        {...props}\n      >\n        <span className=\"kg-scroll-progress__bar block h-full origin-left rounded-r-full bg-kg-ink transition-none [transform:scaleX(var(--_p))]\" />\n      </div>\n    )\n  },\n)\n\nScrollProgress.displayName = \"ScrollProgress\"\n",
+      "target": "components/kitgrid/scroll-progress/scroll-progress.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

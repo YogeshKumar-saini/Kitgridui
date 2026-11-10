@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "orb",
+  "type": "registry:ui",
+  "title": "Orb",
+  "description": "A lit sphere with a slow inner swirl and an orbit light sweeping its rim. Layers of radial and conic gradients turned on transform-only loops. Pure CSS, server safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/orb/index.ts",
+      "type": "registry:ui",
+      "content": "export { Orb, type OrbProps } from \"./orb\"\n",
+      "target": "components/kitgrid/orb/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/orb/orb.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-orb__halo {\n    background: radial-gradient(\n      closest-side,\n      color-mix(in oklab, var(--_c) 45%, transparent),\n      color-mix(in oklab, var(--_c) 12%, transparent) 55%,\n      transparent\n    );\n    animation: kg-orb-breathe calc(9s / var(--_speed)) var(--kg-ease-in-out) infinite\n      alternate;\n  }\n\n  .kg-orb__sphere {\n    background: radial-gradient(\n      circle at 34% 28%,\n      color-mix(in oklab, var(--_warm), white 45%) 0%,\n      var(--_warm) 16%,\n      var(--_c) 38%,\n      var(--_deep) 78%,\n      color-mix(in oklab, var(--_deep) 60%, var(--kg-bg)) 100%\n    );\n    box-shadow:\n      inset -1.5rem -2rem 3rem color-mix(in oklab, var(--kg-bg) 45%, transparent),\n      0 2rem 4rem -1.5rem color-mix(in oklab, var(--_c) 40%, transparent);\n  }\n\n  .kg-orb__swirl {\n    background: conic-gradient(\n      from 0deg,\n      transparent 0deg,\n      color-mix(in oklab, var(--_warm) 55%, transparent) 70deg,\n      transparent 150deg,\n      color-mix(in oklab, var(--_c) 50%, transparent) 230deg,\n      transparent 300deg\n    );\n    animation: kg-orb-spin calc(16s / var(--_speed)) linear infinite;\n  }\n\n  .kg-orb__shine {\n    background: radial-gradient(closest-side, color-mix(in oklab, white 55%, transparent), transparent);\n  }\n\n  /* The orbit light: a conic sweep masked down to a hairline ring just outside the sphere. */\n  .kg-orb__rim {\n    background: conic-gradient(\n      from 0deg,\n      transparent 0deg 220deg,\n      color-mix(in oklab, var(--_warm) 90%, transparent) 300deg,\n      transparent 360deg\n    );\n    mask-image: radial-gradient(closest-side, transparent 96%, #000 97.5%, transparent 100%);\n    animation: kg-orb-spin calc(7s / var(--_speed)) linear infinite reverse;\n  }\n\n  .kg-orb__layer * {\n    animation-play-state: var(--kg-orb-state, running);\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-orb__layer * {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-orb__layer * {\n    animation: none;\n  }\n\n  @keyframes kg-orb-spin {\n    to {\n      transform: rotate(1turn);\n    }\n  }\n\n  @keyframes kg-orb-breathe {\n    from {\n      transform: scale(0.92);\n    }\n    to {\n      transform: scale(1.06);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/orb/orb.css"
+    },
+    {
+      "path": "kitgrid/src/components/orb/orb.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { variants } from \"../lib/utils/variants\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport interface OrbProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color. Defaults to ink, warmed with peach paper. */\n  color?: string\n  /** Diameter as any CSS length. */\n  size?: string\n  /** Where the sphere sits inside the section. */\n  position?: \"center\" | \"top\" | \"bottom\"\n  /** Rotation speed multiplier; 0 holds it still. */\n  speed?: number\n  /** Strength of the surrounding glow, 0–1. */\n  glow?: number\n  children?: ReactNode\n}\n\nconst orbLayer = variants({\n  base: \"kg-orb__layer pointer-events-none absolute inset-0 z-0 grid overflow-hidden\",\n  variants: {\n    position: {\n      center: \"place-items-center\",\n      top: \"[place-items:start_center] pt-[6%]\",\n      bottom: \"[place-items:end_center] pb-[6%]\",\n    },\n  },\n  defaults: { position: \"center\" },\n})\n\n/**\n * A lit sphere with a slow inner swirl and an orbit light sweeping its rim. Layers of radial and\n * conic gradients turned on transform-only loops. Pure CSS, server safe.\n */\nexport const Orb = forwardRef<HTMLDivElement, OrbProps>(\n  (\n    {\n      color,\n      size = \"min(56%, 22rem)\",\n      position = \"center\",\n      speed = 1,\n      glow = 0.6,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-orb absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-orb-color,var(--kg-ink))] [--_warm:color-mix(in_oklab,var(--_c),var(--kg-paper-peach)_50%)] [--_deep:color-mix(in_oklab,var(--_c)_40%,var(--kg-bg))] [--_speed:var(--kg-orb-speed,1)]\",\n          className,\n          wrapper,\n        )}\n        data-position={position}\n        style={\n          {\n            ...(color ? { \"--kg-orb-color\": color } : null),\n            \"--kg-orb-size\": size,\n            \"--kg-orb-speed\": Math.max(speed, 0.001),\n            \"--kg-orb-state\": speed === 0 ? \"paused\" : \"running\",\n            \"--kg-orb-glow\": Math.min(Math.max(glow, 0), 1),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className={orbLayer({ position })} aria-hidden=\"true\">\n          <div className=\"kg-orb__body relative aspect-square w-[var(--kg-orb-size,22rem)]\">\n            <div className=\"kg-orb__halo absolute -inset-[45%] rounded-full opacity-[var(--kg-orb-glow,0.6)]\" />\n            <div className=\"kg-orb__sphere absolute inset-0 overflow-hidden rounded-full\">\n              <div className=\"kg-orb__swirl absolute -inset-[20%] rounded-full blur-[1.2rem] mix-blend-soft-light\" />\n              <div className=\"kg-orb__shine absolute top-[10%] left-[18%] h-[22%] w-[34%] rotate-[-28deg] rounded-full\" />\n            </div>\n            <div className=\"kg-orb__rim absolute -inset-[3%] rounded-full\" />\n          </div>\n        </div>\n        {wrapper && <div className=\"kg-orb__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nOrb.displayName = \"Orb\"\n",
+      "target": "components/kitgrid/orb/orb.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

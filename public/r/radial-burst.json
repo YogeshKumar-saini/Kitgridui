@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "radial-burst",
+  "type": "registry:ui",
+  "title": "Radial Burst",
+  "description": "A slow-turning sunburst: a repeating conic gradient on an oversized disc, faded toward its rim so it reads as light rather than a pattern. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/radial-burst/index.ts",
+      "type": "registry:ui",
+      "content": "export { RadialBurst, type RadialBurstProps } from \"./radial-burst\"\n",
+      "target": "components/kitgrid/radial-burst/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/radial-burst/radial-burst.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-radial-burst__disc {\n    background: repeating-conic-gradient(\n      from 0deg,\n      color-mix(in oklab, var(--_c) 40%, transparent) 0deg,\n      transparent var(--kg-radial-burst-lit, 4deg) var(--kg-radial-burst-period, 10deg)\n    );\n    mask-image: radial-gradient(closest-side, #000 2%, rgb(0 0 0 / 0.4) 30%, transparent 70%);\n    animation: kg-radial-burst-turn calc(120s / var(--kg-radial-burst-speed, 1)) linear\n      infinite;\n    animation-play-state: var(--kg-radial-burst-state, running);\n  }\n\n  .kg-radial-burst__glow {\n    background: radial-gradient(\n      closest-side,\n      color-mix(in oklab, var(--_c) 45%, transparent),\n      transparent\n    );\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-radial-burst__disc {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-radial-burst__disc {\n    animation: none;\n  }\n\n  @keyframes kg-radial-burst-turn {\n    to {\n      transform: rotate(1turn);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/radial-burst/radial-burst.css"
+    },
+    {
+      "path": "kitgrid/src/components/radial-burst/radial-burst.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport interface RadialBurstProps extends HTMLAttributes<HTMLDivElement> {\n  /** Number of rays, 8–96. */\n  rays?: number\n  /** Any CSS color. Defaults to ink. */\n  color?: string\n  /** Where the burst radiates from. */\n  origin?: \"center\" | \"top\" | \"bottom\"\n  /** Share of each ray period that is lit, 0.1–0.9. */\n  duty?: number\n  /** Rotation speed multiplier; 0 holds it still. */\n  speed?: number\n  /** Overall strength, 0–1. */\n  intensity?: number\n  children?: ReactNode\n}\n\n/**\n * A slow-turning sunburst: a repeating conic gradient on an oversized disc, faded toward its\n * rim so it reads as light rather than a pattern. Server-component safe.\n */\nexport const RadialBurst = forwardRef<HTMLDivElement, RadialBurstProps>(\n  (\n    {\n      rays = 36,\n      color,\n      origin = \"center\",\n      duty = 0.45,\n      speed = 1,\n      intensity = 0.5,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const count = Math.round(Math.min(Math.max(rays, 8), 96))\n    const period = 360 / count\n    const lit = period * Math.min(Math.max(duty, 0.1), 0.9)\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-radial-burst absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-radial-burst-color,var(--kg-ink))] [--_y:50%] data-[origin=top]:[--_y:0%] data-[origin=bottom]:[--_y:100%]\",\n          className,\n          wrapper,\n        )}\n        data-origin={origin}\n        style={\n          {\n            ...(color ? { \"--kg-radial-burst-color\": color } : null),\n            \"--kg-radial-burst-period\": `${Math.round(period * 1000) / 1000}deg`,\n            \"--kg-radial-burst-lit\": `${Math.round(lit * 1000) / 1000}deg`,\n            \"--kg-radial-burst-speed\": Math.max(speed, 0.001),\n            \"--kg-radial-burst-state\": speed === 0 ? \"paused\" : \"running\",\n            \"--kg-radial-burst-intensity\": Math.min(Math.max(intensity, 0), 1),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-radial-burst__layer pointer-events-none absolute inset-0 z-0 overflow-hidden opacity-[var(--kg-radial-burst-intensity,0.5)]\" aria-hidden=\"true\">\n          <div className=\"kg-radial-burst__disc absolute top-(--_y) left-1/2 aspect-square -translate-1/2 rounded-full w-[max(160%,160vh)]\" />\n          <div className=\"kg-radial-burst__glow absolute top-(--_y) left-1/2 aspect-square -translate-1/2 rounded-full w-3/5\" />\n        </div>\n        {wrapper && <div className=\"kg-radial-burst__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nRadialBurst.displayName = \"RadialBurst\"\n",
+      "target": "components/kitgrid/radial-burst/radial-burst.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "getting-started-cards",
+  "type": "registry:ui",
+  "title": "Getting Started Cards",
+  "description": "Next-step cards for an empty workspace, numbered on an orbit and linking out. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/getting-started-cards/getting-started-cards.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface GettingStartedCardsItem {\n  id: string\n  title: ReactNode\n  /** One short line. */\n  description?: ReactNode\n  icon?: ReactNode\n  /** Makes the whole card a link. */\n  href?: string\n  /** A short trailing hint such as \"2 min\". */\n  meta?: ReactNode\n  done?: boolean\n}\n\nexport interface GettingStartedCardsProps extends HTMLAttributes<HTMLUListElement> {\n  items: readonly GettingStartedCardsItem[]\n  doneLabel?: string\n}\n\n/* Paper Layers: each step is a white sheet; linked steps lift off their ink offset on hover. */\nconst cardClass = cx(\n  \"kg-getting-started-cards__card group/card relative flex min-h-36 flex-col gap-1.5 p-4 text-inherit no-underline\",\n  \"rounded-kg-xl border-2 border-kg-ink bg-kg-surface shadow-kg-sm\",\n  \"transition-[translate,box-shadow] duration-(--kg-duration-fast) ease-kg-out motion-reduce:transition-none\",\n)\n\nconst linkClass = cx(\n  cardClass,\n  \"cursor-pointer hover:-translate-0.5 hover:shadow-kg-md active:translate-0 active:shadow-kg-xs\",\n  \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n)\n\n/** Next-step cards for an empty workspace, numbered on an orbit and linking out. Server-safe. */\nexport const GettingStartedCards = forwardRef<HTMLUListElement, GettingStartedCardsProps>(\n  ({ items, doneLabel = \"Done\", className, ...props }, ref) => (\n    <ul ref={ref} className={cx(\n        \"kg-getting-started-cards m-0 grid list-none grid-cols-[repeat(auto-fit,minmax(min(100%,13rem),1fr))] gap-3 p-0\",\n        className,\n      )} {...props}>\n      {items.map((item, index) => {\n        const content = (\n          <>\n            <span\n              className={cx(\n                \"kg-getting-started-cards__badge mb-2 grid size-8 place-items-center rounded-full border-2 border-kg-ink\",\n                \"bg-kg-paper-butter text-kg-xs font-bold text-kg-fg [&_svg]:size-4\",\n                \"group-data-done/item:bg-kg-success group-data-done/item:text-kg-success-fg\",\n              )}\n              aria-hidden=\"true\"\n            >\n              {item.icon ?? index + 1}\n            </span>\n            <span className=\"kg-getting-started-cards__title text-kg-sm font-semibold text-kg-fg\">{item.title}</span>\n            {item.description != null && (\n              <span className=\"kg-getting-started-cards__description text-kg-xs leading-normal text-kg-fg-muted\">{item.description}</span>\n            )}\n            <span className=\"kg-getting-started-cards__foot mt-auto flex items-center justify-between gap-2 pt-2\">\n              {item.done ? (\n                <span className=\"kg-getting-started-cards__done rounded-full bg-kg-success px-2 text-kg-xs leading-5 font-semibold text-kg-success-fg\">{doneLabel}</span>\n              ) : (\n                item.meta != null && (\n                  <span className=\"kg-getting-started-cards__meta text-kg-xs text-kg-fg-muted\">{item.meta}</span>\n                )\n              )}\n              {item.href && (\n                <svg\n                  className={cx(\n                    \"kg-getting-started-cards__arrow ms-auto size-4 text-kg-fg-muted\",\n                    \"transition-[translate,color] duration-(--kg-duration-base) ease-kg-out motion-reduce:transition-none\",\n                    \"group-hover/card:translate-x-[3px] group-hover/card:text-kg-fg\",\n                  )}\n                  viewBox=\"0 0 16 16\"\n                  fill=\"none\"\n                  aria-hidden=\"true\"\n                >\n                  <path d=\"M3.5 8h9m-3.5-3.5L12.5 8 9 11.5\" stroke=\"currentColor\" strokeWidth=\"1.6\" strokeLinecap=\"round\" strokeLinejoin=\"round\" />\n                </svg>\n              )}\n            </span>\n          </>\n        )\n        return (\n          <li\n            key={item.id}\n            className=\"kg-getting-started-cards__item group/item grid\"\n            data-done={item.done || undefined}\n          >\n            {item.href ? (\n              <a className={linkClass} href={item.href}>\n                {content}\n              </a>\n            ) : (\n              <div className={cardClass}>{content}</div>\n            )}\n          </li>\n        )\n      })}\n    </ul>\n  ),\n)\n\nGettingStartedCards.displayName = \"GettingStartedCards\"\n",
+      "target": "components/kitgrid/getting-started-cards/getting-started-cards.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/getting-started-cards/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  GettingStartedCards,\n  type GettingStartedCardsItem,\n  type GettingStartedCardsProps,\n} from \"./getting-started-cards\"\n",
+      "target": "components/kitgrid/getting-started-cards/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

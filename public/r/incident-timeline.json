@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "incident-timeline",
+  "type": "registry:ui",
+  "title": "Incident Timeline",
+  "description": "The updates posted for one incident, newest first, on a single rail. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/incident-timeline/incident-timeline.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type IncidentTimelineStage = \"investigating\" | \"identified\" | \"monitoring\" | \"resolved\"\n\nexport interface IncidentTimelineUpdate {\n  id: string\n  stage: IncidentTimelineStage\n  /** Display time, e.g. \"14:32 UTC\". */\n  time: ReactNode\n  /** Machine-readable time for the <time> element. */\n  dateTime?: string\n  message: ReactNode\n}\n\nexport interface IncidentTimelineProps extends HTMLAttributes<HTMLOListElement> {\n  /** Newest first, as status pages publish them. */\n  updates: readonly IncidentTimelineUpdate[]\n  labels?: Partial<Record<IncidentTimelineStage, string>>\n}\n\nconst stageWords: Record<IncidentTimelineStage, string> = {\n  investigating: \"Investigating\",\n  identified: \"Identified\",\n  monitoring: \"Monitoring\",\n  resolved: \"Resolved\",\n}\n\n/* Paper Layers: earlier updates are paper-tinted discs; the latest fills with its status and lifts. */\nconst paperNode: Record<IncidentTimelineStage, string> = {\n  investigating: \"bg-kg-paper-rose\",\n  identified: \"bg-kg-paper-butter\",\n  monitoring: \"bg-kg-paper-sky\",\n  resolved: \"bg-kg-paper-sage\",\n}\n\nconst latestNode: Record<IncidentTimelineStage, string> = {\n  investigating: \"bg-kg-danger shadow-kg-xs\",\n  identified: \"bg-kg-warning shadow-kg-xs\",\n  monitoring: \"bg-kg-info shadow-kg-xs\",\n  resolved: \"bg-kg-success shadow-kg-xs\",\n}\n\n/** The updates posted for one incident, newest first, on a single rail. Server-safe. */\nexport const IncidentTimeline = forwardRef<HTMLOListElement, IncidentTimelineProps>(\n  ({ updates, labels, className, ...props }, ref) => {\n    const words = { ...stageWords, ...labels }\n    return (\n      <ol ref={ref} className={cx(\"kg-incident-timeline m-0 grid list-none p-0\", className)} {...props}>\n        {updates.map((update, index) => (\n          <li\n            key={update.id}\n            className={cx(\n              \"kg-incident-timeline__item relative grid gap-1 ps-7 pb-5 last:pb-0\",\n              \"before:absolute before:top-[1.125rem] before:bottom-0 before:start-[calc(0.4375rem-1px)] before:w-[2px] before:bg-kg-border-strong last:before:content-none\",\n            )}\n            data-stage={update.stage}\n            data-latest={index === 0 || undefined}\n          >\n            <span\n              className={cx(\n                \"kg-incident-timeline__node absolute start-0 top-[0.25rem] size-[0.875rem] rounded-full border-2 border-kg-ink\",\n                index === 0 ? latestNode[update.stage] : paperNode[update.stage],\n              )}\n              aria-hidden=\"true\"\n            />\n            <div className=\"kg-incident-timeline__head flex flex-wrap items-baseline gap-2\">\n              <span className=\"kg-incident-timeline__stage text-kg-sm font-[620] text-kg-fg\">\n                {words[update.stage]}\n              </span>\n              <time\n                className=\"kg-incident-timeline__time text-kg-xs tabular-nums text-kg-fg-faint\"\n                dateTime={update.dateTime}\n              >\n                {update.time}\n              </time>\n            </div>\n            <div className=\"kg-incident-timeline__message max-w-[60ch] text-kg-sm leading-[1.55] text-kg-fg-muted\">\n              {update.message}\n            </div>\n          </li>\n        ))}\n      </ol>\n    )\n  },\n)\n\nIncidentTimeline.displayName = \"IncidentTimeline\"\n",
+      "target": "components/kitgrid/incident-timeline/incident-timeline.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/incident-timeline/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  IncidentTimeline,\n  type IncidentTimelineProps,\n  type IncidentTimelineStage,\n  type IncidentTimelineUpdate,\n} from \"./incident-timeline\"\n",
+      "target": "components/kitgrid/incident-timeline/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

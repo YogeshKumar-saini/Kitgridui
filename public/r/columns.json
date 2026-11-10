@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "columns",
+  "type": "registry:ui",
+  "title": "Columns",
+  "description": "A side column and a main column that stack on their own when space runs out, with no media queries: the layout reacts to its own width.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/columns/columns.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxAlign, type BoxSpace, alignValue, space, vars } from \"../box/space\"\n\nexport interface ColumnsProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  /** Which child is the side column: the first (`start`) or the last (`end`). */\n  side?: \"start\" | \"end\"\n  /** The side column's preferred width. */\n  sideWidth?: string\n  /** Once the main column would be narrower than this share, both stack. */\n  contentMin?: string\n  gap?: BoxSpace\n  align?: BoxAlign\n}\n\n/* The side column keeps its width; the main one grows and wraps below once squeezed. */\nconst SIDE = {\n  start: [\n    \"[&>:first-child]:grow [&>:first-child]:basis-[var(--_side,16rem)]\",\n    \"[&>:last-child]:grow-999 [&>:last-child]:basis-0 [&>:last-child]:min-w-[var(--_content-min,55%)]\",\n  ],\n  end: [\n    \"[&>:last-child]:grow [&>:last-child]:basis-[var(--_side,16rem)]\",\n    \"[&>:first-child]:grow-999 [&>:first-child]:basis-0 [&>:first-child]:min-w-[var(--_content-min,55%)]\",\n  ],\n}\n\n/**\n * A side column and a main column that stack on their own when space runs out, with no media\n * queries: the layout reacts to its own width.\n */\nexport const Columns = forwardRef<HTMLElement, ColumnsProps>(\n  (\n    {\n      as: Tag = \"div\",\n      side = \"start\",\n      sideWidth = \"16rem\",\n      contentMin = \"55%\",\n      gap = 6,\n      align,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => (\n    <Tag\n      ref={ref}\n      className={cx(\n        \"kg-columns flex min-w-0 flex-wrap *:min-w-0\",\n        \"[align-items:var(--_align,stretch)] gap-[var(--_gap,calc(var(--kg-space)*6))]\",\n        SIDE[side],\n        className,\n      )}\n      data-side={side}\n      style={{\n        ...vars({\n          \"--_side\": sideWidth,\n          \"--_content-min\": contentMin,\n          \"--_gap\": space(gap),\n          \"--_align\": alignValue(align),\n        }),\n        ...style,\n      }}\n      {...props}\n    />\n  ),\n)\n\nColumns.displayName = \"Columns\"\n",
+      "target": "components/kitgrid/columns/columns.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/columns/index.ts",
+      "type": "registry:ui",
+      "content": "export { Columns, type ColumnsProps } from \"./columns\"\n",
+      "target": "components/kitgrid/columns/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

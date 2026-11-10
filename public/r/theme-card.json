@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "theme-card",
+  "type": "registry:ui",
+  "title": "Theme Card",
+  "description": "A theme choice as a radio tile: a miniature app rendered in that theme's real tokens, so even a faint tint registers before it is picked. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/appearance-preview.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/option-tile.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/theme-card/index.ts",
+      "type": "registry:ui",
+      "content": "export { ThemeCard, type ThemeCardProps } from \"./theme-card\"\n",
+      "target": "components/kitgrid/theme-card/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/theme-card/theme-card.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport {\n  AppearancePreview,\n  type AppearancePreviewTheme,\n} from \"../appearance-preview/appearance-preview\"\nimport { OptionTile, type OptionTileProps } from \"../option-tile/option-tile\"\n\nexport interface ThemeCardProps extends Omit<OptionTileProps, \"preview\" | \"layout\"> {\n  /** The theme the miniature is drawn in. */\n  theme: AppearancePreviewTheme\n  /** The theme's accent, when it differs from the page's. */\n  accent?: string\n  radius?: string | number\n  font?: string\n  /** Swatches shown beside the label: the accent first, then any palette colors. */\n  swatches?: readonly string[]\n}\n\n/**\n * A theme choice as a radio tile: a miniature app rendered in that theme's real tokens, so\n * even a faint tint registers before it is picked. Server-component safe.\n */\nexport const ThemeCard = forwardRef<HTMLInputElement, ThemeCardProps>(\n  ({ theme, accent, radius, font, swatches, label, className, ...props }, ref) => (\n    <OptionTile\n      ref={ref}\n      className={cx(\"kg-theme-card\", className)}\n      preview={\n        <AppearancePreview\n          size=\"sm\"\n          theme={theme}\n          accent={accent}\n          radius={radius}\n          font={font}\n        />\n      }\n      label={\n        <span className=\"kg-theme-card__label flex min-w-0 items-center gap-2\">\n          <span className=\"kg-theme-card__name min-w-0 flex-1 truncate\">{label}</span>\n          {swatches && swatches.length > 0 && (\n            <span className=\"kg-theme-card__swatches flex shrink-0 -space-x-[0.2rem]\" aria-hidden=\"true\">\n              {swatches.map((color, index) => (\n                <span key={index} className=\"size-[0.625rem] rounded-full border border-kg-ink\" style={{ background: color }} />\n              ))}\n            </span>\n          )}\n        </span>\n      }\n      {...props}\n    />\n  ),\n)\n\nThemeCard.displayName = \"ThemeCard\"\n",
+      "target": "components/kitgrid/theme-card/theme-card.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

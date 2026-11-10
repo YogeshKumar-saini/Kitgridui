@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "badge",
+  "type": "registry:ui",
+  "title": "Badge",
+  "description": "A compact label for status, counts and merchandising flags such as “New” or “−20%”.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/badge/badge.tsx",
+      "type": "registry:ui",
+      "content": "import { cx } from \"../lib/utils/cx\"\nimport { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: a badge is a round paper chip with ink text. --_paper is the soft fill,\n * --_tone the solid fill and dot, --_tone-fg the text on that solid fill.\n */\nexport const badgeVariants = variants({\n  base: [\n    \"kg-badge inline-flex items-center rounded-full border-2 align-middle\",\n    \"font-semibold leading-none tracking-[0.005em] tabular-nums whitespace-nowrap\",\n  ],\n  variants: {\n    tone: {\n      neutral: \"[--_paper:var(--kg-muted)] [--_tone:var(--kg-fg)] [--_tone-fg:var(--kg-bg)] [--_dot:var(--kg-fg-muted)]\",\n      accent: \"[--_paper:var(--kg-paper-sage)] [--_tone:var(--kg-accent)] [--_tone-fg:var(--kg-accent-fg)] [--_dot:var(--kg-ink)]\",\n      success: \"[--_paper:var(--kg-paper-sage)] [--_tone:var(--kg-success)] [--_tone-fg:var(--kg-success-fg)] [--_dot:var(--kg-success)]\",\n      warning: \"[--_paper:var(--kg-paper-butter)] [--_tone:var(--kg-warning)] [--_tone-fg:var(--kg-warning-fg)] [--_dot:var(--kg-warning)]\",\n      danger: \"[--_paper:var(--kg-paper-rose)] [--_tone:var(--kg-danger)] [--_tone-fg:var(--kg-danger-fg)] [--_dot:var(--kg-danger)]\",\n      info: \"[--_paper:var(--kg-paper-sky)] [--_tone:var(--kg-info)] [--_tone-fg:var(--kg-info-fg)] [--_dot:var(--kg-info)]\",\n      sage: \"[--_paper:var(--kg-paper-sage)] [--_tone:var(--kg-paper-sage)] [--_tone-fg:var(--kg-fg)] [--_dot:var(--kg-ink)]\",\n      peach: \"[--_paper:var(--kg-paper-peach)] [--_tone:var(--kg-paper-peach)] [--_tone-fg:var(--kg-fg)] [--_dot:var(--kg-ink)]\",\n      sky: \"[--_paper:var(--kg-paper-sky)] [--_tone:var(--kg-paper-sky)] [--_tone-fg:var(--kg-fg)] [--_dot:var(--kg-ink)]\",\n      butter: \"[--_paper:var(--kg-paper-butter)] [--_tone:var(--kg-paper-butter)] [--_tone-fg:var(--kg-fg)] [--_dot:var(--kg-ink)]\",\n      rose: \"[--_paper:var(--kg-paper-rose)] [--_tone:var(--kg-paper-rose)] [--_tone-fg:var(--kg-fg)] [--_dot:var(--kg-ink)]\",\n    },\n    variant: {\n      soft: \"border-transparent bg-(--_paper) text-kg-fg\",\n      solid: \"border-kg-ink bg-(--_tone) text-(--_tone-fg) [--_dot:currentColor]\",\n      outline: \"border-kg-ink bg-transparent text-kg-fg\",\n    },\n    size: {\n      sm: \"h-[1.125rem] gap-1 px-1.5 text-[0.6875rem]\",\n      md: \"h-6 gap-1.25 px-2 text-kg-xs\",\n    },\n  },\n  defaults: { tone: \"neutral\", variant: \"soft\", size: \"md\" },\n})\n\ntype BadgeVariantProps = VariantProps<typeof badgeVariants>\nexport type BadgeTone = NonNullable<BadgeVariantProps[\"tone\"]>\nexport type BadgeVariant = NonNullable<BadgeVariantProps[\"variant\"]>\nexport type BadgeSize = NonNullable<BadgeVariantProps[\"size\"]>\n\nexport interface BadgeProps extends HTMLAttributes<HTMLSpanElement> {\n  /** A status tone, or one of the category papers (sage, peach, sky, butter, rose). */\n  tone?: BadgeTone\n  variant?: BadgeVariant\n  size?: BadgeSize\n  /** A leading status dot in the tone color. */\n  dot?: boolean\n  /** Adds a soft ping around the dot for live states. Removed under reduced motion. */\n  pulse?: boolean\n  /** Decorative leading icon; the text stays the accessible name. */\n  icon?: ReactNode\n}\n\n/** A compact label for status, counts and merchandising flags such as “New” or “−20%”. */\nexport const Badge = forwardRef<HTMLSpanElement, BadgeProps>(\n  (\n    {\n      tone = \"neutral\",\n      variant = \"soft\",\n      size = \"md\",\n      dot = false,\n      pulse = false,\n      icon,\n      className,\n      children,\n      ...props\n    },\n    ref,\n  ) => (\n    <span\n      ref={ref}\n      className={badgeVariants({ tone, variant, size, className })}\n      data-tone={tone}\n      data-variant={variant}\n      data-size={size}\n      {...props}\n    >\n      {dot && (\n        <span\n          className={cx(\n            \"kg-badge__dot relative size-1.5 shrink-0 rounded-full bg-(--_dot)\",\n            pulse &&\n              \"after:absolute after:inset-0 after:animate-ping after:rounded-full after:bg-inherit motion-reduce:after:hidden\",\n          )}\n          data-pulse={pulse || undefined}\n          aria-hidden=\"true\"\n        />\n      )}\n      {icon != null && (\n        <span\n          className=\"kg-badge__icon -ms-px inline-flex [&_svg]:size-[1.1em]\"\n          aria-hidden=\"true\"\n        >\n          {icon}\n        </span>\n      )}\n      {children}\n    </span>\n  ),\n)\n\nBadge.displayName = \"Badge\"\n",
+      "target": "components/kitgrid/badge/badge.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/badge/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Badge,\n  type BadgeProps,\n  type BadgeSize,\n  type BadgeTone,\n  type BadgeVariant,\n} from \"./badge\"\n",
+      "target": "components/kitgrid/badge/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

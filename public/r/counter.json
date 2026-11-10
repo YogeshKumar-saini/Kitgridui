@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "counter",
+  "type": "registry:ui",
+  "title": "Counter",
+  "description": "A live figure that tweens from its previous value whenever `value` changes, for KPIs that refresh in place. Built on `NumberTicker`, so it formats with Intl, reserves its width and exposes only the final value to assistive tech. Snaps under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/number-ticker.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/counter/counter.css",
+      "type": "registry:file",
+      "content": "/* Keyframes can't be utilities; the flash reads --_flash from the element. */\n@layer kg.components {\n  @keyframes kg-counter-flash {\n    from {\n      background-color: color-mix(in oklab, var(--_flash) 24%, transparent);\n      box-shadow: 0 0 0 0.15em color-mix(in oklab, var(--_flash) 24%, transparent);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/counter/counter.css"
+    },
+    {
+      "path": "kitgrid/src/components/counter/counter.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, useEffect, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport { NumberTicker, type NumberTickerProps } from \"../number-ticker/number-ticker\"\n\nexport interface CounterProps extends Omit<NumberTickerProps, \"from\" | \"trigger\"> {\n  /** Count up from zero on mount instead of landing on the first value. */\n  animateOnMount?: boolean\n  /** Briefly lights the figure each time it changes, tinted by the direction of the change. */\n  flash?: boolean\n}\n\nconst flashClass = [\n  \"kg-counter rounded-kg-xs [--_flash:var(--kg-accent)]\",\n  \"data-[flash=up]:[--_flash:var(--kg-success)] data-[flash=down]:[--_flash:var(--kg-danger)]\",\n  \"data-flash:animate-[kg-counter-flash_var(--kg-duration-bounce)_var(--kg-ease-out)]\",\n  \"motion-reduce:data-flash:animate-none in-data-[kg-motion=reduce]:data-flash:animate-none\",\n].join(\" \")\n\n/**\n * A live figure that tweens from its previous value whenever `value` changes, for KPIs that\n * refresh in place. Built on `NumberTicker`, so it formats with Intl, reserves its width and\n * exposes only the final value to assistive tech. Snaps under reduced motion.\n */\nexport const Counter = forwardRef<HTMLSpanElement, CounterProps>(\n  (\n    {\n      value,\n      animateOnMount = false,\n      flash = true,\n      duration = 650,\n      className,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLSpanElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const first = useRef(value)\n    const previous = useRef(value)\n\n    useEffect(() => {\n      const node = local.current\n      const before = previous.current\n      previous.current = value\n      if (!node || !flash || before === value) return\n      node.dataset.flash = value > before ? \"up\" : \"down\"\n      // Drop and re-add the animation so back-to-back changes each get their own flash.\n      node.style.animation = \"none\"\n      void node.offsetWidth\n      node.style.animation = \"\"\n    }, [value, flash])\n\n    return (\n      <NumberTicker\n        ref={ref}\n        className={cx(flashClass, className)}\n        value={value}\n        from={animateOnMount ? 0 : first.current}\n        trigger=\"mount\"\n        duration={duration}\n        {...props}\n      />\n    )\n  },\n)\n\nCounter.displayName = \"Counter\"\n",
+      "target": "components/kitgrid/counter/counter.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/counter/index.ts",
+      "type": "registry:ui",
+      "content": "export { Counter, type CounterProps } from \"./counter\"\n",
+      "target": "components/kitgrid/counter/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

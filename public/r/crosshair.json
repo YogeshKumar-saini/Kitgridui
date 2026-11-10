@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "crosshair",
+  "type": "registry:ui",
+  "title": "Crosshair",
+  "description": "Hairlines that track the pointer across an area, like a measuring tool. The lines are moved by CSS variables written once per frame, so the area never re-renders.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/crosshair/crosshair.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, useRef } from \"react\"\nimport { usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface CrosshairProps extends HTMLAttributes<HTMLDivElement> {\n  /** Print the pointer position, in px from the top-left corner, beside the crosshair. */\n  coordinates?: boolean\n  /** Hide the system cursor inside the area. */\n  hideCursor?: boolean\n}\n\n/**\n * Hairlines that track the pointer across an area, like a measuring tool. The lines are moved\n * by CSS variables written once per frame, so the area never re-renders.\n */\nexport const Crosshair = forwardRef<HTMLDivElement, CrosshairProps>(\n  ({ coordinates = false, hideCursor = false, className, children, ...props }, forwardedRef) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const readout = useRef<HTMLSpanElement>(null)\n\n    usePointerVars(local, {\n      onMove: ({ x, y }) => {\n        if (readout.current) readout.current.textContent = `${Math.round(x)}, ${Math.round(y)}`\n      },\n    })\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\n          \"kg-crosshair group/crosshair relative overflow-hidden [--_line:var(--kg-crosshair-color,color-mix(in_oklab,var(--kg-ink)_45%,transparent))] data-hide-cursor:cursor-none\",\n          className,\n        )}\n        data-hide-cursor={hideCursor || undefined}\n        {...props}\n      >\n        {children}\n        <span\n          className=\"kg-crosshair__layer pointer-events-none absolute inset-0 opacity-0 transition-opacity duration-(--kg-duration-base) ease-kg-out group-data-[pointer=in]/crosshair:opacity-100\"\n          aria-hidden=\"true\"\n        >\n          <span\n            className=\"kg-crosshair__line absolute top-0 left-0 h-px w-full bg-(--_line) [transform:translateY(var(--kg-pointer-y,50%))]\"\n            data-axis=\"x\"\n          />\n          <span\n            className=\"kg-crosshair__line absolute top-0 left-0 h-full w-px bg-(--_line) [transform:translateX(var(--kg-pointer-x,50%))]\"\n            data-axis=\"y\"\n          />\n          <span className=\"kg-crosshair__dot absolute -top-[5px] -left-[5px] size-[11px] rounded-full border-[1.5px] border-kg-ink [transform:translate(var(--kg-pointer-x,0),var(--kg-pointer-y,0))]\" />\n          {coordinates ? (\n            <span\n              ref={readout}\n              className=\"kg-crosshair__readout absolute top-0 left-0 whitespace-nowrap rounded-kg-sm border-2 border-kg-ink bg-kg-surface-raised px-1.5 py-0.5 font-kg-mono text-kg-xs text-kg-fg tabular-nums shadow-kg-xs [transform:translate(calc(var(--kg-pointer-x,0px)+12px),calc(var(--kg-pointer-y,0px)+12px))]\"\n            />\n          ) : null}\n        </span>\n      </div>\n    )\n  },\n)\n\nCrosshair.displayName = \"Crosshair\"\n",
+      "target": "components/kitgrid/crosshair/crosshair.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/crosshair/index.ts",
+      "type": "registry:ui",
+      "content": "export { Crosshair, type CrosshairProps } from \"./crosshair\"\n",
+      "target": "components/kitgrid/crosshair/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

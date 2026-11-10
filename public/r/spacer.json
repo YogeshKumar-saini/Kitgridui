@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spacer",
+  "type": "registry:ui",
+  "title": "Spacer",
+  "description": "Empty room: a fixed gap, or a flexible one that pushes siblings apart.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/spacer/index.ts",
+      "type": "registry:ui",
+      "content": "export { Spacer, type SpacerProps } from \"./spacer\"\n",
+      "target": "components/kitgrid/spacer/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/spacer/spacer.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"../box/space\"\n\nexport interface SpacerProps extends HTMLAttributes<HTMLDivElement> {\n  /** A fixed gap. Without it the spacer takes all free space in a flex row or column. */\n  size?: BoxSpace\n  /** The direction a fixed gap runs: `block` is vertical, `inline` horizontal. */\n  axis?: \"block\" | \"inline\"\n}\n\n/** Empty room: a fixed gap, or a flexible one that pushes siblings apart. */\nexport const Spacer = forwardRef<HTMLDivElement, SpacerProps>(\n  ({ size, axis = \"block\", className, style, ...props }, ref) => {\n    const fixed = size !== undefined\n    return (\n      <div\n        ref={ref}\n        aria-hidden=\"true\"\n        className={cx(\n          \"kg-spacer self-stretch\",\n          !fixed && \"flex-[1_1_0]\",\n          fixed && \"shrink-0 grow-0 basis-(--_size)\",\n          fixed && (axis === \"inline\" ? \"inline-block w-(--_size)\" : \"h-(--_size)\"),\n          className,\n        )}\n        data-axis={axis}\n        data-fixed={fixed ? \"\" : undefined}\n        style={{ ...vars({ \"--_size\": space(size) }), ...style }}\n        {...props}\n      />\n    )\n  },\n)\n\nSpacer.displayName = \"Spacer\"\n",
+      "target": "components/kitgrid/spacer/spacer.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

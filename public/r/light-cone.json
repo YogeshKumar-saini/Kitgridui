@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "light-cone",
+  "type": "registry:ui",
+  "title": "Light Cone",
+  "description": "A stage light: a thin glowing bar near the top casts a soft cone of light down onto the content. Opens once on mount, then rests; its resting styles are the final frame. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/light-cone/index.ts",
+      "type": "registry:ui",
+      "content": "export { LightCone, type LightConeProps } from \"./light-cone\"\n",
+      "target": "components/kitgrid/light-cone/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/light-cone/light-cone.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  /* The cone's apex sits above the bar, so the light leaves the bar across its full width. */\n  .kg-light-cone__beam {\n    --_offset: calc(var(--kg-light-cone-width, 34rem) / 2 / tan(var(--_half)));\n    top: calc(var(--_top) - var(--_offset));\n    height: calc(100% - var(--_top) + var(--_offset) + 10%);\n    clip-path: inset(var(--_offset) 0 0 0);\n    background: conic-gradient(\n      from calc(180deg - var(--_half)) at 50% 0%,\n      transparent 0deg,\n      color-mix(in oklab, var(--_c) 40%, transparent) var(--_half),\n      transparent calc(var(--_half) * 2)\n    );\n    mask-image: linear-gradient(\n      to bottom,\n      #000 var(--_offset),\n      rgb(0 0 0 / 0.5) calc(var(--_offset) + 30%),\n      transparent 90%\n    );\n  }\n\n  .kg-light-cone__pool {\n    background: radial-gradient(\n      closest-side,\n      color-mix(in oklab, var(--_c) 45%, transparent),\n      transparent\n    );\n  }\n\n  .kg-light-cone__bar {\n    background: linear-gradient(\n      90deg,\n      transparent,\n      color-mix(in oklab, var(--_c) 60%, var(--kg-surface)) 20% 80%,\n      transparent\n    );\n  }\n\n  .kg-light-cone[data-animated] {\n    & .kg-light-cone__beam,\n    & .kg-light-cone__pool,\n    & .kg-light-cone__bar {\n      animation: kg-light-cone-open var(--kg-light-cone-duration, 1.2s) var(--kg-ease-out)\n        both;\n    }\n\n    & .kg-light-cone__beam {\n      animation-name: kg-light-cone-widen;\n    }\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-light-cone__layer > * {\n      animation: none !important;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-light-cone__layer > * {\n    animation: none !important;\n  }\n\n  @keyframes kg-light-cone-open {\n    from {\n      opacity: 0;\n      transform: scaleX(0.4);\n    }\n  }\n\n  @keyframes kg-light-cone-widen {\n    from {\n      opacity: 0;\n      transform: scaleX(0.5);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/light-cone/light-cone.css"
+    },
+    {
+      "path": "kitgrid/src/components/light-cone/light-cone.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport interface LightConeProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color. Defaults to ink. */\n  color?: string\n  /** Width of the lit bar: an absolute or `cqw` length (percentages would resolve per axis). */\n  width?: string\n  /** Distance of the source from the top, as any CSS length. */\n  top?: string\n  /** Opening angle of the cone, in degrees. */\n  angle?: number\n  /** Seconds the cone takes to open on mount; 0 renders it open. */\n  duration?: number\n  children?: ReactNode\n}\n\n/**\n * A stage light: a thin glowing bar near the top casts a soft cone of light down onto the content.\n * Opens once on mount, then rests; its resting styles are the final frame. Server-component safe.\n */\nexport const LightCone = forwardRef<HTMLDivElement, LightConeProps>(\n  (\n    {\n      color,\n      width = \"min(70cqw, 34rem)\",\n      top = \"18%\",\n      angle = 70,\n      duration = 1.2,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const half = Math.min(Math.max(angle, 10), 170) / 2\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-light-cone absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-light-cone-color,var(--kg-ink))] [--_top:var(--kg-light-cone-top,18%)] [--_half:var(--kg-light-cone-half,35deg)]\",\n          className,\n          wrapper,\n        )}\n        data-animated={duration > 0 || undefined}\n        style={\n          {\n            ...(color ? { \"--kg-light-cone-color\": color } : null),\n            \"--kg-light-cone-width\": width,\n            \"--kg-light-cone-top\": top,\n            \"--kg-light-cone-half\": `${half}deg`,\n            \"--kg-light-cone-duration\": `${Math.max(duration, 0)}s`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-light-cone__layer pointer-events-none absolute inset-0 z-0 overflow-hidden [container-type:size]\" aria-hidden=\"true\">\n          <div className=\"kg-light-cone__beam absolute left-1/2 -translate-x-1/2 origin-top w-[240%]\" />\n          <div className=\"kg-light-cone__pool absolute top-(--_top) left-1/2 aspect-[3.2] w-[calc(var(--kg-light-cone-width,34rem)*1.3)] origin-top -translate-1/2\" />\n          <div className=\"kg-light-cone__bar absolute left-1/2 -translate-x-1/2 origin-top top-(--_top) h-[2px] w-[var(--kg-light-cone-width,34rem)] rounded-full\" />\n        </div>\n        {wrapper && <div className=\"kg-light-cone__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nLightCone.displayName = \"LightCone\"\n",
+      "target": "components/kitgrid/light-cone/light-cone.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

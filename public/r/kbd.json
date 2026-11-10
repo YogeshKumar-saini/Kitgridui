@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kbd",
+  "type": "registry:ui",
+  "title": "Kbd",
+  "description": "A keyboard key or shortcut. Server-safe; only platform-aware keys hydrate a tiny client part.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/kbd/index.ts",
+      "type": "registry:ui",
+      "content": "export { Kbd, type KbdProps, type KbdSize } from \"./kbd\"\n",
+      "target": "components/kitgrid/kbd/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/kbd/kbd-platform-key.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { useSyncExternalStore } from \"react\"\n\nexport type KbdPlatformToken = \"mod\" | \"alt\" | \"ctrl\"\n\nconst glyphs: Record<\n  KbdPlatformToken,\n  { apple: [string, string]; other: [string, string] }\n> = {\n  mod: { apple: [\"⌘\", \"Command\"], other: [\"Ctrl\", \"Control\"] },\n  alt: { apple: [\"⌥\", \"Option\"], other: [\"Alt\", \"Alt\"] },\n  ctrl: { apple: [\"⌃\", \"Control\"], other: [\"Ctrl\", \"Control\"] },\n}\n\ntype UserAgentDataNavigator = Navigator & { userAgentData?: { platform?: string } }\n\nconst subscribe = () => () => {}\n\nconst isApplePlatform = () => {\n  const nav = navigator as UserAgentDataNavigator\n  return /mac|iphone|ipad|ipod/i.test(nav.userAgentData?.platform || nav.platform || \"\")\n}\n\n/**\n * Renders the non-Apple form on the server and during hydration, then upgrades in place, so\n * markup always matches and the swap never logs a hydration error.\n */\nexport const KbdPlatformKey = ({ token }: { token: KbdPlatformToken }) => {\n  const apple = useSyncExternalStore(subscribe, isApplePlatform, () => false)\n  const [glyph, label] = glyphs[token][apple ? \"apple\" : \"other\"]\n  return glyph === label ? (\n    <>{glyph}</>\n  ) : (\n    <>\n      <span aria-hidden=\"true\">{glyph}</span>\n      <span className=\"kg-visually-hidden\">{label}</span>\n    </>\n  )\n}\n",
+      "target": "components/kitgrid/kbd/kbd-platform-key.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/kbd/kbd.tsx",
+      "type": "registry:ui",
+      "content": "import { Fragment, forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { KbdPlatformKey, type KbdPlatformToken } from \"./kbd-platform-key\"\n\nexport type KbdSize = \"sm\" | \"md\"\n\nexport interface KbdProps extends HTMLAttributes<HTMLElement> {\n  /**\n   * A key combination, one entry per key. `\"mod\"` renders ⌘ on Apple platforms and Ctrl\n   * elsewhere; `\"alt\"`, `\"ctrl\"`, `\"shift\"`, `\"enter\"`, arrows and friends get their glyphs.\n   */\n  keys?: string[]\n  /** Shown between keys. Pass `null` for a compact ⌘K look. */\n  separator?: ReactNode\n  size?: KbdSize\n}\n\n/* Paper Layers: a keycap is a small white sheet with an ink edge and a 2px ink lip below. */\nconst keycap =\n  \"inline-flex h-(--_height) min-w-(--_height) items-center justify-center gap-[0.2em] rounded-kg-sm border border-kg-ink bg-kg-surface px-[0.4em] text-kg-fg shadow-[0_2px_0_var(--kg-ink)]\"\n\nconst root =\n  \"kg-kbd whitespace-nowrap align-middle [font-family:inherit] text-(length:--_text) font-semibold leading-none\"\n\nconst SIZE: Record<KbdSize, string> = {\n  sm: \"[--_height:1.125rem] [--_text:0.6875rem]\",\n  md: \"[--_height:1.375rem] [--_text:var(--kg-text-xs)]\",\n}\n\nconst platformTokens = new Set<string>([\"mod\", \"alt\", \"option\", \"ctrl\", \"control\"])\n\nconst named: Record<string, [glyph: string, label: string]> = {\n  shift: [\"⇧\", \"Shift\"],\n  enter: [\"↵\", \"Enter\"],\n  return: [\"↵\", \"Return\"],\n  esc: [\"Esc\", \"Escape\"],\n  escape: [\"Esc\", \"Escape\"],\n  tab: [\"Tab\", \"Tab\"],\n  backspace: [\"⌫\", \"Backspace\"],\n  delete: [\"Del\", \"Delete\"],\n  space: [\"Space\", \"Space\"],\n  up: [\"↑\", \"Up arrow\"],\n  down: [\"↓\", \"Down arrow\"],\n  left: [\"←\", \"Left arrow\"],\n  right: [\"→\", \"Right arrow\"],\n}\n\nconst renderKey = (key: string): ReactNode => {\n  const token = key.toLowerCase()\n  if (platformTokens.has(token)) {\n    const platform: KbdPlatformToken =\n      token === \"option\"\n        ? \"alt\"\n        : token === \"control\"\n          ? \"ctrl\"\n          : (token as KbdPlatformToken)\n    return <KbdPlatformKey token={platform} />\n  }\n  const entry = named[token]\n  if (!entry) return key.length === 1 ? key.toUpperCase() : key\n  const [glyph, label] = entry\n  if (glyph === label) return glyph\n  return (\n    <>\n      <span aria-hidden=\"true\">{glyph}</span>\n      <span className=\"kg-visually-hidden\">{label}</span>\n    </>\n  )\n}\n\n/** A keyboard key or shortcut. Server-safe; only platform-aware keys hydrate a tiny client part. */\nexport const Kbd = forwardRef<HTMLElement, KbdProps>(\n  ({ keys, separator = \"+\", size = \"md\", className, children, ...props }, ref) => {\n    if (!keys) {\n      return (\n        <kbd\n          ref={ref}\n          className={cx(root, SIZE[size], keycap, className)}\n          data-size={size}\n          {...props}\n        >\n          {children}\n        </kbd>\n      )\n    }\n\n    return (\n      // The combo root keeps the UA inline display, so a host's `hidden` class still hides it.\n      <kbd\n        ref={ref}\n        className={cx(root, SIZE[size], className)}\n        data-size={size}\n        data-combo=\"\"\n        {...props}\n      >\n        {keys.map((key, index) => (\n          <Fragment key={`${key}-${index}`}>\n            {index > 0 && separator != null && (\n              <span className=\"kg-kbd__separator mx-[0.25em] text-[0.95em] text-kg-fg-muted\">{separator}</span>\n            )}\n            <kbd className={cx(\"kg-kbd__key [font:inherit] [&+&]:ms-[0.25em]\", keycap)}>{renderKey(key)}</kbd>\n          </Fragment>\n        ))}\n      </kbd>\n    )\n  },\n)\n\nKbd.displayName = \"Kbd\"\n",
+      "target": "components/kitgrid/kbd/kbd.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

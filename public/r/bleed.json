@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bleed",
+  "type": "registry:ui",
+  "title": "Bleed",
+  "description": "Lets a child escape its container's padding, for edge-to-edge images and bands.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/bleed/bleed.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"../box/space\"\n\nexport interface BleedProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  /** Pulls past the parent's side padding by this much. */\n  inline?: BoxSpace\n  /** Pulls past the parent's top and bottom padding by this much. */\n  block?: BoxSpace\n  /** Breaks out to the full viewport width, whatever the parent. */\n  full?: boolean\n}\n\n/** Lets a child escape its container's padding, for edge-to-edge images and bands. */\nexport const Bleed = forwardRef<HTMLElement, BleedProps>(\n  ({ as: Tag = \"div\", inline, block, full = false, className, style, ...props }, ref) => (\n    <Tag\n      ref={ref}\n      className={cx(\n        \"kg-bleed my-[calc(var(--_block,0px)*-1)]\",\n        full ? \"mx-[calc(50%-50vw)] w-screen max-w-[100vw]\" : \"mx-[calc(var(--_inline,0px)*-1)]\",\n        className,\n      )}\n      data-full={full || undefined}\n      style={{ ...vars({ \"--_inline\": space(inline), \"--_block\": space(block) }), ...style }}\n      {...props}\n    />\n  ),\n)\n\nBleed.displayName = \"Bleed\"\n",
+      "target": "components/kitgrid/bleed/bleed.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/bleed/index.ts",
+      "type": "registry:ui",
+      "content": "export { Bleed, type BleedProps } from \"./bleed\"\n",
+      "target": "components/kitgrid/bleed/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

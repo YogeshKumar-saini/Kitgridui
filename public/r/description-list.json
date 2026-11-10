@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "description-list",
+  "type": "registry:ui",
+  "title": "Description List",
+  "description": "Labelled values in a semantic `<dl>`, grouped per pair so each term stays with its value.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/description-list/description-list.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: pairs sit on the page split by ink hairlines; `bordered` is a sheet with an\n * ink edge, `striped` lays sage paper behind every other pair.\n */\nconst listVariants = variants({\n  base: \"kg-description-list @container m-0 grid text-kg-base text-kg-fg [--_term:9rem]\",\n  variants: {\n    layout: {\n      grid: \"grid-cols-[repeat(var(--_columns),minmax(0,1fr))] gap-x-6 gap-y-5\",\n      inline: \"grid-cols-1\",\n      stacked: \"grid-cols-1\",\n    },\n    variant: {\n      plain: \"\",\n      bordered: \"gap-0 overflow-hidden rounded-kg-xl border-2 border-kg-ink bg-kg-surface shadow-kg-xs\",\n      striped: \"\",\n    },\n  },\n  defaults: { layout: \"grid\", variant: \"plain\" },\n})\n\nconst itemVariants = variants({\n  base: \"kg-description-list__item grid min-w-0 gap-1\",\n  variants: {\n    layout: {\n      grid: \"col-span-(--_span,1) @max-[30rem]:col-[1/-1]\",\n      inline: \"grid-cols-[var(--_term)_minmax(0,1fr)] items-baseline gap-4 py-3 @max-[30rem]:grid-cols-1 @max-[30rem]:gap-1\",\n      stacked: \"py-3\",\n    },\n    variant: {\n      plain: \"\",\n      bordered: \"px-4 py-3.5 shadow-[inset_-1px_0_0_color-mix(in_oklab,var(--kg-ink)_25%,transparent),inset_0_-1px_0_color-mix(in_oklab,var(--kg-ink)_25%,transparent)]\",\n      striped: \"rounded-kg-md px-3 odd:bg-kg-paper-sage\",\n    },\n  },\n  defaults: { layout: \"grid\", variant: \"plain\" },\n  compound: [\n    { layout: \"inline\", variant: \"plain\", class: \"[&+&]:border-t [&+&]:border-kg-ink/25\" },\n    { layout: \"stacked\", variant: \"plain\", class: \"[&+&]:border-t [&+&]:border-kg-ink/25\" },\n  ],\n})\n\nexport type DescriptionListLayout = \"grid\" | \"inline\" | \"stacked\"\nexport type DescriptionListVariant = \"plain\" | \"bordered\" | \"striped\"\n\nexport interface DescriptionListItem {\n  term: ReactNode\n  description: ReactNode\n  /** Columns this pair spans in the grid layout. */\n  span?: number\n  key?: string\n}\n\nexport interface DescriptionListProps extends HTMLAttributes<HTMLDListElement> {\n  items: DescriptionListItem[]\n  /** `grid` lays pairs in columns, `inline` puts term and value on one row, `stacked` one under another. */\n  layout?: DescriptionListLayout\n  variant?: DescriptionListVariant\n  /** Grid columns at full width. Collapses to one column on narrow containers. */\n  columns?: number\n  /** Width of the term column in the inline layout. */\n  termWidth?: string\n}\n\n/** Labelled values in a semantic `<dl>`, grouped per pair so each term stays with its value. */\nexport const DescriptionList = forwardRef<HTMLDListElement, DescriptionListProps>(\n  (\n    {\n      items,\n      layout = \"grid\",\n      variant = \"plain\",\n      columns = 3,\n      termWidth,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => (\n    <dl\n      ref={ref}\n      className={listVariants({ layout, variant, className })}\n      data-layout={layout}\n      data-variant={variant}\n      style={\n        {\n          \"--_columns\": columns,\n          ...(termWidth ? { \"--_term\": termWidth } : null),\n          ...style,\n        } as CSSProperties\n      }\n      {...props}\n    >\n      {items.map((item, index) => (\n        <div\n          key={item.key ?? index}\n          className={itemVariants({ layout, variant })}\n          style={\n            item.span && layout === \"grid\"\n              ? ({ \"--_span\": Math.min(item.span, columns) } as CSSProperties)\n              : undefined\n          }\n        >\n          <dt className={`kg-description-list__term text-kg-sm font-medium ${variant === \"striped\" ? \"text-kg-fg\" : \"text-kg-fg-muted\"}`}>{item.term}</dt>\n          <dd className=\"kg-description-list__description m-0 min-w-0 font-medium tabular-nums [overflow-wrap:anywhere]\">{item.description}</dd>\n        </div>\n      ))}\n    </dl>\n  ),\n)\nDescriptionList.displayName = \"DescriptionList\"\n",
+      "target": "components/kitgrid/description-list/description-list.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/description-list/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  DescriptionList,\n  type DescriptionListItem,\n  type DescriptionListLayout,\n  type DescriptionListProps,\n  type DescriptionListVariant,\n} from \"./description-list\"\n",
+      "target": "components/kitgrid/description-list/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

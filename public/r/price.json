@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "price",
+  "type": "registry:ui",
+  "title": "Price",
+  "description": "Locale-aware money with compare-at and savings.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/price/index.ts",
+      "type": "registry:ui",
+      "content": "export { Price, type PriceLabels, type PriceProps, type PriceSize } from \"./price\"\n",
+      "target": "components/kitgrid/price/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/price/price.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { useLocale } from \"../lib/hooks/use-locale\"\nimport { cx } from \"../lib/utils/cx\"\nimport { discountPercent, formatMoney, getMoneyFormatter } from \"../lib/utils/money\"\n\nexport type PriceSize = \"sm\" | \"md\" | \"lg\" | \"xl\"\n\nexport interface PriceLabels {\n  /** Read before the current amount when on sale. */\n  sale?: string\n  /** Read before the struck-through amount. */\n  regular?: string\n}\n\nexport interface PriceProps extends Omit<HTMLAttributes<HTMLSpanElement>, \"children\"> {\n  amount: number\n  /** The original price. Shown struck through when higher than `amount`. */\n  compareAt?: number\n  currency?: string\n  locale?: string\n  size?: PriceSize\n  /** Badge showing the discount. Defaults to a percentage whenever there is one. */\n  savings?: \"percent\" | \"amount\" | false\n  trimZeros?: boolean\n  /** Render the minor units small and raised, as on product detail pages. */\n  superscript?: boolean\n  /** Trailing text such as \"/ month\". */\n  suffix?: ReactNode\n  labels?: PriceLabels\n  /** Stack the amounts in a column aligned to the end, so prices in a list share a right edge. */\n  stacked?: boolean\n}\n\nconst SIZE: Record<PriceSize, string> = {\n  sm: \"[--_text:var(--kg-text-sm)]\",\n  md: \"[--_text:var(--kg-text-md)]\",\n  lg: \"[--_text:var(--kg-text-xl)]\",\n  xl: \"[--_text:var(--kg-text-3xl)]\",\n}\n\n/* Danger pulled toward the text colour, the same AA-safe mix Field uses for errors. */\nconst saleInk = \"text-[color-mix(in_oklab,var(--kg-danger),var(--kg-fg)_30%)]\"\n\nconst defaultLabels: Required<PriceLabels> = {\n  sale: \"Sale price\",\n  regular: \"Regular price\",\n}\n\nexport const Price = forwardRef<HTMLSpanElement, PriceProps>(\n  (\n    {\n      amount,\n      compareAt,\n      currency = \"USD\",\n      locale: localeProp,\n      size = \"md\",\n      savings = \"percent\",\n      trimZeros = false,\n      superscript = false,\n      suffix,\n      labels,\n      stacked = false,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const locale = useLocale(localeProp)\n    const options = { currency, locale, trimZeros }\n    const text = { ...defaultLabels, ...labels }\n    const percent = discountPercent(amount, compareAt)\n    const onSale = percent > 0 && compareAt !== undefined\n    const formatted = formatMoney(amount, options)\n\n    const visual = superscript\n      ? getMoneyFormatter(options)\n          .formatToParts(amount)\n          .map((part, index) => {\n            if (part.type === \"decimal\") return null\n            if (part.type === \"fraction\") {\n              return (\n                <sup\n                  key={index}\n                  className=\"kg-price__minor ms-[0.05em] align-[0.55em] text-[0.55em] leading-none\"\n                >\n                  {part.value}\n                </sup>\n              )\n            }\n            return <span key={index}>{part.value}</span>\n          })\n      : formatted\n\n    return (\n      <span\n        ref={ref}\n        className={cx(\n          \"kg-price inline-flex gap-x-[0.5em] gap-y-[0.25em] leading-[1.1] tabular-nums\",\n          stacked ? \"flex-col items-end text-end\" : \"flex-wrap items-baseline\",\n          SIZE[size] ?? SIZE.md,\n          className,\n        )}\n        data-size={size}\n        data-on-sale={onSale || undefined}\n        {...props}\n      >\n        <span\n          className={cx(\n            \"kg-price__current text-(length:--_text) font-bold tracking-[-0.015em]\",\n            onSale ? saleInk : \"text-kg-fg\",\n          )}\n        >\n          <span className=\"kg-visually-hidden\">\n            {onSale ? `${text.sale} ${formatted}` : formatted}\n          </span>\n          <span aria-hidden=\"true\">{visual}</span>\n        </span>\n        {suffix != null && <span className=\"kg-price__suffix text-[length:calc(var(--_text)*0.7)] text-kg-fg-muted\">{suffix}</span>}\n        {onSale && (\n          <s className=\"kg-price__compare text-[length:calc(var(--_text)*0.72)] text-kg-fg-muted decoration-1\">\n            <span className=\"kg-visually-hidden\">{text.regular} </span>\n            {formatMoney(compareAt, options)}\n          </s>\n        )}\n        {onSale && savings && (\n          <span className=\"kg-price__savings self-center rounded-full bg-kg-paper-rose px-[0.5em] py-[0.2em] text-[length:max(0.6875rem,calc(var(--_text)*0.55))] font-bold leading-[1.2] text-kg-fg\">\n            {savings === \"percent\"\n              ? `−${percent}%`\n              : `−${formatMoney(compareAt - amount, options)}`}\n          </span>\n        )}\n      </span>\n    )\n  },\n)\n\nPrice.displayName = \"Price\"\n",
+      "target": "components/kitgrid/price/price.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

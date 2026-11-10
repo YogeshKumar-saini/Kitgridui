@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "grainient",
+  "type": "registry:ui",
+  "title": "Grainient",
+  "description": "A drifting, grainy colour field. Soft colour fields wander on transform-only loops under a film-grain SVG tile, so the compositor does the work: no canvas, no WebGL, no JavaScript. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/noise.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/grainient/grainient.css",
+      "type": "registry:file",
+      "content": "/* Keyframes only: the drift paths can't be utilities. */\n@layer kg.components {\n  @keyframes kg-grainient-a {\n    to {\n      transform: translate3d(38%, 30%, 0) rotate(40deg) scale(1.15);\n    }\n  }\n\n  @keyframes kg-grainient-b {\n    to {\n      transform: translate3d(-34%, -26%, 0) rotate(-30deg) scale(0.9);\n    }\n  }\n\n  @keyframes kg-grainient-c {\n    to {\n      transform: translate3d(-40%, 22%, 0) scale(1.35);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/grainient/grainient.css"
+    },
+    {
+      "path": "kitgrid/src/components/grainient/grainient.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { Noise } from \"../noise/noise\"\n\nexport interface GrainientProps extends HTMLAttributes<HTMLDivElement> {\n  /**\n   * Up to four CSS colors: the first is the base the others rise out of. Defaults to sage, peach\n   * and sky paper rising out of a butter-tinted page, so it follows the theme.\n   */\n  colors?: readonly string[]\n  /** Drift speed multiplier; 1 completes a cycle in roughly 18 seconds. */\n  speed?: number\n  /** How soft the colour fields are, in px. */\n  blur?: number\n  /** Film grain strength, 0–1. 0 removes the grain layer. */\n  grain?: number\n  /** Size of the grain tile, in px: larger reads coarser. */\n  grainSize?: number\n  /** Let the fields drift. They hold still under reduced motion regardless. */\n  animated?: boolean\n  /** Optional content, painted above the gradient. */\n  children?: ReactNode\n}\n\n/* Each field is a soft disc on its own transform-only loop; the paused base positions are the static frame. */\nconst field = cx(\n  \"kg-grainient__field absolute aspect-square rounded-full blur-(--_blur) opacity-60 will-change-transform\",\n  \"[animation-direction:alternate] [animation-iteration-count:infinite] [animation-play-state:paused]\",\n  \"[animation-timing-function:var(--kg-ease-in-out)] in-data-animated:[animation-play-state:running] motion-reduce:animate-none\",\n)\n\n/**\n * A drifting, grainy colour field. Soft colour fields wander on transform-only loops under a\n * film-grain SVG tile, so the compositor does the work: no canvas, no WebGL, no JavaScript.\n * Server-component safe.\n */\nexport const Grainient = forwardRef<HTMLDivElement, GrainientProps>(\n  (\n    {\n      colors,\n      speed = 1,\n      blur = 56,\n      grain = 0.22,\n      grainSize = 180,\n      animated = true,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const [c0, c1, c2, c3] = colors ?? []\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          cx(\n            \"kg-grainient absolute inset-0 overflow-hidden pointer-events-none bg-(--_base)\",\n            \"data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\",\n            \"[--_base:var(--kg-grainient-base,color-mix(in_oklab,var(--kg-paper-butter)_45%,var(--kg-bg)))]\",\n            \"[--_blur:var(--kg-grainient-blur,56px)]\",\n          ),\n          className,\n          wrapper,\n        )}\n        data-animated={animated || undefined}\n        style={\n          {\n            ...(c0 ? { \"--kg-grainient-base\": c0 } : null),\n            ...(c1 ? { \"--kg-grainient-color-1\": c1 } : null),\n            ...(c2 ? { \"--kg-grainient-color-2\": c2 } : null),\n            ...(c3 ? { \"--kg-grainient-color-3\": c3 } : null),\n            \"--kg-grainient-speed\": Math.max(speed, 0.01),\n            \"--kg-grainient-blur\": `${Math.max(blur, 0)}px`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-grainient__layer group/layer pointer-events-none absolute inset-0 overflow-hidden\" aria-hidden=\"true\">\n          <div\n            className={cx(field, \"-top-[30%] -left-[15%] w-[75%] bg-[radial-gradient(closest-side,var(--kg-grainient-color-1,var(--kg-paper-sage)),transparent)] [animation-name:kg-grainient-a] [animation-duration:calc(18s/var(--kg-grainient-speed,1))]\")}\n            data-field=\"1\"\n          />\n          <div\n            className={cx(field, \"-right-[20%] -bottom-[35%] w-[85%] bg-[radial-gradient(closest-side,var(--kg-grainient-color-2,var(--kg-paper-peach)),transparent)] [animation-name:kg-grainient-b] [animation-duration:calc(23s/var(--kg-grainient-speed,1))]\")}\n            data-field=\"2\"\n          />\n          <div\n            className={cx(field, \"top-[20%] left-[30%] w-[55%] bg-[radial-gradient(closest-side,var(--kg-grainient-color-3,var(--kg-paper-sky)),transparent)] opacity-45 [animation-name:kg-grainient-c] [animation-duration:calc(29s/var(--kg-grainient-speed,1))]\")}\n            data-field=\"3\"\n          />\n          {grain > 0 && (\n            <Noise\n              opacity={grain}\n              size={grainSize}\n              baseFrequency={0.9}\n              blendMode=\"overlay\"\n            />\n          )}\n        </div>\n        {wrapper && <div className=\"kg-grainient__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nGrainient.displayName = \"Grainient\"\n",
+      "target": "components/kitgrid/grainient/grainient.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/grainient/index.ts",
+      "type": "registry:ui",
+      "content": "export { Grainient, type GrainientProps } from \"./grainient\"\n",
+      "target": "components/kitgrid/grainient/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

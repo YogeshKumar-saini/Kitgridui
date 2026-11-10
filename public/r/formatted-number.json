@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "formatted-number",
+  "type": "registry:ui",
+  "title": "Formatted Number",
+  "description": "A number formatted with `Intl.NumberFormat`, wrapped in `<data>` with the raw value.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/formatted-number/formatted-number.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type FormattedNumberFormat = \"decimal\" | \"compact\" | \"percent\" | \"currency\" | \"unit\" | \"bytes\"\nexport type FormattedNumberTone = \"neutral\" | \"signed\"\n\nexport interface FormattedNumberProps\n  extends Omit<HTMLAttributes<HTMLDataElement>, \"children\"> {\n  value: number\n  format?: FormattedNumberFormat\n  /** ISO 4217 code for `currency`. */\n  currency?: string\n  /** A sanctioned unit for `unit`, such as `kilometer-per-hour` or `millisecond`. */\n  unit?: string\n  /** Fixed by default so the server and the browser print the same string. */\n  locale?: string\n  minimumFractionDigits?: number\n  maximumFractionDigits?: number\n  /** `percent` treats 0.42 as 42% by default; pass true when the value is already 42. */\n  percentOfHundred?: boolean\n  signDisplay?: \"auto\" | \"always\" | \"exceptZero\" | \"never\"\n  /** `signed` colors positive and negative values; the sign keeps the meaning in text. */\n  tone?: FormattedNumberTone\n  /** Shown when the value is not finite. */\n  fallback?: string\n}\n\nconst BYTE_UNITS = [\"byte\", \"kilobyte\", \"megabyte\", \"gigabyte\", \"terabyte\", \"petabyte\"]\n\nconst toParts = (props: FormattedNumberProps): string => {\n  const {\n    value,\n    format = \"decimal\",\n    currency = \"USD\",\n    unit = \"meter\",\n    locale = \"en-US\",\n    minimumFractionDigits,\n    maximumFractionDigits,\n    percentOfHundred = false,\n    signDisplay = \"auto\",\n  } = props\n  const digits = {\n    ...(minimumFractionDigits !== undefined && { minimumFractionDigits }),\n    ...(maximumFractionDigits !== undefined && { maximumFractionDigits }),\n  }\n  switch (format) {\n    case \"compact\":\n      return new Intl.NumberFormat(locale, {\n        notation: \"compact\",\n        maximumFractionDigits: 1,\n        signDisplay,\n        ...digits,\n      }).format(value)\n    case \"percent\":\n      return new Intl.NumberFormat(locale, {\n        style: \"percent\",\n        maximumFractionDigits: 1,\n        signDisplay,\n        ...digits,\n      }).format(percentOfHundred ? value / 100 : value)\n    case \"currency\":\n      return new Intl.NumberFormat(locale, {\n        style: \"currency\",\n        currency,\n        signDisplay,\n        ...digits,\n      }).format(value)\n    case \"unit\":\n      return new Intl.NumberFormat(locale, {\n        style: \"unit\",\n        unit,\n        unitDisplay: \"short\",\n        signDisplay,\n        ...digits,\n      }).format(value)\n    case \"bytes\": {\n      let size = Math.abs(value)\n      let index = 0\n      while (size >= 1024 && index < BYTE_UNITS.length - 1) {\n        size /= 1024\n        index++\n      }\n      return new Intl.NumberFormat(locale, {\n        style: \"unit\",\n        unit: BYTE_UNITS[index] ?? \"byte\",\n        unitDisplay: \"short\",\n        maximumFractionDigits: index === 0 ? 0 : 1,\n        signDisplay,\n        ...digits,\n      }).format(Math.sign(value) * size)\n    }\n    default:\n      return new Intl.NumberFormat(locale, { signDisplay, ...digits }).format(value)\n  }\n}\n\n/** A number formatted with `Intl.NumberFormat`, wrapped in `<data>` with the raw value. */\nexport const FormattedNumber = forwardRef<HTMLDataElement, FormattedNumberProps>(\n  (props, ref) => {\n    const {\n      value,\n      format = \"decimal\",\n      currency: _currency,\n      unit: _unit,\n      locale: _locale,\n      minimumFractionDigits: _min,\n      maximumFractionDigits: _max,\n      percentOfHundred: _pct,\n      signDisplay: _sign,\n      tone = \"neutral\",\n      fallback = \"-\",\n      className,\n      ...rest\n    } = props\n    const finite = Number.isFinite(value)\n    const text = finite ? toParts(props) : fallback\n    const sign = !finite || value === 0 ? \"zero\" : value > 0 ? \"positive\" : \"negative\"\n    return (\n      <data\n        ref={ref}\n        value={finite ? String(value) : undefined}\n        className={cx(\n          \"kg-formatted-number whitespace-nowrap tabular-nums data-[tone=signed]:data-[sign=positive]:text-[color-mix(in_oklab,var(--kg-success)_80%,var(--kg-fg))] data-[tone=signed]:data-[sign=negative]:text-[color-mix(in_oklab,var(--kg-danger)_80%,var(--kg-fg))]\",\n          className,\n        )}\n        data-format={format}\n        data-tone={tone}\n        data-sign={sign}\n        {...rest}\n      >\n        {text}\n      </data>\n    )\n  },\n)\nFormattedNumber.displayName = \"FormattedNumber\"\n",
+      "target": "components/kitgrid/formatted-number/formatted-number.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/formatted-number/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  FormattedNumber,\n  type FormattedNumberFormat,\n  type FormattedNumberProps,\n  type FormattedNumberTone,\n} from \"./formatted-number\"\n",
+      "target": "components/kitgrid/formatted-number/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

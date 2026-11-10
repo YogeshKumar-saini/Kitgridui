@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "moire",
+  "type": "registry:ui",
+  "title": "Moire",
+  "description": "Two identical hairline patterns drifting against each other, so large interference fringes bloom and dissolve between them. Two gradients, transform only. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/moire/index.ts",
+      "type": "registry:ui",
+      "content": "export { Moire, type MoireProps, type MoireMask } from \"./moire\"\n",
+      "target": "components/kitgrid/moire/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/moire/moire.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-moire {\n    &[data-mask=\"radial\"] > .kg-moire__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-moire__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-moire__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-moire__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n\n  .kg-moire__sheet {\n    animation-duration: calc(26s / var(--_speed));\n    animation-timing-function: var(--kg-ease-in-out);\n    animation-iteration-count: infinite;\n    animation-direction: alternate;\n    animation-play-state: var(--kg-moire-state, running);\n  }\n\n  .kg-moire[data-pattern=\"rings\"] .kg-moire__sheet {\n    background-image: repeating-radial-gradient(\n      circle at 50% 50%,\n      var(--_c) 0 1px,\n      transparent 1px var(--_s)\n    );\n  }\n\n  .kg-moire[data-pattern=\"lines\"] .kg-moire__sheet {\n    background-image: repeating-linear-gradient(\n      90deg,\n      var(--_c) 0 1px,\n      transparent 1px var(--_s)\n    );\n  }\n\n  .kg-moire__sheet[data-sheet=\"b\"] {\n    animation-name: kg-moire-drift;\n  }\n\n  .kg-moire[data-pattern=\"lines\"] .kg-moire__sheet[data-sheet=\"b\"] {\n    animation-name: kg-moire-tilt;\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-moire__sheet {\n      animation: none !important;\n    }\n\n    .kg-moire__sheet[data-sheet=\"b\"] {\n      transform: translate3d(4%, 3%, 0) rotate(2deg);\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-moire__sheet {\n    animation: none !important;\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-moire__sheet[data-sheet=\"b\"] {\n    transform: translate3d(4%, 3%, 0) rotate(2deg);\n  }\n\n  @keyframes kg-moire-drift {\n    from {\n      transform: translate3d(-6%, -3%, 0);\n    }\n    to {\n      transform: translate3d(7%, 5%, 0);\n    }\n  }\n\n  @keyframes kg-moire-tilt {\n    from {\n      transform: rotate(-4deg);\n    }\n    to {\n      transform: rotate(4deg);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/moire/moire.css"
+    },
+    {
+      "path": "kitgrid/src/components/moire/moire.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport type MoireMask = BackdropMask\n\nexport interface MoireProps extends HTMLAttributes<HTMLDivElement> {\n  /** Concentric rings or straight lines. */\n  pattern?: \"rings\" | \"lines\"\n  /** Any CSS color. Defaults to a faint ink. */\n  color?: string\n  /** Distance between lines, in px. */\n  spacing?: number\n  /** Drift speed multiplier; 0 holds the interference still. */\n  speed?: number\n  mask?: MoireMask\n  children?: ReactNode\n}\n\n/**\n * Two identical hairline patterns drifting against each other, so large interference fringes\n * bloom and dissolve between them. Two gradients, transform only. Server-component safe.\n */\nexport const Moire = forwardRef<HTMLDivElement, MoireProps>(\n  (\n    {\n      pattern = \"rings\",\n      color,\n      spacing = 9,\n      speed = 1,\n      mask = \"radial\",\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-moire absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-moire-color,color-mix(in_oklab,var(--kg-ink)_22%,transparent))] [--_s:var(--kg-moire-spacing,9px)] [--_speed:var(--kg-moire-speed,1)]\",\n          className,\n          wrapper,\n        )}\n        data-mask={mask}\n        data-pattern={pattern}\n        style={\n          {\n            ...(color ? { \"--kg-moire-color\": color } : null),\n            \"--kg-moire-spacing\": `${Math.max(spacing, 3)}px`,\n            \"--kg-moire-speed\": Math.max(speed, 0.001),\n            \"--kg-moire-state\": speed === 0 ? \"paused\" : \"running\",\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-moire__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <div className=\"kg-moire__sheet absolute -inset-[30%] will-change-transform\" data-sheet=\"a\" />\n          <div className=\"kg-moire__sheet absolute -inset-[30%] will-change-transform\" data-sheet=\"b\" />\n        </div>\n        {wrapper && <div className=\"kg-moire__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nMoire.displayName = \"Moire\"\n",
+      "target": "components/kitgrid/moire/moire.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

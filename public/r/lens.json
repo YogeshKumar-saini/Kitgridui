@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "lens",
+  "type": "registry:ui",
+  "title": "Lens",
+  "description": "A round magnifier that follows the pointer over an image or any content. The magnified copy is a clipped, scaled clone driven by pointer CSS variables, so it costs no re-renders; the clone is inert and hidden from assistive tech.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/lens/index.ts",
+      "type": "registry:ui",
+      "content": "export { Lens, type LensProps } from \"./lens\"\n",
+      "target": "components/kitgrid/lens/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/lens/lens.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface LensProps extends HTMLAttributes<HTMLDivElement> {\n  /** Magnification inside the lens. */\n  zoom?: number\n  /** Diameter of the lens, in px. */\n  size?: number\n}\n\n/**\n * A round magnifier that follows the pointer over an image or any content. The magnified copy\n * is a clipped, scaled clone driven by pointer CSS variables, so it costs no re-renders; the\n * clone is inert and hidden from assistive tech.\n */\nexport const Lens = forwardRef<HTMLDivElement, LensProps>(\n  ({ zoom = 2, size = 170, className, style, children, ...props }, forwardedRef) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const cloneRef = useRef<HTMLDivElement>(null)\n    usePointerVars(local)\n\n    useEffect(() => {\n      const clone = cloneRef.current\n      if (!clone) return\n      clone.setAttribute(\"inert\", \"\")\n      // The clone must not duplicate ids (broken label/aria references) or form names\n      // (radio groups and submissions would see two controls).\n      const strip = () =>\n        clone.querySelectorAll(\"[id], [name]\").forEach((node) => {\n          node.removeAttribute(\"id\")\n          node.removeAttribute(\"name\")\n        })\n      strip()\n      const observer = new MutationObserver(strip)\n      observer.observe(clone, {\n        subtree: true,\n        childList: true,\n        attributes: true,\n        attributeFilter: [\"id\", \"name\"],\n      })\n      return () => observer.disconnect()\n    }, [])\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-lens group/lens relative cursor-zoom-in overflow-hidden rounded-kg-xl [&_img]:block [&_img]:max-w-full\", className)}\n        style={{ \"--_zoom\": zoom, \"--_size\": `${size}px`, ...style } as CSSProperties}\n        {...props}\n      >\n        {children}\n        <div ref={cloneRef} className=\"kg-lens__zoom pointer-events-none absolute inset-0 origin-[var(--kg-pointer-x,50%)_var(--kg-pointer-y,50%)] opacity-0 transition-opacity duration-(--kg-duration-base) ease-kg-out [clip-path:circle(calc(var(--_size)_/_2_/_var(--_zoom))_at_var(--kg-pointer-x,50%)_var(--kg-pointer-y,50%))] [transform:scale(var(--_zoom))] group-data-[pointer=in]/lens:opacity-100\" aria-hidden=\"true\">\n          {children}\n        </div>\n        <span\n          className=\"kg-lens__ring pointer-events-none absolute top-0 left-0 size-(--_size) rounded-full border-2 border-kg-ink opacity-0 shadow-kg-lg transition-opacity duration-(--kg-duration-base) ease-kg-out [transform:translate(calc(var(--kg-pointer-x,0px)_-_var(--_size)_/_2),calc(var(--kg-pointer-y,0px)_-_var(--_size)_/_2))] group-data-[pointer=in]/lens:opacity-100\"\n          aria-hidden=\"true\"\n        />\n      </div>\n    )\n  },\n)\n\nLens.displayName = \"Lens\"\n",
+      "target": "components/kitgrid/lens/lens.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

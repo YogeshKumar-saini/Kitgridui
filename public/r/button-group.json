@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "button-group",
+  "type": "registry:ui",
+  "title": "Button Group",
+  "description": "Groups related buttons under one accessible name. Pass `aria-label` to name the group.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/button-group/button-group.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type ButtonGroupOrientation = \"horizontal\" | \"vertical\"\n\n/*\n * Attached segments share one 2px ink edge. The selectors are qualified so they outrank the\n * children's own radius utilities; hovered and focused segments rise above their neighbours.\n */\nconst groupClass = [\n  \"kg-button-group inline-flex gap-2 data-[orientation=vertical]:flex-col\",\n  \"data-attached:isolate data-attached:gap-0\",\n  \"[&[data-attached]>*]:relative [&[data-attached]>*:hover]:z-1 [&[data-attached]>*:focus-visible]:z-2\",\n  \"[&[data-attached][data-orientation=horizontal]>*:not(:first-child)]:-ms-[2px]\",\n  \"[&[data-attached][data-orientation=horizontal]>*:not(:first-child)]:rounded-s-none\",\n  \"[&[data-attached][data-orientation=horizontal]>*:not(:last-child)]:rounded-e-none\",\n  \"[&[data-attached][data-orientation=vertical]>*:not(:first-child)]:-mt-[2px]\",\n  \"[&[data-attached][data-orientation=vertical]>*:not(:first-child)]:rounded-t-none\",\n  \"[&[data-attached][data-orientation=vertical]>*:not(:last-child)]:rounded-b-none\",\n]\n\nexport interface ButtonGroupProps extends HTMLAttributes<HTMLDivElement> {\n  orientation?: ButtonGroupOrientation\n  /** Fuse the buttons into one control with shared borders. Off leaves a small gap. */\n  attached?: boolean\n}\n\n/** Groups related buttons under one accessible name. Pass `aria-label` to name the group. */\nexport const ButtonGroup = forwardRef<HTMLDivElement, ButtonGroupProps>(\n  ({ orientation = \"horizontal\", attached = true, className, ...props }, ref) => (\n    <div\n      ref={ref}\n      role=\"group\"\n      className={cx(groupClass, className)}\n      data-orientation={orientation}\n      data-attached={attached || undefined}\n      {...props}\n    />\n  ),\n)\n\nButtonGroup.displayName = \"ButtonGroup\"\n",
+      "target": "components/kitgrid/button-group/button-group.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/button-group/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  ButtonGroup,\n  type ButtonGroupOrientation,\n  type ButtonGroupProps,\n} from \"./button-group\"\n",
+      "target": "components/kitgrid/button-group/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

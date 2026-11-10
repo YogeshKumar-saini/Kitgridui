@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "series-swatch",
+  "type": "registry:ui",
+  "title": "Series Swatch",
+  "description": "Carries a series' identity beside its label, so the label itself stays in the text colour. The mark is decorative; the children are the accessible label. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/series-swatch/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  SeriesSwatch,\n  type SeriesSwatchProps,\n  type SeriesSwatchShape,\n} from \"./series-swatch\"\n",
+      "target": "components/kitgrid/series-swatch/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/series-swatch/series-swatch.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * `--kg-series-N` lets a theme supply a chart palette; without one, the accent, status hues and\n * ink steps keep series apart.\n */\nconst palette = [\n  \"[--_color:var(--kg-series-1,var(--kg-accent))]\",\n  \"[--_color:var(--kg-series-2,var(--kg-info))]\",\n  \"[--_color:var(--kg-series-3,var(--kg-success))]\",\n  \"[--_color:var(--kg-series-4,var(--kg-warning))]\",\n  \"[--_color:var(--kg-series-5,var(--kg-danger))]\",\n  \"[--_color:var(--kg-series-6,var(--kg-fg-muted))]\",\n  \"[--_color:var(--kg-series-7,var(--kg-accent-strong))]\",\n  \"[--_color:var(--kg-series-8,var(--kg-fg-faint))]\",\n]\n\nconst markVariants = variants({\n  base: \"kg-series-swatch__mark shrink-0\",\n  variants: {\n    shape: {\n      dot: \"size-[0.625rem] rounded-full bg-(--_color)\",\n      square: \"size-[0.625rem] rounded-kg-xs bg-(--_color)\",\n      line: \"h-[2px] w-[0.875rem] bg-(--_color)\",\n      dash: \"h-[2px] w-[0.875rem] bg-[repeating-linear-gradient(90deg,var(--_color)_0_4px,transparent_4px_6px)]\",\n      area: \"h-[0.625rem] w-[0.875rem] rounded-[1px] border-t-2 border-(--_color) bg-(--_color)/28\",\n    },\n  },\n  defaults: { shape: \"dot\" },\n})\n\nexport type SeriesSwatchShape = NonNullable<VariantProps<typeof markVariants>[\"shape\"]>\n\nexport interface SeriesSwatchProps extends HTMLAttributes<HTMLSpanElement> {\n  shape?: SeriesSwatchShape\n  /** Position in the series palette, from 0. Ignored when `color` is set. */\n  index?: number\n  /** Any CSS color, e.g. `var(--kg-info)`. */\n  color?: string\n}\n\n/**\n * Carries a series' identity beside its label, so the label itself stays in the text colour.\n * The mark is decorative; the children are the accessible label. Server-safe.\n */\nexport const SeriesSwatch = forwardRef<HTMLSpanElement, SeriesSwatchProps>(\n  ({ shape = \"dot\", index = 0, color, className, style, children, ...props }, ref) => {\n    const slot = color ? undefined : Math.abs(Math.trunc(index)) % 8\n    return (\n      <span\n        ref={ref}\n        className={cx(\n          \"kg-series-swatch inline-flex min-w-0 items-center gap-1.5 text-kg-sm leading-[1.3] text-kg-fg\",\n          slot === undefined ? undefined : palette[slot],\n          className,\n        )}\n        data-shape={shape}\n        data-index={slot}\n        style={color ? ({ ...style, \"--_color\": color } as CSSProperties) : style}\n        {...props}\n      >\n        <span className={markVariants({ shape })} aria-hidden=\"true\" />\n        {children}\n      </span>\n    )\n  },\n)\n\nSeriesSwatch.displayName = \"SeriesSwatch\"\n",
+      "target": "components/kitgrid/series-swatch/series-swatch.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

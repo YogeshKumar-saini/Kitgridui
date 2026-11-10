@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "magnetic",
+  "type": "registry:ui",
+  "title": "Magnetic",
+  "description": "Pulls its child toward a nearby pointer and springs it home when the pointer moves away.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/magnetic/index.ts",
+      "type": "registry:ui",
+      "content": "export { Magnetic, type MagneticProps } from \"./magnetic\"\n",
+      "target": "components/kitgrid/magnetic/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/magnetic/magnetic.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  forwardRef,\n  type HTMLAttributes,\n  type ReactElement,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useInView } from \"../lib/hooks/use-in-view\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { createSpring, type SpringConfig } from \"../lib/hooks/use-spring\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\n\nexport interface MagneticProps extends HTMLAttributes<HTMLElement> {\n  /** A single element. It keeps its own markup; only `translate` is written to it. */\n  children: ReactElement\n  /** Fraction of the pointer's offset from the centre that the element follows, 0–1. */\n  strength?: number\n  /** How far beyond the element's edge the pull reaches, in px. */\n  radius?: number\n  disabled?: boolean\n  spring?: SpringConfig\n}\n\nconst DEFAULT_SPRING: SpringConfig = { stiffness: 210, damping: 15, mass: 0.7 }\n\n/** Pulls its child toward a nearby pointer and springs it home when the pointer moves away. */\nexport const Magnetic = forwardRef<HTMLElement, MagneticProps>(\n  (\n    { children, strength = 0.35, radius = 80, disabled = false, spring, ...props },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLElement | null>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const reduced = useReducedMotion()\n    const inView = useInView(local, { once: false, amount: 0 })\n    const enabled = !disabled && !reduced && inView\n    const { stiffness, damping, mass } = spring ?? DEFAULT_SPRING\n\n    useEffect(() => {\n      const node = local.current\n      if (!node || !enabled) return\n      const config = { stiffness, damping, mass, precision: 0.05 }\n      const write = () => {\n        const dx = x.get()\n        const dy = y.get()\n        const resting = Math.abs(dx) < 0.05 && Math.abs(dy) < 0.05\n        node.style.translate = resting ? \"\" : `${dx.toFixed(2)}px ${dy.toFixed(2)}px`\n      }\n      const x = createSpring(0, write, config)\n      const y = createSpring(0, write, config)\n\n      let frame = 0\n      let last: PointerEvent | null = null\n\n      const release = () => {\n        delete node.dataset.magnetic\n        x.set(0)\n        y.set(0)\n      }\n\n      const flush = () => {\n        frame = 0\n        if (!last) return\n        const rect = node.getBoundingClientRect()\n        // Measure the resting position: the rect already includes the current pull.\n        const cx = rect.left + rect.width / 2 - x.get()\n        const cy = rect.top + rect.height / 2 - y.get()\n        const dx = last.clientX - cx\n        const dy = last.clientY - cy\n        const outside = Math.hypot(\n          Math.max(Math.abs(dx) - rect.width / 2, 0),\n          Math.max(Math.abs(dy) - rect.height / 2, 0),\n        )\n        if (outside > radius) {\n          if (node.dataset.magnetic) release()\n          return\n        }\n        // Full pull over the element, easing to nothing at the edge of the field: no snap.\n        const falloff = radius > 0 ? 1 - (outside / radius) ** 2 : 1\n        node.dataset.magnetic = \"active\"\n        x.set(dx * strength * falloff)\n        y.set(dy * strength * falloff)\n      }\n\n      const handleMove = (event: PointerEvent) => {\n        if (event.pointerType === \"touch\") return\n        last = event\n        if (!frame) frame = requestAnimationFrame(flush)\n      }\n      const handleOut = (event: PointerEvent) => {\n        if (!event.relatedTarget) release()\n      }\n\n      window.addEventListener(\"pointermove\", handleMove, { passive: true })\n      document.addEventListener(\"pointerout\", handleOut)\n      window.addEventListener(\"blur\", release)\n      return () => {\n        cancelAnimationFrame(frame)\n        x.stop()\n        y.stop()\n        window.removeEventListener(\"pointermove\", handleMove)\n        document.removeEventListener(\"pointerout\", handleOut)\n        window.removeEventListener(\"blur\", release)\n        node.style.translate = \"\"\n        delete node.dataset.magnetic\n      }\n    }, [enabled, strength, radius, stiffness, damping, mass])\n\n    return (\n      <Slot ref={ref} {...props}>\n        {children}\n      </Slot>\n    )\n  },\n)\n\nMagnetic.displayName = \"Magnetic\"\n",
+      "target": "components/kitgrid/magnetic/magnetic.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

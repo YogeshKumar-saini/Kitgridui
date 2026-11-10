@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "trial-countdown",
+  "type": "registry:ui",
+  "title": "Trial Countdown",
+  "description": "Time left on a trial as a draining ring, with room for an upgrade action. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/trial-countdown/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  TrialCountdown,\n  type TrialCountdownProps,\n  type TrialCountdownVariant,\n} from \"./trial-countdown\"\n",
+      "target": "components/kitgrid/trial-countdown/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/trial-countdown/trial-countdown.css",
+      "type": "registry:file",
+      "content": "@property --kg-trial-left {\n  syntax: \"<number>\";\n  inherits: true;\n  initial-value: 0;\n}\n",
+      "target": "components/kitgrid/trial-countdown/trial-countdown.css"
+    },
+    {
+      "path": "kitgrid/src/components/trial-countdown/trial-countdown.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: a draining ring in the state's tone. The card is a white sheet with an ink edge;\n * --kg-trial-left is registered in trial-countdown.css so the ring can ease between values.\n */\nexport const trialCountdownVariants = variants({\n  base: [\n    \"kg-trial-countdown flex items-center gap-3 min-w-0 [--kg-trial-left:var(--_left,0)]\",\n    \"transition-[--kg-trial-left] duration-(--kg-duration-slower) ease-kg-out\",\n  ],\n  variants: {\n    variant: {\n      card: \"p-3 text-kg-fg bg-kg-surface border-2 border-kg-ink rounded-kg-lg shadow-kg-sm\",\n      inline: \"\",\n    },\n    state: {\n      active: \"[--_tone:var(--kg-accent)]\",\n      urgent: \"[--_tone:var(--kg-warning)]\",\n      ended: \"[--_tone:var(--kg-danger)]\",\n    },\n  },\n  defaults: { variant: \"card\", state: \"active\" },\n})\n\nexport type TrialCountdownVariant = NonNullable<\n  VariantProps<typeof trialCountdownVariants>[\"variant\"]\n>\n\nexport interface TrialCountdownProps extends Omit<HTMLAttributes<HTMLDivElement>, \"title\"> {\n  /** Days remaining. Pass a computed number so server and client render the same thing. */\n  daysLeft: number\n  /** Trial length, for the ring. */\n  totalDays: number\n  /** Plan being trialled, e.g. \"Pro\". */\n  plan?: ReactNode\n  /** Usually an upgrade button. */\n  action?: ReactNode\n  variant?: TrialCountdownVariant\n  formatLeft?: (days: number) => string\n  /** Days left at which the ring turns amber. */\n  urgentAt?: number\n}\n\nconst defaultLeft = (days: number) =>\n  days <= 0 ? \"Trial ended\" : `${days} ${days === 1 ? \"day\" : \"days\"} left`\n\n/** Time left on a trial as a draining ring, with room for an upgrade action. Server-safe. */\nexport const TrialCountdown = forwardRef<HTMLDivElement, TrialCountdownProps>(\n  (\n    {\n      daysLeft,\n      totalDays,\n      plan,\n      action,\n      variant = \"card\",\n      formatLeft = defaultLeft,\n      urgentAt = 3,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const left = Math.max(Math.round(daysLeft), 0)\n    const fraction = totalDays > 0 ? Math.min(left / totalDays, 1) : 0\n    const state = left <= 0 ? \"ended\" : left <= urgentAt ? \"urgent\" : \"active\"\n    return (\n      <div\n        ref={ref}\n        className={trialCountdownVariants({ variant, state, className })}\n        data-variant={variant}\n        data-state={state}\n        style={{ \"--_left\": fraction, ...style } as CSSProperties}\n        {...props}\n      >\n        <span\n          className={cx(\n            \"kg-trial-countdown__ring relative grid shrink-0 place-items-center size-[2.25rem]\",\n            \"before:absolute before:inset-0 before:rounded-full\",\n            \"before:bg-[conic-gradient(var(--_tone)_calc(var(--kg-trial-left)*1turn),var(--kg-muted)_0)]\",\n            \"before:[mask:radial-gradient(circle,transparent_60%,var(--kg-fg)_62%)]\",\n          )}\n          aria-hidden=\"true\"\n        >\n          <span className=\"kg-trial-countdown__number relative text-kg-sm font-bold tabular-nums text-kg-fg\">\n            {left}\n          </span>\n        </span>\n        <div className=\"kg-trial-countdown__text grid flex-1 min-w-0 leading-[1.3]\">\n          {plan != null && (\n            <span className=\"kg-trial-countdown__plan text-kg-xs font-[560] text-kg-fg-muted\">\n              {plan}\n            </span>\n          )}\n          <span className=\"kg-trial-countdown__left text-kg-sm font-[620] text-kg-fg\">\n            {formatLeft(left)}\n          </span>\n        </div>\n        {action != null && <div className=\"kg-trial-countdown__action shrink-0\">{action}</div>}\n      </div>\n    )\n  },\n)\n\nTrialCountdown.displayName = \"TrialCountdown\"\n",
+      "target": "components/kitgrid/trial-countdown/trial-countdown.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

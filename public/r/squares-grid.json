@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "squares-grid",
+  "type": "registry:ui",
+  "title": "Squares Grid",
+  "description": "A hairline grid that scrolls steadily in one direction, lighting the cell under the pointer as it passes. Canvas, DPR-capped, paused offscreen and still under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/backdrop-kit.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/squares-grid/index.ts",
+      "type": "registry:ui",
+      "content": "export { SquaresGrid, type SquaresGridProps, type SquaresGridMask, type SquaresGridDirection } from \"./squares-grid\"\n",
+      "target": "components/kitgrid/squares-grid/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/squares-grid/squares-grid.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-squares-grid {\n    &[data-mask=\"radial\"] > .kg-squares-grid__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-squares-grid__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-squares-grid__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-squares-grid__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/squares-grid/squares-grid.css"
+    },
+    {
+      "path": "kitgrid/src/components/squares-grid/squares-grid.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { rgba, useCanvasStage } from \"../backdrop-kit/stage\"\n\nexport type SquaresGridMask = BackdropMask\nexport type SquaresGridDirection = \"right\" | \"left\" | \"up\" | \"down\" | \"diagonal\"\n\nexport interface SquaresGridProps extends HTMLAttributes<HTMLDivElement> {\n  /** Which way the grid scrolls. */\n  direction?: SquaresGridDirection\n  /** Scroll speed in px per frame; 0 holds it still. */\n  speed?: number\n  /** Cell size, in px. */\n  size?: number\n  /** Any CSS color for the lines. Defaults to the border token. */\n  lineColor?: string\n  /** Any CSS color for the cell under the pointer. Defaults to sage paper. */\n  hoverColor?: string\n  mask?: SquaresGridMask\n  children?: ReactNode\n}\n\nconst VECTORS: Record<SquaresGridDirection, readonly [number, number]> = {\n  right: [1, 0],\n  left: [-1, 0],\n  up: [0, -1],\n  down: [0, 1],\n  diagonal: [0.7071, 0.7071],\n}\n\n/**\n * A hairline grid that scrolls steadily in one direction, lighting the cell under the pointer as\n * it passes. Canvas, DPR-capped, paused offscreen and still under reduced motion.\n */\nexport const SquaresGrid = forwardRef<HTMLDivElement, SquaresGridProps>(\n  (\n    {\n      direction = \"diagonal\",\n      speed = 0.4,\n      size = 44,\n      lineColor = \"var(--kg-border)\",\n      hoverColor = \"var(--kg-paper-sage)\",\n      mask = \"radial\",\n      className,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const wrapper = hasChildren(children)\n    const offset = useRef({ x: 0, y: 0 })\n\n    useCanvasStage(root, canvasRef, {\n      draw: ({ ctx, width, height, dt, still, pointer, color }) => {\n        const cell = Math.max(size, 8)\n        const [vx, vy] = VECTORS[direction]\n        if (!still) {\n          offset.current.x = (offset.current.x + vx * speed * dt + cell) % cell\n          offset.current.y = (offset.current.y + vy * speed * dt + cell) % cell\n        }\n        const { x: ox, y: oy } = offset.current\n        ctx.clearRect(0, 0, width, height)\n\n        if (pointer.inside) {\n          const cx = Math.floor((pointer.x - ox) / cell) * cell + ox\n          const cy = Math.floor((pointer.y - oy) / cell) * cell + oy\n          ctx.fillStyle = rgba(color(hoverColor))\n          ctx.fillRect(cx, cy, cell, cell)\n        }\n\n        ctx.strokeStyle = rgba(color(lineColor))\n        ctx.lineWidth = 1\n        ctx.beginPath()\n        for (let x = (ox % cell) - cell; x <= width + cell; x += cell) {\n          const sx = Math.round(x) + 0.5\n          ctx.moveTo(sx, 0)\n          ctx.lineTo(sx, height)\n        }\n        for (let y = (oy % cell) - cell; y <= height + cell; y += cell) {\n          const sy = Math.round(y) + 0.5\n          ctx.moveTo(0, sy)\n          ctx.lineTo(width, sy)\n        }\n        ctx.stroke()\n      },\n    })\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\"kg-squares-grid absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\", className, wrapper)}\n        data-mask={mask}\n        {...props}\n      >\n        <div className=\"kg-squares-grid__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <canvas ref={canvasRef} className=\"kg-squares-grid__canvas block size-full\" />\n        </div>\n        {wrapper && <div className=\"kg-squares-grid__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nSquaresGrid.displayName = \"SquaresGrid\"\n",
+      "target": "components/kitgrid/squares-grid/squares-grid.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

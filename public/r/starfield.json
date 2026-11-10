@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "starfield",
+  "type": "registry:ui",
+  "title": "Starfield",
+  "description": "Flying through a field of stars: points stream outward from the centre and stretch into warp streaks as they pass. Canvas, DPR-capped, paused offscreen, a still sky under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/backdrop-kit.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/starfield/index.ts",
+      "type": "registry:ui",
+      "content": "export { Starfield, type StarfieldProps } from \"./starfield\"\n",
+      "target": "components/kitgrid/starfield/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/starfield/starfield.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { createRandom } from \"../aurora/internal/random\"\nimport { rgba, useCanvasStage } from \"../backdrop-kit/stage\"\n\nexport interface StarfieldProps extends HTMLAttributes<HTMLDivElement> {\n  /** Number of stars, capped at 1200. */\n  count?: number\n  /** Any CSS color for the stars. Defaults to the foreground. */\n  color?: string\n  /** Any CSS color for a share of nearer stars. Defaults to ink. */\n  accentColor?: string\n  /** Travel speed multiplier; 0 holds the field still. */\n  speed?: number\n  /** Streak length, 0–1: 0 draws points, 1 draws long warp trails. */\n  warp?: number\n  /** Same seed, same sky. */\n  seed?: number\n  children?: ReactNode\n}\n\ninterface Star {\n  x: number\n  y: number\n  z: number\n  accent: boolean\n}\n\nconst DEPTH = 1000\n\n/**\n * Flying through a field of stars: points stream outward from the centre and stretch into warp\n * streaks as they pass. Canvas, DPR-capped, paused offscreen, a still sky under reduced motion.\n */\nexport const Starfield = forwardRef<HTMLDivElement, StarfieldProps>(\n  (\n    {\n      count = 420,\n      color = \"var(--kg-fg)\",\n      accentColor = \"var(--kg-ink)\",\n      speed = 1,\n      warp = 0.35,\n      seed = 2,\n      className,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const wrapper = hasChildren(children)\n    const stars = useRef<Star[]>([])\n    const built = useRef(\"\")\n    const total = Math.min(Math.max(Math.round(count), 0), 1200)\n\n    if (built.current !== `${total}:${seed}`) {\n      built.current = `${total}:${seed}`\n      const random = createRandom(seed)\n      stars.current = Array.from({ length: total }, () => ({\n        x: (random() - 0.5) * 2,\n        y: (random() - 0.5) * 2,\n        z: random() * DEPTH,\n        accent: random() < 0.08,\n      }))\n    }\n\n    useCanvasStage(root, canvasRef, {\n      pointer: false,\n      deps: [total, seed],\n      draw: ({ ctx, width, height, dt, still, color: resolve }) => {\n        const cx = width / 2\n        const cy = height / 2\n        const spread = Math.max(width, height) * 0.6\n        const step = still ? 0 : 4 * speed * dt\n        const trail = Math.min(Math.max(warp, 0), 1) * 22\n        const base = resolve(color)\n        const lit = resolve(accentColor)\n        ctx.clearRect(0, 0, width, height)\n        ctx.lineCap = \"round\"\n        for (const star of stars.current) {\n          const before = star.z\n          star.z -= step\n          if (star.z <= 1) {\n            star.z += DEPTH\n            continue\n          }\n          const k = DEPTH / star.z\n          const x = cx + star.x * spread * k * 0.25\n          const y = cy + star.y * spread * k * 0.25\n          if (x < -20 || x > width + 20 || y < -20 || y > height + 20) {\n            star.z = DEPTH\n            continue\n          }\n          const near = 1 - star.z / DEPTH\n          const alpha = near * near * 0.7 + 0.04\n          const radius = 0.25 + near * 1.15\n          ctx.strokeStyle = rgba(star.accent ? lit : base, alpha)\n          ctx.lineWidth = radius * 2\n          ctx.beginPath()\n          if (!still && trail > 0) {\n            const kb = DEPTH / Math.min(before + step * trail, DEPTH)\n            ctx.moveTo(cx + star.x * spread * kb * 0.25, cy + star.y * spread * kb * 0.25)\n          } else {\n            ctx.moveTo(x - 0.01, y)\n          }\n          ctx.lineTo(x, y)\n          ctx.stroke()\n        }\n      },\n    })\n\n    return (\n      <div ref={ref} {...backdropRoot(\"kg-starfield absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\", className, wrapper)} {...props}>\n        <div className=\"kg-starfield__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <canvas ref={canvasRef} className=\"kg-starfield__canvas block size-full\" />\n        </div>\n        {wrapper && <div className=\"kg-starfield__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nStarfield.displayName = \"Starfield\"\n",
+      "target": "components/kitgrid/starfield/starfield.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

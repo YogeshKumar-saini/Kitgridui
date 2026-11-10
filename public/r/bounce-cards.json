@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "bounce-cards",
+  "type": "registry:ui",
+  "title": "Bounce Cards",
+  "description": "A fanned hand of cards that bounce in one by one. Hovering or focusing a card straightens and lifts it while its neighbours lean away to make room.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/bounce-cards/bounce-cards.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  @keyframes kg-bounce-in {\n    from {\n      opacity: 0;\n      scale: 0.85;\n      translate: 0 12px;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/bounce-cards/bounce-cards.css"
+    },
+    {
+      "path": "kitgrid/src/components/bounce-cards/bounce-cards.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  Children,\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n  useState,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface BounceCardsProps extends HTMLAttributes<HTMLDivElement> {\n  /** The cards, left to right. Images or small panels work best. */\n  children: ReactNode\n  /** Rotation between neighbouring cards, in degrees. */\n  spread?: number\n  /** Horizontal overlap step between neighbouring cards, in px. */\n  offset?: number\n  /** How far the neighbours of a hovered card make room, in px. */\n  push?: number\n}\n\n/**\n * A fanned hand of cards that bounce in one by one. Hovering or focusing a card straightens\n * and lifts it while its neighbours lean away to make room.\n */\nexport const BounceCards = forwardRef<HTMLDivElement, BounceCardsProps>(\n  (\n    { children, spread = 9, offset = 92, push = 56, className, style, onPointerLeave, ...props },\n    ref,\n  ) => {\n    const cards = Children.toArray(children)\n    const [active, setActive] = useState<number | null>(null)\n    const mid = (cards.length - 1) / 2\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\n          \"kg-bounce-cards relative grid min-h-[calc(var(--_w)*1.45)] w-full place-items-center [--_w:var(--kg-bounce-cards-width,9.5rem)]\",\n          className,\n        )}\n        data-active={active === null ? undefined : \"\"}\n        style={{ \"--_n\": cards.length, \"--_offset\": `${offset}px`, ...style } as CSSProperties}\n        onPointerLeave={(event) => {\n          onPointerLeave?.(event)\n          setActive(null)\n        }}\n        {...props}\n      >\n        {cards.map((card, i) => {\n          const rest = (i - mid) * spread\n          const x = (i - mid) * offset\n          const lifted = active === i\n          const shift = active === null || lifted ? 0 : i < active ? -push : push\n          return (\n            <div\n              key={i}\n              className=\"kg-bounce-cards__card aspect-square w-(--_w) overflow-hidden rounded-kg-xl border-2 border-kg-ink bg-kg-surface-raised shadow-kg-lg transition-transform duration-(--kg-duration-slow) ease-kg-out [grid-area:1/1] [transform:translateX(var(--_x))_rotate(var(--_rot))] animate-[kg-bounce-in_var(--kg-duration-slower)_var(--kg-ease-out)_both] [animation-delay:calc(var(--_i)*70ms)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-kg-ring data-lifted:[transform:translateX(var(--_x))_translateY(-10px)_rotate(0deg)_scale(1.06)] motion-reduce:animate-none [[data-kg-motion=reduce]_&]:animate-none [&>img]:block [&>img]:size-full [&>img]:object-cover\"\n              data-lifted={lifted || undefined}\n              style={\n                {\n                  \"--_i\": i,\n                  \"--_x\": `${x + shift}px`,\n                  \"--_rot\": `${lifted ? 0 : rest}deg`,\n                  zIndex: lifted ? cards.length + 1 : undefined,\n                } as CSSProperties\n              }\n              onPointerEnter={() => setActive(i)}\n              onFocus={() => setActive(i)}\n              onBlur={() => setActive(null)}\n            >\n              {card}\n            </div>\n          )\n        })}\n      </div>\n    )\n  },\n)\n\nBounceCards.displayName = \"BounceCards\"\n",
+      "target": "components/kitgrid/bounce-cards/bounce-cards.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/bounce-cards/index.ts",
+      "type": "registry:ui",
+      "content": "export { BounceCards, type BounceCardsProps } from \"./bounce-cards\"\n",
+      "target": "components/kitgrid/bounce-cards/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

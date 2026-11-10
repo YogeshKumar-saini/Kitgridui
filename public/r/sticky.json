@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sticky",
+  "type": "registry:ui",
+  "title": "Sticky",
+  "description": "Sticks to an edge of its scroll container and reports when it is stuck, so a header can gain a surface and shadow only once content scrolls beneath it.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/sticky/index.ts",
+      "type": "registry:ui",
+      "content": "export { Sticky, type StickyProps } from \"./sticky\"\n",
+      "target": "components/kitgrid/sticky/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/sticky/sticky.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type ElementType, forwardRef, type HTMLAttributes, useEffect, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"../box/space\"\n\nexport interface StickyProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  /** The edge it sticks to. */\n  edge?: \"top\" | \"bottom\"\n  /** Distance from that edge while stuck. */\n  offset?: BoxSpace\n  /** Called when it starts or stops sticking. `data-stuck` is set on the element either way. */\n  onStuckChange?: (stuck: boolean) => void\n}\n\n/**\n * Sticks to an edge of its scroll container and reports when it is stuck, so a header can gain\n * a surface and shadow only once content scrolls beneath it.\n */\nexport const Sticky = forwardRef<HTMLElement, StickyProps>(\n  (\n    { as: Tag = \"div\", edge = \"top\", offset = 0, onStuckChange, className, style, ...props },\n    ref,\n  ) => {\n    const node = useRef<HTMLElement>(null)\n    const composed = useComposedRefs(node, ref)\n    const callback = useRef(onStuckChange)\n    callback.current = onStuckChange\n\n    useEffect(() => {\n      const element = node.current\n      if (!element || typeof IntersectionObserver === \"undefined\") return\n      // Sticky elements resolve their offset to px, which is what rootMargin needs.\n      const styles = getComputedStyle(element)\n      const inset = Number.parseFloat(edge === \"top\" ? styles.top : styles.bottom) || 0\n      const margin =\n        edge === \"top\" ? `${-(inset + 1)}px 0px 0px 0px` : `0px 0px ${-(inset + 1)}px 0px`\n      let stuck = false\n      const observer = new IntersectionObserver(\n        ([entry]) => {\n          if (!entry) return\n          const bounds = entry.boundingClientRect\n          const root = entry.rootBounds\n          const next =\n            entry.intersectionRatio < 1 &&\n            root !== null &&\n            (edge === \"top\" ? bounds.top <= root.top + 1 : bounds.bottom >= root.bottom - 1)\n          if (next === stuck) return\n          stuck = next\n          if (next) element.setAttribute(\"data-stuck\", \"\")\n          else element.removeAttribute(\"data-stuck\")\n          callback.current?.(next)\n        },\n        { rootMargin: margin, threshold: [1] },\n      )\n      observer.observe(element)\n      return () => observer.disconnect()\n    }, [edge, offset])\n\n    return (\n      <Tag\n        ref={composed}\n        className={cx(\n          \"kg-sticky sticky z-10 transition-[background-color,box-shadow] duration-(--kg-duration-base) ease-kg-out\",\n          edge === \"bottom\" ? \"bottom-[var(--_offset,0)]\" : \"top-[var(--_offset,0)]\",\n          className,\n        )}\n        data-edge={edge}\n        style={{ ...vars({ \"--_offset\": space(offset) }), ...style }}\n        {...props}\n      />\n    )\n  },\n)\n\nSticky.displayName = \"Sticky\"\n",
+      "target": "components/kitgrid/sticky/sticky.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

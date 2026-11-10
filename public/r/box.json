@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "box",
+  "type": "registry:ui",
+  "title": "Box",
+  "description": "The base layout block: padding, surface, radius, border and shadow from tokens.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/box/box.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"./space\"\n\nexport type BoxSurface = \"none\" | \"surface\" | \"raised\" | \"sunken\" | \"muted\" | \"accent\"\nexport type BoxRadius = \"none\" | \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" | \"full\"\nexport type BoxShadow = \"none\" | \"xs\" | \"sm\" | \"md\" | \"lg\"\n\nexport interface BoxProps extends HTMLAttributes<HTMLElement> {\n  /** The element to render. */\n  as?: ElementType\n  /** Merges the box onto its only child instead of rendering an element. */\n  asChild?: boolean\n  /** Padding on every side: a spacing step or a CSS length. */\n  padding?: BoxSpace\n  paddingX?: BoxSpace\n  paddingY?: BoxSpace\n  surface?: BoxSurface\n  radius?: BoxRadius\n  /** A hairline border; `strong` draws the 2px ink edge of a paper sheet. */\n  border?: boolean | \"strong\"\n  shadow?: BoxShadow\n}\n\nconst SURFACE: Record<BoxSurface, string> = {\n  none: \"\",\n  surface: \"bg-kg-surface\",\n  raised: \"bg-kg-surface-raised\",\n  sunken: \"bg-kg-surface-sunken\",\n  muted: \"bg-kg-muted\",\n  accent: \"bg-kg-paper-sage text-kg-fg\",\n}\n\nconst RADIUS: Record<BoxRadius, string> = {\n  none: \"rounded-none\",\n  sm: \"rounded-kg-sm\",\n  md: \"rounded-kg-md\",\n  lg: \"rounded-kg-lg\",\n  xl: \"rounded-kg-xl\",\n  \"2xl\": \"rounded-kg-2xl\",\n  full: \"rounded-full\",\n}\n\nconst SHADOW: Record<BoxShadow, string> = {\n  none: \"\",\n  xs: \"shadow-kg-xs\",\n  sm: \"shadow-kg-sm\",\n  md: \"shadow-kg-md\",\n  lg: \"shadow-kg-lg\",\n}\n\n/** The base layout block: padding, surface, radius, border and shadow from tokens. */\nexport const Box = forwardRef<HTMLElement, BoxProps>(\n  (\n    {\n      as: Tag = \"div\",\n      asChild = false,\n      padding,\n      paddingX,\n      paddingY,\n      surface,\n      radius,\n      border,\n      shadow,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const Component: ElementType = asChild ? Slot : Tag\n    return (\n      <Component\n        ref={ref}\n        className={cx(\n          \"kg-box box-border min-w-0 py-[var(--_py,var(--_p,0))] px-[var(--_px,var(--_p,0))]\",\n          surface && SURFACE[surface],\n          radius && RADIUS[radius],\n          border === \"strong\" ? \"border-2 border-kg-ink\" : border && \"border border-kg-border\",\n          shadow && SHADOW[shadow],\n          className,\n        )}\n        data-surface={surface && surface !== \"none\" ? surface : undefined}\n        data-radius={radius}\n        data-border={border === true ? \"\" : border || undefined}\n        data-shadow={shadow && shadow !== \"none\" ? shadow : undefined}\n        style={{\n          ...vars({\n            \"--_p\": space(padding),\n            \"--_px\": space(paddingX),\n            \"--_py\": space(paddingY),\n          }),\n          ...style,\n        }}\n        {...props}\n      />\n    )\n  },\n)\n\nBox.displayName = \"Box\"\n",
+      "target": "components/kitgrid/box/box.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/box/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Box,\n  type BoxProps,\n  type BoxRadius,\n  type BoxShadow,\n  type BoxSurface,\n} from \"./box\"\nexport type { BoxAlign, BoxJustify, BoxSpace } from \"./space\"\n",
+      "target": "components/kitgrid/box/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/box/space.ts",
+      "type": "registry:ui",
+      "content": "/**\n * A step on the spacing scale (multiples of `--kg-space`, so density scales it) or any CSS\n * length such as `\"2rem\"` or `\"5vw\"`.\n */\nexport type BoxSpace = number | string\n\n/** Resolves a scale step or a length to a CSS value. */\nexport const space = (value: BoxSpace | undefined): string | undefined => {\n  if (value === undefined) return undefined\n  if (typeof value === \"number\") return value === 0 ? \"0\" : `calc(var(--kg-space) * ${value})`\n  return value\n}\n\n/** Builds a style object of private custom properties, skipping the unset ones. */\nexport const vars = (\n  entries: Record<string, string | number | undefined>,\n): Record<string, string | number> => {\n  const out: Record<string, string | number> = {}\n  for (const [key, value] of Object.entries(entries)) if (value !== undefined) out[key] = value\n  return out\n}\n\nexport type BoxAlign = \"start\" | \"center\" | \"end\" | \"stretch\" | \"baseline\"\nexport type BoxJustify = \"start\" | \"center\" | \"end\" | \"between\" | \"around\" | \"evenly\"\n\nconst JUSTIFY: Record<BoxJustify, string> = {\n  start: \"flex-start\",\n  center: \"center\",\n  end: \"flex-end\",\n  between: \"space-between\",\n  around: \"space-around\",\n  evenly: \"space-evenly\",\n}\n\nconst ALIGN: Record<BoxAlign, string> = {\n  start: \"flex-start\",\n  center: \"center\",\n  end: \"flex-end\",\n  stretch: \"stretch\",\n  baseline: \"baseline\",\n}\n\nexport const justifyValue = (value: BoxJustify | undefined) =>\n  value ? JUSTIFY[value] : undefined\n\nexport const alignValue = (value: BoxAlign | undefined) => (value ? ALIGN[value] : undefined)\n",
+      "target": "components/kitgrid/box/space.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

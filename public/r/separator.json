@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "separator",
+  "type": "registry:ui",
+  "title": "Separator",
+  "description": "A hairline divider, horizontal or vertical.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/separator/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Separator,\n  type SeparatorLabelPosition,\n  type SeparatorOrientation,\n  type SeparatorProps,\n} from \"./separator\"\n",
+      "target": "components/kitgrid/separator/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/separator/separator.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type SeparatorOrientation = \"horizontal\" | \"vertical\"\nexport type SeparatorLabelPosition = \"start\" | \"center\" | \"end\"\n\nexport interface SeparatorProps extends HTMLAttributes<HTMLDivElement> {\n  orientation?: SeparatorOrientation\n  /**\n   * Purely visual by default. Set false when the line divides content in a way assistive\n   * technology should know about; it then becomes role=\"separator\".\n   */\n  decorative?: boolean\n  /** Text in the middle of a horizontal rule, such as “or”. */\n  label?: ReactNode\n  labelPosition?: SeparatorLabelPosition\n}\n\n/* --kg-separator-color is public: set it on any ancestor to recolour the rule. */\nconst base = \"kg-separator shrink-0 [--_color:var(--kg-separator-color,var(--kg-border))]\"\n\nconst LABELLED: Record<SeparatorLabelPosition, string> = {\n  start: \"before:w-4 before:flex-none after:flex-1\",\n  center: \"before:flex-1 after:flex-1\",\n  end: \"before:flex-1 after:w-4 after:flex-none\",\n}\n\nexport const Separator = forwardRef<HTMLDivElement, SeparatorProps>(\n  (\n    {\n      orientation = \"horizontal\",\n      decorative = true,\n      label,\n      labelPosition = \"center\",\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const labelled = label != null && orientation === \"horizontal\"\n    // A separator's children are presentational, so a semantic one carries its label by name.\n    const semantic = decorative\n      ? { role: \"none\" }\n      : {\n          role: \"separator\",\n          \"aria-orientation\": orientation,\n          \"aria-label\": labelled && typeof label === \"string\" ? label : undefined,\n        }\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\n          base,\n          labelled\n            ? [\n                \"flex w-full items-center gap-3 before:h-px before:bg-(--_color) after:h-px after:bg-(--_color)\",\n                LABELLED[labelPosition] ?? LABELLED.center,\n              ]\n            : orientation === \"vertical\"\n              ? \"min-h-[1em] w-px self-stretch bg-(--_color)\"\n              : \"h-px w-full bg-(--_color)\",\n          className,\n        )}\n        data-orientation={orientation}\n        data-label-position={labelled ? labelPosition : undefined}\n        {...semantic}\n        {...props}\n      >\n        {labelled && <span className=\"kg-separator__label shrink-0 text-kg-xs font-semibold leading-[1.2] tracking-[0.02em] text-kg-fg-muted\">{label}</span>}\n      </div>\n    )\n  },\n)\n\nSeparator.displayName = \"Separator\"\n",
+      "target": "components/kitgrid/separator/separator.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

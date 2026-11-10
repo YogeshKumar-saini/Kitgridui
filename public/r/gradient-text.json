@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "gradient-text",
+  "type": "registry:ui",
+  "title": "Gradient Text",
+  "description": "Text filled with a slowly drifting multi-stop gradient. Pure CSS, server component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/text-reveal.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/gradient-text/gradient-text.css",
+      "type": "registry:file",
+      "content": "/* Keyframes can't be utilities. */\n@layer kg.components {\n  @keyframes kg-gradient-text {\n    to {\n      background-position: 100% 50%;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/gradient-text/gradient-text.css"
+    },
+    {
+      "path": "kitgrid/src/components/gradient-text/gradient-text.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  type ElementType,\n  forwardRef,\n  type HTMLAttributes,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport type { TextEffectElement } from \"../text-reveal/split-text\"\n\nexport interface GradientTextProps extends HTMLAttributes<HTMLElement> {\n  as?: TextEffectElement\n  /**\n   * Any CSS colors, in order. Defaults to ink flowing through peach and sky pulled toward the text\n   * colour, so the gradient follows the paper palette and the theme.\n   */\n  colors?: string[]\n  /** Gradient direction, in degrees. */\n  angle?: number\n  /** One pass across the gradient, in ms. */\n  duration?: number\n  /** Drift the gradient back and forth. Off renders a static gradient. */\n  animate?: boolean\n}\n\n/*\n * Display text needs large-text contrast, so the peach and sky stops are pulled more than half\n * way toward the text colour.\n */\nconst gradientClass = [\n  \"kg-gradient-text -my-[0.08em] py-[0.08em] text-kg-accent-strong bg-clip-text [-webkit-text-fill-color:transparent]\",\n  \"[--_c1:var(--kg-accent-strong)] [--_c2:color-mix(in_oklab,var(--kg-paper-peach),var(--kg-fg)_58%)] [--_c3:color-mix(in_oklab,var(--kg-paper-sky),var(--kg-fg)_55%)]\",\n  \"bg-[linear-gradient(var(--_angle,90deg),var(--kg-gradient-colors,var(--_c1),var(--_c2),var(--_c3),var(--_c1)))] bg-size-[100%_100%] bg-[position:0%_50%]\",\n  \"data-animate:bg-size-[300%_100%] data-animate:animate-[kg-gradient-text_var(--_duration,6000ms)_var(--kg-ease-in-out)_infinite_alternate]\",\n  \"motion-reduce:animate-none in-data-[kg-motion=reduce]:animate-none\",\n  \"forced-colors:bg-none forced-colors:[-webkit-text-fill-color:currentColor]\",\n].join(\" \")\n\n/** Text filled with a slowly drifting multi-stop gradient. Pure CSS, server component safe. */\nexport const GradientText = forwardRef<HTMLElement, GradientTextProps>(\n  (\n    {\n      as = \"span\",\n      colors,\n      angle = 90,\n      duration = 6000,\n      animate = true,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const Tag = as as ElementType\n    // Ending on the first colour lets the alternating drift turn around without a visible seam.\n    const stops =\n      colors && colors.length > 0 ? [...colors, colors[0]].join(\", \") : undefined\n\n    return (\n      <Tag\n        ref={ref}\n        className={cx(gradientClass, className)}\n        data-animate={animate || undefined}\n        style={\n          {\n            \"--_angle\": `${angle}deg`,\n            \"--_duration\": `${duration}ms`,\n            ...(stops ? { \"--kg-gradient-colors\": stops } : null),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      />\n    )\n  },\n)\n\nGradientText.displayName = \"GradientText\"\n",
+      "target": "components/kitgrid/gradient-text/gradient-text.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/gradient-text/index.ts",
+      "type": "registry:ui",
+      "content": "export { GradientText, type GradientTextProps } from \"./gradient-text\"\n",
+      "target": "components/kitgrid/gradient-text/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

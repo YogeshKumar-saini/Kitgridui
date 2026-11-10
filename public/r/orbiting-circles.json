@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "orbiting-circles",
+  "type": "registry:ui",
+  "title": "Orbiting Circles",
+  "description": "Satellites circling a centre on an orbit, each kept upright by a counter-rotation. Stack several with different radii for a system. Pure CSS: server-safe, and still under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/orbiting-circles/index.ts",
+      "type": "registry:ui",
+      "content": "export { OrbitingCircles, type OrbitingCirclesProps } from \"./orbiting-circles\"\n",
+      "target": "components/kitgrid/orbiting-circles/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/orbiting-circles/orbiting-circles.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  @keyframes kg-orbit {\n    to {\n      transform: rotate(360deg);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/orbiting-circles/orbiting-circles.css"
+    },
+    {
+      "path": "kitgrid/src/components/orbiting-circles/orbiting-circles.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  Children,\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface OrbitingCirclesProps extends HTMLAttributes<HTMLDivElement> {\n  /** The satellites, spaced evenly around the orbit. */\n  children: ReactNode\n  /** Content pinned at the centre, such as a logo. */\n  center?: ReactNode\n  /** Orbit radius, in px. */\n  radius?: number\n  /** One revolution, in seconds. */\n  duration?: number\n  reverse?: boolean\n  /** Draw the orbit track. */\n  path?: boolean\n}\n\n/**\n * Satellites circling a centre on an orbit, each kept upright by a counter-rotation. Stack\n * several with different radii for a system. Pure CSS: server-safe, and still under reduced\n * motion.\n */\nexport const OrbitingCircles = forwardRef<HTMLDivElement, OrbitingCirclesProps>(\n  (\n    {\n      children,\n      center,\n      radius = 120,\n      duration = 24,\n      reverse = false,\n      path = true,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const items = Children.toArray(children)\n    return (\n      <div\n        ref={ref}\n        className={cx(\n          \"kg-orbiting-circles relative grid aspect-square w-[calc(var(--_r)_*_2_+_var(--_size))] max-w-full place-items-center [--_size:var(--kg-orbiting-circles-item,2.75rem)]\",\n          className,\n        )}\n        data-reverse={reverse || undefined}\n        style={\n          {\n            \"--_r\": `${radius}px`,\n            \"--_duration\": `${duration}s`,\n            \"--_n\": Math.max(items.length, 1),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        {path ? <span\n            className=\"kg-orbiting-circles__path pointer-events-none absolute aspect-square w-[calc(var(--_r)*2)] rounded-full border border-dashed border-kg-border-strong\"\n            aria-hidden=\"true\"\n          /> : null}\n        {center !== undefined ? (\n          <div className=\"kg-orbiting-circles__center relative z-1 grid place-items-center\">{center}</div>\n        ) : null}\n        <div\n          className={cx(\n            \"kg-orbiting-circles__ring absolute inset-0 motion-reduce:animate-none [[data-kg-motion=reduce]_&]:animate-none\",\n            reverse\n              ? \"animate-[kg-orbit_var(--_duration)_linear_infinite_reverse]\"\n              : \"animate-[kg-orbit_var(--_duration)_linear_infinite]\",\n          )}\n        >\n          {items.map((item, i) => (\n            <div\n              key={i}\n              className=\"kg-orbiting-circles__slot absolute top-[calc(50%_-_var(--_size)_/_2)] left-[calc(50%_-_var(--_size)_/_2)] size-(--_size) rotate-[calc(var(--_i)_*_360deg_/_var(--_n))] [transform:translateX(var(--_r))]\"\n              style={{ \"--_i\": i } as CSSProperties}\n            >\n              <div\n                className={cx(\n                  \"kg-orbiting-circles__item grid size-full rotate-[calc(var(--_i)_*_-360deg_/_var(--_n))] place-items-center rounded-full border-2 border-kg-ink bg-kg-surface-raised text-kg-fg shadow-kg-xs motion-reduce:animate-none [[data-kg-motion=reduce]_&]:animate-none [&_svg]:size-[45%]\",\n                  reverse\n                    ? \"animate-[kg-orbit_var(--_duration)_linear_infinite]\"\n                    : \"animate-[kg-orbit_var(--_duration)_linear_infinite_reverse]\",\n                )}\n              >\n                {item}\n              </div>\n            </div>\n          ))}\n        </div>\n      </div>\n    )\n  },\n)\n\nOrbitingCircles.displayName = \"OrbitingCircles\"\n",
+      "target": "components/kitgrid/orbiting-circles/orbiting-circles.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

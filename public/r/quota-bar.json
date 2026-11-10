@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "quota-bar",
+  "type": "registry:ui",
+  "title": "Quota Bar",
+  "description": "A usage meter against a plan limit, turning amber near it and red past it. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/quota-bar/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  QuotaBar,\n  type QuotaBarLevel,\n  type QuotaBarProps,\n  type QuotaBarSize,\n  quotaBarLevel,\n} from \"./quota-bar\"\n",
+      "target": "components/kitgrid/quota-bar/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/quota-bar/quota-bar.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes, type ReactNode, useId } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/* Paper Layers: a flat ink fill on a muted track; past the limit the fill turns to a hatch. */\nexport const quotaBarVariants = variants({\n  base: \"kg-quota-bar group/quota grid min-w-0\",\n  variants: {\n    size: {\n      sm: \"gap-1.5 [--_track:0.3125rem]\",\n      md: \"gap-2 [--_track:0.5rem]\",\n    },\n    level: {\n      ok: \"[--_tone:var(--kg-accent)]\",\n      warning: \"[--_tone:var(--kg-warning)]\",\n      exceeded: \"[--_tone:var(--kg-danger)]\",\n    },\n  },\n  defaults: { size: \"md\", level: \"ok\" },\n})\n\ntype QuotaBarVariantProps = VariantProps<typeof quotaBarVariants>\nexport type QuotaBarSize = NonNullable<QuotaBarVariantProps[\"size\"]>\nexport type QuotaBarLevel = NonNullable<QuotaBarVariantProps[\"level\"]>\n\nexport interface QuotaBarProps extends Omit<HTMLAttributes<HTMLDivElement>, \"children\"> {\n  label: ReactNode\n  used: number\n  limit: number\n  /** Formats both numbers, e.g. bytes to \"4.2 GB\". */\n  format?: (value: number) => string\n  /** Fraction of the limit where the bar turns to warning. */\n  warnAt?: number\n  size?: QuotaBarSize\n  /** Replaces the \"used / limit\" readout. */\n  valueText?: ReactNode\n}\n\nconst defaultFormat = (value: number) => new Intl.NumberFormat().format(value)\n\nexport const quotaBarLevel = (used: number, limit: number, warnAt = 0.8): QuotaBarLevel => {\n  if (limit <= 0 || used >= limit) return \"exceeded\"\n  return used / limit >= warnAt ? \"warning\" : \"ok\"\n}\n\n/** A usage meter against a plan limit, turning amber near it and red past it. Server-safe. */\nexport const QuotaBar = forwardRef<HTMLDivElement, QuotaBarProps>(\n  (\n    { label, used, limit, format = defaultFormat, warnAt = 0.8, size = \"md\", valueText, className, style, ...props },\n    ref,\n  ) => {\n    const labelId = useId()\n    const level = quotaBarLevel(used, limit, warnAt)\n    const fraction = limit > 0 ? Math.min(used / limit, 1) : 1\n    const text = `${format(used)} of ${format(limit)}`\n    return (\n      <div\n        ref={ref}\n        className={quotaBarVariants({ size, level, className })}\n        data-level={level}\n        data-size={size}\n        style={{ \"--_fill\": fraction, ...style } as CSSProperties}\n        {...props}\n      >\n        <div\n          className={cx(\n            \"kg-quota-bar__head flex items-baseline justify-between gap-3 min-w-0\",\n            size === \"sm\" ? \"text-kg-xs\" : \"text-kg-sm\",\n          )}\n        >\n          <span\n            id={labelId}\n            className=\"kg-quota-bar__label min-w-0 overflow-hidden font-[520] whitespace-nowrap text-ellipsis text-kg-fg\"\n          >\n            {label}\n          </span>\n          <span\n            className={cx(\n              \"kg-quota-bar__value shrink-0 tabular-nums text-kg-fg-faint [&_strong]:font-semibold\",\n              level === \"exceeded\" ? \"[&_strong]:text-kg-danger\" : \"[&_strong]:text-kg-fg\",\n            )}\n          >\n            {valueText ?? (\n              <>\n                <strong>{format(used)}</strong> / {format(limit)}\n              </>\n            )}\n          </span>\n        </div>\n        <div\n          className=\"kg-quota-bar__track relative h-(--_track) overflow-hidden rounded-full bg-kg-muted\"\n          role=\"meter\"\n          aria-labelledby={labelId}\n          aria-valuemin={0}\n          aria-valuemax={limit}\n          aria-valuenow={Math.min(used, limit)}\n          aria-valuetext={level === \"exceeded\" ? `${text}, limit reached` : text}\n        >\n          <span\n            className={cx(\n              \"kg-quota-bar__fill absolute inset-0 rounded-[inherit] bg-(--_tone)\",\n              \"scale-x-(--_fill) origin-left rtl:origin-right\",\n              \"transition-[scale] duration-(--kg-duration-slower) ease-kg-out\",\n              \"group-data-[level=exceeded]/quota:bg-[repeating-linear-gradient(-45deg,transparent_0_6px,color-mix(in_oklab,var(--kg-danger),var(--kg-mix-strong)_18%)_6px_12px)]\",\n            )}\n          />\n        </div>\n      </div>\n    )\n  },\n)\n\nQuotaBar.displayName = \"QuotaBar\"\n",
+      "target": "components/kitgrid/quota-bar/quota-bar.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

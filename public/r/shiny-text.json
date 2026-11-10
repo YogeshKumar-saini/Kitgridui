@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "shiny-text",
+  "type": "registry:ui",
+  "title": "Shiny Text",
+  "description": "A band of light that sweeps across text through `background-clip: text`. Pure CSS, server component safe, and still under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/text-reveal.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/shiny-text/index.ts",
+      "type": "registry:ui",
+      "content": "export { ShinyText, type ShinyTextProps } from \"./shiny-text\"\n",
+      "target": "components/kitgrid/shiny-text/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/shiny-text/shiny-text.css",
+      "type": "registry:file",
+      "content": "/*\n * The band's gradient stack and its off states stay here: the image is (2 + band) times the text's\n * width with the band at its centre, so stepping background-position from 100% to 0% carries it\n * from just past the start edge to just past the end edge, whatever its width.\n */\n@layer kg.components {\n  .kg-shiny-text {\n    --_half: calc(var(--_band, 0.32) / (2 * (2 + var(--_band, 0.32))) * 100%);\n\n    background-image: linear-gradient(\n      100deg,\n      var(--_base) calc(50% - var(--_half)),\n      var(--_shine) 50%,\n      var(--_base) calc(50% + var(--_half))\n    );\n    background-repeat: no-repeat;\n    background-size: calc((2 + var(--_band, 0.32)) * 100%) 100%;\n    background-position: 100% 0;\n  }\n\n  @keyframes kg-shiny-text {\n    from {\n      background-position: 100% 0;\n    }\n    62%,\n    to {\n      background-position: 0% 0;\n    }\n  }\n\n  .kg-shiny-text[data-disabled] {\n    animation: none;\n    background: none;\n    -webkit-text-fill-color: currentColor;\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-shiny-text {\n      animation: none;\n      background: none;\n      -webkit-text-fill-color: currentColor;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-shiny-text {\n    animation: none;\n    background: none;\n    -webkit-text-fill-color: currentColor;\n  }\n\n  @media (forced-colors: active) {\n    .kg-shiny-text {\n      background: none;\n      -webkit-text-fill-color: currentColor;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/shiny-text/shiny-text.css"
+    },
+    {
+      "path": "kitgrid/src/components/shiny-text/shiny-text.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  type ElementType,\n  forwardRef,\n  type HTMLAttributes,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport type { TextEffectElement } from \"../text-reveal/split-text\"\n\nexport interface ShinyTextProps extends HTMLAttributes<HTMLElement> {\n  as?: TextEffectElement\n  /** One sweep plus the rest before the next, in ms. Lower is faster. */\n  duration?: number\n  /** Width of the light band, as a percentage of the text's width. */\n  width?: number\n  /** Any CSS color. Defaults to the muted foreground. */\n  baseColor?: string\n  /** Any CSS color. Defaults to the foreground, so it reads as light in both themes. */\n  shineColor?: string\n  /** Render plain text in the base color without the sweep. */\n  disabled?: boolean\n}\n\n/**\n * A band of light that sweeps across text through `background-clip: text`. Pure CSS, server\n * component safe, and still under reduced motion.\n */\nexport const ShinyText = forwardRef<HTMLElement, ShinyTextProps>(\n  (\n    {\n      as = \"span\",\n      duration = 2800,\n      width = 32,\n      baseColor,\n      shineColor,\n      disabled = false,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const Tag = as as ElementType\n    return (\n      <Tag\n        ref={ref}\n        className={cx(\n          \"kg-shiny-text -my-[0.08em] py-[0.08em] text-(--_base) bg-clip-text [-webkit-text-fill-color:transparent]\",\n          \"[--_base:var(--kg-shiny-base,var(--kg-fg-muted))] [--_shine:var(--kg-shiny-shine,var(--kg-fg))]\",\n          \"animate-[kg-shiny-text_var(--_duration,2800ms)_var(--kg-ease-in-out)_infinite] rtl:[animation-direction:reverse]\",\n          className,\n        )}\n        data-disabled={disabled || undefined}\n        style={\n          {\n            \"--_duration\": `${duration}ms`,\n            \"--_band\": Math.min(Math.max(width, 1), 100) / 100,\n            ...(baseColor ? { \"--kg-shiny-base\": baseColor } : null),\n            ...(shineColor ? { \"--kg-shiny-shine\": shineColor } : null),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      />\n    )\n  },\n)\n\nShinyText.displayName = \"ShinyText\"\n",
+      "target": "components/kitgrid/shiny-text/shiny-text.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pager",
+  "type": "registry:ui",
+  "title": "Pager",
+  "description": "Previous and next links at the end of an article or docs page.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/pager/index.ts",
+      "type": "registry:ui",
+      "content": "export { Pager, type PagerLink, type PagerProps } from \"./pager\"\n",
+      "target": "components/kitgrid/pager/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/pager/pager.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface PagerLink {\n  label: ReactNode\n  href: string\n}\n\nexport interface PagerProps extends HTMLAttributes<HTMLElement> {\n  previous?: PagerLink\n  next?: PagerLink\n  previousLabel?: string\n  nextLabel?: string\n}\n\nconst linkClass = [\n  \"kg-pager__link group/link grid gap-1 px-5 py-4 text-kg-fg no-underline\",\n  \"bg-kg-surface border-2 border-kg-ink rounded-kg-xl shadow-kg-sm\",\n  \"transition-[translate,box-shadow] duration-(--kg-duration-base) ease-kg-out\",\n  \"hover:-translate-y-px hover:shadow-kg-md\",\n  \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n  \"data-[dir=next]:justify-items-end data-[dir=next]:text-end min-[30rem]:data-[dir=next]:col-start-2\",\n]\n\nconst hintClass =\n  \"kg-pager__hint inline-flex items-center gap-1.5 text-kg-xs text-kg-fg-muted\"\n\nconst Arrow = ({ flip = false }: { flip?: boolean }) => (\n  <svg\n    viewBox=\"0 0 24 24\"\n    fill=\"none\"\n    stroke=\"currentColor\"\n    strokeWidth=\"2\"\n    aria-hidden=\"true\"\n    className=\"kg-pager__arrow size-[0.875rem] transition-transform duration-(--kg-duration-base) ease-kg-out data-flip:rotate-180 rtl:-scale-x-100 group-hover/link:[transform:translateX(3px)]\"\n    data-flip={flip || undefined}\n  >\n    <path d=\"M5 12h14M13 6l6 6-6 6\" strokeLinecap=\"round\" strokeLinejoin=\"round\" />\n  </svg>\n)\n\n/** Previous and next links at the end of an article or docs page. */\nexport const Pager = forwardRef<HTMLElement, PagerProps>(\n  (\n    {\n      previous,\n      next,\n      previousLabel = \"Previous\",\n      nextLabel = \"Next\",\n      className,\n      \"aria-label\": ariaLabel = \"Pagination\",\n      ...props\n    },\n    ref,\n  ) => (\n    <nav ref={ref} aria-label={ariaLabel} className={cx(\"kg-pager grid grid-cols-1 gap-3 min-[30rem]:grid-cols-2\", className)} {...props}>\n      {previous ? (\n        <a href={previous.href} rel=\"prev\" className={cx(linkClass)} data-dir=\"previous\">\n          <span className={hintClass}>\n            <Arrow flip />\n            {previousLabel}\n          </span>\n          <span className=\"kg-pager__title text-kg-md font-semibold tracking-[-0.01em]\">{previous.label}</span>\n        </a>\n      ) : (\n        <span aria-hidden=\"true\" />\n      )}\n      {next ? (\n        <a href={next.href} rel=\"next\" className={cx(linkClass)} data-dir=\"next\">\n          <span className={hintClass}>\n            {nextLabel}\n            <Arrow />\n          </span>\n          <span className=\"kg-pager__title text-kg-md font-semibold tracking-[-0.01em]\">{next.label}</span>\n        </a>\n      ) : (\n        <span aria-hidden=\"true\" />\n      )}\n    </nav>\n  ),\n)\n\nPager.displayName = \"Pager\"\n",
+      "target": "components/kitgrid/pager/pager.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "relative-time",
+  "type": "registry:ui",
+  "title": "Relative Time",
+  "description": "“3 minutes ago”, kept fresh while mounted, with the absolute time as a tooltip.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/relative-time/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  RelativeTime,\n  type RelativeTimeProps,\n  type RelativeTimeStyle,\n} from \"./relative-time\"\n",
+      "target": "components/kitgrid/relative-time/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/relative-time/relative-time.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, useEffect, useState } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type RelativeTimeStyle = \"long\" | \"short\" | \"narrow\"\n\nexport interface RelativeTimeProps\n  extends Omit<HTMLAttributes<HTMLTimeElement>, \"children\"> {\n  date: Date | string | number\n  /** Reference point. Pass it from the server to render the same text on both sides. */\n  now?: Date | string | number\n  /** Re-renders on a cadence that matches the distance. Off when `now` is fixed. */\n  live?: boolean\n  locale?: string\n  formatStyle?: RelativeTimeStyle\n  /** Past this many days the absolute date is shown instead. */\n  absoluteAfterDays?: number\n}\n\nconst UNITS: [Intl.RelativeTimeFormatUnit, number][] = [\n  [\"year\", 31_536_000],\n  [\"month\", 2_592_000],\n  [\"week\", 604_800],\n  [\"day\", 86_400],\n  [\"hour\", 3_600],\n  [\"minute\", 60],\n  [\"second\", 1],\n]\n\nconst toDate = (input: Date | string | number) =>\n  input instanceof Date ? input : new Date(input)\n\nexport const formatRelativeTime = (\n  date: Date,\n  now: Date,\n  locale: string,\n  style: RelativeTimeStyle,\n): string => {\n  const seconds = Math.round((date.getTime() - now.getTime()) / 1000)\n  const abs = Math.abs(seconds)\n  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: \"auto\", style })\n  if (abs < 45) return rtf.format(0, \"second\")\n  for (const [unit, size] of UNITS) {\n    if (abs >= size || unit === \"second\") {\n      return rtf.format(Math.round(seconds / size), unit)\n    }\n  }\n  return rtf.format(seconds, \"second\")\n}\n\nconst cadence = (distanceMs: number) => {\n  const abs = Math.abs(distanceMs)\n  if (abs < 60_000) return 10_000\n  if (abs < 3_600_000) return 30_000\n  return 3_600_000\n}\n\n/** “3 minutes ago”, kept fresh while mounted, with the absolute time as a tooltip. */\nexport const RelativeTime = forwardRef<HTMLTimeElement, RelativeTimeProps>(\n  (\n    {\n      date,\n      now,\n      live = true,\n      locale = \"en-US\",\n      formatStyle = \"long\",\n      absoluteAfterDays,\n      className,\n      title,\n      ...props\n    },\n    ref,\n  ) => {\n    const target = toDate(date)\n    const [tick, setTick] = useState(() => (now ? toDate(now) : new Date()))\n    const reference = now ? toDate(now) : tick\n\n    useEffect(() => {\n      if (now || !live || Number.isNaN(target.getTime())) return\n      let timer: ReturnType<typeof setTimeout>\n      const schedule = () => {\n        timer = setTimeout(\n          () => {\n            if (!document.hidden) setTick(new Date())\n            schedule()\n          },\n          cadence(target.getTime() - Date.now()),\n        )\n      }\n      schedule()\n      return () => clearTimeout(timer)\n    }, [now, live, target.getTime()])\n\n    if (Number.isNaN(target.getTime())) return null\n\n    const absolute = new Intl.DateTimeFormat(locale, {\n      dateStyle: \"medium\",\n      timeStyle: \"short\",\n    }).format(target)\n    const days = Math.abs(target.getTime() - reference.getTime()) / 86_400_000\n    const text =\n      absoluteAfterDays !== undefined && days > absoluteAfterDays\n        ? new Intl.DateTimeFormat(locale, { dateStyle: \"medium\" }).format(target)\n        : formatRelativeTime(target, reference, locale, formatStyle)\n\n    return (\n      <time\n        ref={ref}\n        dateTime={target.toISOString()}\n        title={title ?? absolute}\n        className={cx(\n          \"kg-relative-time whitespace-nowrap tabular-nums underline decoration-transparent decoration-dotted underline-offset-[3px] transition-[text-decoration-color] duration-(--kg-duration-fast) ease-kg-out hover:decoration-kg-fg-faint\",\n          className,\n        )}\n        suppressHydrationWarning\n        {...props}\n      >\n        {text}\n      </time>\n    )\n  },\n)\nRelativeTime.displayName = \"RelativeTime\"\n",
+      "target": "components/kitgrid/relative-time/relative-time.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

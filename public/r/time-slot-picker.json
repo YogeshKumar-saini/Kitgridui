@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "time-slot-picker",
+  "type": "registry:ui",
+  "title": "Time Slot Picker",
+  "description": "Bookable times as a grid of native radios: arrow keys move, taken slots stay visible.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/field.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/time-slot-picker/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  TimeSlotPicker,\n  type TimeSlotPickerProps,\n  type TimeSlotPickerSlot,\n} from \"./time-slot-picker\"\n",
+      "target": "components/kitgrid/time-slot-picker/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/time-slot-picker/time-slot-picker.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, useId } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport { useField } from \"../field/field\"\n\nexport interface TimeSlotPickerSlot {\n  /** Submitted value, e.g. `09:30`. */\n  value: string\n  /** Shown text. Defaults to `value`. */\n  label?: string\n  disabled?: boolean\n}\n\nexport interface TimeSlotPickerProps\n  extends Omit<HTMLAttributes<HTMLDivElement>, \"defaultValue\" | \"onChange\"> {\n  slots: readonly TimeSlotPickerSlot[]\n  value?: string | null\n  defaultValue?: string | null\n  onValueChange?: (value: string) => void\n  /** Names the group for assistive tech. */\n  label?: string\n  name?: string\n  disabled?: boolean\n}\n\n/* Each slot is a small sheet; the native radio sits invisibly on top and drives the face. */\nconst faceClass = cx(\n  \"kg-time-slot-picker__face grid place-items-center h-kg-md pointer-events-none\",\n  \"text-kg-sm font-[550] tabular-nums text-kg-fg bg-kg-surface border-2 border-kg-ink rounded-kg-md\",\n  \"transition-[background-color,color,translate,box-shadow] duration-(--kg-duration-fast) ease-kg-out\",\n  \"peer-enabled:group-hover:-translate-y-px peer-enabled:group-hover:shadow-kg-xs\",\n  \"peer-checked:bg-kg-accent peer-checked:text-kg-accent-fg peer-checked:font-semibold\",\n  \"peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-kg-ring\",\n  \"peer-disabled:text-kg-fg-muted peer-disabled:bg-kg-surface-sunken peer-disabled:border-dashed\",\n  \"peer-disabled:border-kg-border-strong peer-disabled:line-through\",\n)\n\n/** Bookable times as a grid of native radios: arrow keys move, taken slots stay visible. */\nexport const TimeSlotPicker = forwardRef<HTMLDivElement, TimeSlotPickerProps>(\n  (\n    {\n      slots,\n      value: valueProp,\n      defaultValue = null,\n      onValueChange,\n      label,\n      name,\n      disabled,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const field = useField()\n    const [value, setValue] = useControllableState<string | null>({\n      value: valueProp,\n      defaultValue,\n      onChange: onValueChange as ((value: string | null) => void) | undefined,\n    })\n    const generated = useId()\n    const group = name ?? generated\n    const isDisabled = disabled ?? field?.disabled\n\n    return (\n      <div\n        ref={ref}\n        role=\"radiogroup\"\n        aria-label={label}\n        aria-labelledby={label ? undefined : field?.labelId}\n        aria-describedby={field?.describedBy}\n        className={cx(\n          \"kg-time-slot-picker grid grid-cols-[repeat(auto-fill,minmax(5.5rem,1fr))] gap-2 w-full\",\n          className,\n        )}\n        {...props}\n      >\n        {slots.map((slot) => (\n          <label\n            key={slot.value}\n            className=\"kg-time-slot-picker__slot group relative grid cursor-pointer data-disabled:cursor-not-allowed\"\n            data-disabled={slot.disabled || isDisabled || undefined}\n          >\n            <input\n              type=\"radio\"\n              name={group}\n              value={slot.value}\n              className=\"kg-time-slot-picker__input peer absolute inset-0 m-0 opacity-0 cursor-[inherit]\"\n              checked={value === slot.value}\n              disabled={slot.disabled || isDisabled}\n              onChange={() => setValue(slot.value)}\n            />\n            <span className={faceClass}>{slot.label ?? slot.value}</span>\n          </label>\n        ))}\n      </div>\n    )\n  },\n)\n\nTimeSlotPicker.displayName = \"TimeSlotPicker\"\n",
+      "target": "components/kitgrid/time-slot-picker/time-slot-picker.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

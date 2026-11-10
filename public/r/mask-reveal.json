@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "mask-reveal",
+  "type": "registry:ui",
+  "title": "Mask Reveal",
+  "description": "A surface with a second layer hidden beneath it, uncovered through a soft circular window that follows the pointer and swells open on hover.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/mask-reveal/index.ts",
+      "type": "registry:ui",
+      "content": "export { MaskReveal, type MaskRevealProps } from \"./mask-reveal\"\n",
+      "target": "components/kitgrid/mask-reveal/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/mask-reveal/mask-reveal.css",
+      "type": "registry:file",
+      "content": "@property --kg-mask-reveal-r {\n  syntax: \"<length>\";\n  inherits: false;\n  initial-value: 0px;\n}\n\n@layer kg.components {\n  .kg-mask-reveal__reveal {\n    --kg-mask-reveal-r: 0px;\n\n    -webkit-mask-image: radial-gradient(\n      circle var(--kg-mask-reveal-r) at var(--kg-pointer-x, 50%) var(--kg-pointer-y, 50%),\n      #000 72%,\n      transparent 100%\n    );\n    mask-image: radial-gradient(\n      circle var(--kg-mask-reveal-r) at var(--kg-pointer-x, 50%) var(--kg-pointer-y, 50%),\n      #000 72%,\n      transparent 100%\n    );\n    transition: --kg-mask-reveal-r var(--kg-duration-spring) var(--kg-ease-spring);\n  }\n\n  .kg-mask-reveal[data-pointer=\"in\"] .kg-mask-reveal__reveal {\n    --kg-mask-reveal-r: calc(var(--_size) / 2);\n  }\n}\n",
+      "target": "components/kitgrid/mask-reveal/mask-reveal.css"
+    },
+    {
+      "path": "kitgrid/src/components/mask-reveal/mask-reveal.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n  useRef,\n} from \"react\"\nimport { usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface MaskRevealProps extends HTMLAttributes<HTMLDivElement> {\n  /** The layer underneath, seen through the spotlight. Decorative: it is hidden from assistive tech, so keep essential content in `children`. */\n  reveal: ReactNode\n  /** Spotlight diameter while hovering, in px. */\n  size?: number\n}\n\n/**\n * A surface with a second layer hidden beneath it, uncovered through a soft circular window\n * that follows the pointer and swells open on hover.\n */\nexport const MaskReveal = forwardRef<HTMLDivElement, MaskRevealProps>(\n  ({ reveal, size = 260, className, style, children, ...props }, forwardedRef) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    usePointerVars(local)\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-mask-reveal relative grid overflow-hidden rounded-kg-xl\", className)}\n        style={{ \"--_size\": `${size}px`, ...style } as CSSProperties}\n        {...props}\n      >\n        <div className=\"kg-mask-reveal__base min-w-0 [grid-area:1/1]\">{children}</div>\n        <div className=\"kg-mask-reveal__reveal pointer-events-none min-w-0 [grid-area:1/1]\" aria-hidden=\"true\">\n          {reveal}\n        </div>\n      </div>\n    )\n  },\n)\n\nMaskReveal.displayName = \"MaskReveal\"\n",
+      "target": "components/kitgrid/mask-reveal/mask-reveal.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

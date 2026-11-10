@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ribbons",
+  "type": "registry:ui",
+  "title": "Ribbons",
+  "description": "Soft ribbons that chase the pointer through the section and coil on a slow figure-eight when it leaves. Each ribbon is a spring chain drawn with a tapering stroke. Canvas, DPR-capped.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/backdrop-kit.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/ribbons/index.ts",
+      "type": "registry:ui",
+      "content": "export { Ribbons, type RibbonsProps } from \"./ribbons\"\n",
+      "target": "components/kitgrid/ribbons/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/ribbons/ribbons.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { rgba, useCanvasStage } from \"../backdrop-kit/stage\"\n\nexport interface RibbonsProps extends HTMLAttributes<HTMLDivElement> {\n  /** CSS colors, one ribbon each (up to 6). Defaults to ink, sage and peach. */\n  colors?: readonly string[]\n  /** Thickness at the head, in px. */\n  thickness?: number\n  /** Points per ribbon, 8–80: longer ribbons trail further. */\n  length?: number\n  /** How tightly the ribbons follow, 0.05–0.6. */\n  follow?: number\n  children?: ReactNode\n}\n\nconst DEFAULT_COLORS = [\n  \"var(--kg-ink)\",\n  \"var(--kg-paper-sage)\",\n  \"var(--kg-paper-peach)\",\n] as const\n\ntype Point = { x: number; y: number }\n\n/**\n * Soft ribbons that chase the pointer through the section and coil on a slow figure-eight when\n * it leaves. Each ribbon is a spring chain drawn with a tapering stroke. Canvas, DPR-capped.\n */\nexport const Ribbons = forwardRef<HTMLDivElement, RibbonsProps>(\n  (\n    {\n      colors = DEFAULT_COLORS,\n      thickness = 14,\n      length = 36,\n      follow = 0.28,\n      className,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const wrapper = hasChildren(children)\n    const chains = useRef<Point[][]>([])\n    const palette = (colors.length ? colors : DEFAULT_COLORS).slice(0, 6)\n    const points = Math.round(Math.min(Math.max(length, 8), 80))\n\n    const autopilot = (t: number, lane: number, width: number, height: number): Point => ({\n      x: width / 2 + Math.sin(t * 0.7 + lane * 0.9) * width * 0.32,\n      y: height / 2 + Math.sin(t * 1.4 + lane * 1.7) * height * 0.26,\n    })\n\n    useCanvasStage(root, canvasRef, {\n      draw: ({ ctx, width, height, time, dt, still, pointer, color: resolve }) => {\n        const t = time / 1000\n        if (chains.current.length !== palette.length || chains.current[0]?.length !== points) {\n          chains.current = palette.map((_, lane) =>\n            Array.from({ length: points }, (_, k) => autopilot(t - k * 0.04, lane, width, height)),\n          )\n        }\n        const spring = Math.min(Math.max(follow, 0.05), 0.6)\n        ctx.clearRect(0, 0, width, height)\n        ctx.lineCap = \"round\"\n        ctx.lineJoin = \"round\"\n        chains.current.forEach((chain, lane) => {\n          if (still) {\n            chain.forEach((point, k) => {\n              const p = autopilot(t - k * 0.04, lane, width, height)\n              point.x = p.x\n              point.y = p.y\n            })\n          } else {\n            const head = chain[0] as Point\n            const target = pointer.inside\n              ? { x: pointer.x + Math.sin(t * 3 + lane * 2) * 8, y: pointer.y + Math.cos(t * 3 + lane * 2) * 8 }\n              : autopilot(t, lane, width, height)\n            const lead = 1 - (1 - (spring * (1 - lane * 0.12))) ** dt\n            head.x += (target.x - head.x) * lead\n            head.y += (target.y - head.y) * lead\n            const link = 1 - (1 - 0.3) ** dt\n            for (let k = 1; k < chain.length; k++) {\n              const prev = chain[k - 1] as Point\n              const point = chain[k] as Point\n              point.x += (prev.x - point.x) * link\n              point.y += (prev.y - point.y) * link\n            }\n          }\n          const tone = resolve(palette[lane] as string)\n          for (let k = 1; k < chain.length; k++) {\n            const a = chain[k - 1] as Point\n            const b = chain[k] as Point\n            const f = 1 - k / chain.length\n            ctx.strokeStyle = rgba(tone, 0.15 + f * 0.75)\n            ctx.lineWidth = Math.max(thickness, 1) * f + 0.5\n            ctx.beginPath()\n            ctx.moveTo(a.x, a.y)\n            ctx.lineTo(b.x, b.y)\n            ctx.stroke()\n          }\n        })\n      },\n    })\n\n    return (\n      <div ref={ref} {...backdropRoot(\"kg-ribbons absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\", className, wrapper)} {...props}>\n        <div className=\"kg-ribbons__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <canvas ref={canvasRef} className=\"kg-ribbons__canvas block size-full\" />\n        </div>\n        {wrapper && <div className=\"kg-ribbons__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nRibbons.displayName = \"Ribbons\"\n",
+      "target": "components/kitgrid/ribbons/ribbons.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

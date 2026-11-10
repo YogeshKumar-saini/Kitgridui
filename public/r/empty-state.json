@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "empty-state",
+  "type": "registry:ui",
+  "title": "Empty State",
+  "description": "What a list, table or cart shows when there is nothing in it yet. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/empty-state/empty-state.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\nconst emptyStateVariants = variants({\n  base: \"kg-empty-state flex flex-col items-center text-center text-kg-fg\",\n  variants: {\n    variant: {\n      default: \"\",\n      dashed: \"rounded-kg-xl border-2 border-dashed border-kg-border-strong bg-kg-surface-sunken\",\n    },\n    size: {\n      sm: \"gap-4 px-4.5 py-6\",\n      md: \"gap-5 px-7.5 py-10\",\n      lg: \"gap-6 px-12 py-16\",\n    },\n  },\n  defaults: { variant: \"default\", size: \"md\" },\n})\n\n/* Paper Layers: the icon sits on a round sage sheet with an ink edge and offset. */\nconst ICON = {\n  sm: \"size-10\",\n  md: \"size-12\",\n  lg: \"size-14\",\n}\n\nconst TITLE = {\n  sm: \"text-kg-base\",\n  md: \"text-kg-md\",\n  lg: \"text-kg-lg\",\n}\n\ntype EmptyStateVariantProps = VariantProps<typeof emptyStateVariants>\nexport type EmptyStateVariant = NonNullable<EmptyStateVariantProps[\"variant\"]>\nexport type EmptyStateSize = NonNullable<EmptyStateVariantProps[\"size\"]>\nexport type EmptyStateTitleElement = \"h2\" | \"h3\" | \"h4\" | \"h5\" | \"h6\" | \"p\" | \"div\"\n\nexport interface EmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, \"title\"> {\n  /** Decorative; shown on a round paper tile. */\n  icon?: ReactNode\n  title: ReactNode\n  /** Pick the level that fits the page outline. */\n  titleAs?: EmptyStateTitleElement\n  description?: ReactNode\n  /** The next step, usually one primary and one secondary button. */\n  actions?: ReactNode\n  variant?: EmptyStateVariant\n  size?: EmptyStateSize\n}\n\n/** What a list, table or cart shows when there is nothing in it yet. Server-safe. */\nexport const EmptyState = forwardRef<HTMLDivElement, EmptyStateProps>(\n  (\n    {\n      icon,\n      title,\n      titleAs: Title = \"h3\",\n      description,\n      actions,\n      variant = \"default\",\n      size = \"md\",\n      className,\n      children,\n      ...props\n    },\n    ref,\n  ) => (\n    <div\n      ref={ref}\n      className={emptyStateVariants({ variant, size, className })}\n      data-variant={variant}\n      data-size={size}\n      {...props}\n    >\n      {icon != null && (\n        <span\n          className={cx(\n            \"kg-empty-state__icon grid shrink-0 place-items-center rounded-full border-2 border-kg-ink bg-kg-paper-sage text-kg-fg shadow-kg-sm [&_svg]:size-[45%]\",\n            ICON[size] ?? ICON.md,\n          )}\n          aria-hidden=\"true\"\n        >\n          {icon}\n        </span>\n      )}\n      <div className=\"kg-empty-state__text grid max-w-[26rem] justify-items-center gap-1.5\">\n        <Title\n          className={cx(\n            \"kg-empty-state__title m-0 font-semibold leading-[1.3] tracking-[-0.012em] text-balance\",\n            TITLE[size] ?? TITLE.md,\n          )}\n        >\n          {title}\n        </Title>\n        {description != null && (\n          <p\n            className={cx(\n              \"kg-empty-state__description m-0 leading-[1.55] text-pretty text-kg-fg-muted\",\n              size === \"sm\" ? \"text-kg-sm\" : \"text-kg-base\",\n            )}\n          >\n            {description}\n          </p>\n        )}\n      </div>\n      {actions != null && (\n        <div className=\"kg-empty-state__actions flex flex-wrap items-center justify-center gap-2\">\n          {actions}\n        </div>\n      )}\n      {children}\n    </div>\n  ),\n)\n\nEmptyState.displayName = \"EmptyState\"\n",
+      "target": "components/kitgrid/empty-state/empty-state.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/empty-state/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  EmptyState,\n  type EmptyStateProps,\n  type EmptyStateSize,\n  type EmptyStateTitleElement,\n  type EmptyStateVariant,\n} from \"./empty-state\"\n",
+      "target": "components/kitgrid/empty-state/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

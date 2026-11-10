@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "sticky-reveal",
+  "type": "registry:ui",
+  "title": "Sticky Reveal",
+  "description": "A section that pins while you scroll through it, opening a framed media window to full bleed and then fading its overlay in. Under reduced motion it renders the open state.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/sticky-reveal/index.ts",
+      "type": "registry:ui",
+      "content": "export { StickyReveal, type StickyRevealProps } from \"./sticky-reveal\"\n",
+      "target": "components/kitgrid/sticky-reveal/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/sticky-reveal/sticky-reveal.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n  type RefObject,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useInView } from \"../lib/hooks/use-in-view\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface StickyRevealProps extends HTMLAttributes<HTMLElement> {\n  /** The media that opens up, usually a full-bleed image or video. */\n  children: ReactNode\n  /** Content that fades in over the media once it is nearly open. */\n  overlay?: ReactNode\n  /** Scroll distance the reveal takes, in viewport heights. */\n  length?: number\n  /** How far the media is inset at the start, as a percentage of each side. */\n  inset?: number\n  /** A scrolling ancestor to pin inside, instead of the page. Its height stands in for the viewport. */\n  scroller?: RefObject<HTMLElement | null>\n}\n\n/**\n * A section that pins while you scroll through it, opening a framed media window to full\n * bleed and then fading its overlay in. Under reduced motion it renders the open state.\n */\nexport const StickyReveal = forwardRef<HTMLElement, StickyRevealProps>(\n  (\n    { children, overlay, length = 2, inset = 14, scroller, className, style, ...props },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const reduced = useReducedMotion()\n    const inView = useInView(local, { once: false, amount: 0 })\n\n    useEffect(() => {\n      const node = local.current\n      if (!node || reduced || !inView) return\n      const box = scroller?.current ?? null\n      const source: HTMLElement | Window = box ?? window\n      let frame = 0\n      const update = () => {\n        frame = 0\n        const vh = box ? box.clientHeight : window.innerHeight\n        if (box) node.style.setProperty(\"--_vh\", `${vh}px`)\n        const rect = node.getBoundingClientRect()\n        const top = rect.top - (box ? box.getBoundingClientRect().top : 0)\n        const travel = rect.height - vh\n        const p = travel > 0 ? Math.min(Math.max(-top / travel, 0), 1) : 1\n        node.style.setProperty(\"--_p\", p.toFixed(4))\n      }\n      const schedule = () => {\n        if (!frame) frame = requestAnimationFrame(update)\n      }\n      update()\n      source.addEventListener(\"scroll\", schedule, { passive: true })\n      window.addEventListener(\"resize\", schedule)\n      return () => {\n        cancelAnimationFrame(frame)\n        source.removeEventListener(\"scroll\", schedule)\n        window.removeEventListener(\"resize\", schedule)\n      }\n    }, [reduced, inView, scroller])\n\n    useEffect(() => {\n      if (reduced) local.current?.style.removeProperty(\"--_p\")\n    }, [reduced])\n\n    return (\n      <section\n        ref={ref}\n        className={cx(\n          \"kg-sticky-reveal group/sticky relative h-[calc(var(--_vh,100svh)_*_var(--_steps))] [--_fade:clamp(0,(var(--_p)_-_0.65)_/_0.3,1)] [--_open:clamp(0,var(--_p)_/_0.7,1)] [--_p:0] data-reduced:h-auto data-reduced:[--_p:1]\",\n          className,\n        )}\n        data-reduced={reduced || undefined}\n        style={\n          {\n            \"--_steps\": Math.max(length, 1) + 1,\n            \"--_inset\": `${inset}%`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-sticky-reveal__pin sticky top-0 grid h-[var(--_vh,100svh)] overflow-hidden group-data-reduced/sticky:relative group-data-reduced/sticky:h-auto group-data-reduced/sticky:min-h-[70svh]\">\n          <div className=\"kg-sticky-reveal__media min-h-0 overflow-hidden [grid-area:1/1] [clip-path:inset(calc((1_-_var(--_open))_*_var(--_inset))_round_calc((1_-_var(--_open))_*_var(--kg-radius-2xl)))] [transform:scale(calc(1.08_-_var(--_open)_*_0.08))] [&>:is(img,video)]:block [&>:is(img,video)]:size-full [&>:is(img,video)]:object-cover\">{children}</div>\n          {overlay !== undefined ? (\n            <div className=\"kg-sticky-reveal__overlay z-1 self-end p-10 opacity-(--_fade) [grid-area:1/1] [transform:translateY(calc((1_-_var(--_fade))_*_24px))]\">{overlay}</div>\n          ) : null}\n        </div>\n      </section>\n    )\n  },\n)\n\nStickyReveal.displayName = \"StickyReveal\"\n",
+      "target": "components/kitgrid/sticky-reveal/sticky-reveal.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

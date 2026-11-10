@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "clamp",
+  "type": "registry:ui",
+  "title": "Clamp",
+  "description": "Clamps content to a number of lines with a soft fade, and offers a toggle only when the content actually overflows.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/clamp/clamp.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n  useEffect,\n  useId,\n  useRef,\n  useState,\n} from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface ClampLabels {\n  more?: string\n  less?: string\n}\n\nexport interface ClampProps extends HTMLAttributes<HTMLDivElement> {\n  children: ReactNode\n  /** Visible lines while collapsed. */\n  lines?: number\n  expanded?: boolean\n  defaultExpanded?: boolean\n  onExpandedChange?: (expanded: boolean) => void\n  /** Hide the toggle, for a read-only clamp. */\n  hideToggle?: boolean\n  labels?: ClampLabels\n}\n\n/**\n * Clamps content to a number of lines with a soft fade, and offers a toggle only when the\n * content actually overflows.\n */\nexport const Clamp = forwardRef<HTMLDivElement, ClampProps>(\n  (\n    {\n      children,\n      lines = 3,\n      expanded: expandedProp,\n      defaultExpanded = false,\n      onExpandedChange,\n      hideToggle = false,\n      labels,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const [expanded, setExpanded] = useControllableState({\n      value: expandedProp,\n      defaultValue: defaultExpanded,\n      onChange: onExpandedChange,\n    })\n    const bodyRef = useRef<HTMLDivElement>(null)\n    const [overflows, setOverflows] = useState(false)\n    const id = useId()\n    const words = { more: \"Show more\", less: \"Show less\", ...labels }\n\n    useEffect(() => {\n      const node = bodyRef.current\n      if (!node) return\n      const measure = () => {\n        if (expanded) return\n        setOverflows(node.scrollHeight - node.clientHeight > 1)\n      }\n      measure()\n      if (typeof ResizeObserver === \"undefined\") return\n      const observer = new ResizeObserver(measure)\n      observer.observe(node)\n      return () => observer.disconnect()\n    }, [expanded, lines, children])\n\n    const showToggle = !hideToggle && (overflows || expanded)\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-clamp grid min-w-0 justify-items-start gap-1.5\", className)}\n        data-state={expanded ? \"expanded\" : \"collapsed\"}\n        data-overflows={overflows || undefined}\n        style={{ \"--_lines\": lines, ...style } as CSSProperties}\n        {...props}\n      >\n        <div\n          ref={bodyRef}\n          id={id}\n          className={cx(\n            \"kg-clamp__body min-w-0\",\n            !expanded && \"line-clamp-(--_lines)\",\n            !expanded &&\n              overflows &&\n              \"[mask-image:linear-gradient(to_bottom,black_calc(100%-1.4em),transparent)]\",\n          )}\n        >\n          {children}\n        </div>\n        {showToggle && (\n          <button\n            type=\"button\"\n            className=\"kg-clamp__toggle inline-flex cursor-pointer items-center gap-1 rounded-kg-xs border-0 bg-transparent py-0.5 text-kg-sm font-semibold text-kg-accent-strong underline-offset-[3px] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring [&_svg]:size-3.5 [&_svg]:transition-transform [&_svg]:duration-(--kg-duration-base) [&_svg]:ease-kg-spring aria-expanded:[&_svg]:rotate-180\"\n            aria-expanded={expanded}\n            aria-controls={id}\n            onClick={() => setExpanded((value) => !value)}\n          >\n            {expanded ? words.less : words.more}\n            <svg viewBox=\"0 0 16 16\" aria-hidden=\"true\">\n              <path\n                d=\"M4 6l4 4 4-4\"\n                fill=\"none\"\n                stroke=\"currentColor\"\n                strokeWidth=\"1.75\"\n                strokeLinecap=\"round\"\n                strokeLinejoin=\"round\"\n              />\n            </svg>\n          </button>\n        )}\n      </div>\n    )\n  },\n)\nClamp.displayName = \"Clamp\"\n",
+      "target": "components/kitgrid/clamp/clamp.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/clamp/index.ts",
+      "type": "registry:ui",
+      "content": "export { Clamp, type ClampLabels, type ClampProps } from \"./clamp\"\n",
+      "target": "components/kitgrid/clamp/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

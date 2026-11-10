@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "truncate-text",
+  "type": "registry:ui",
+  "title": "Truncate Text",
+  "description": "Single-line truncation that responds to its container. In `middle` mode the head shrinks with an ellipsis while the tail stays whole, so `invoice-2026-03….pdf` keeps its extension. The DOM always holds the full string, so screen readers and copy-paste get all of it.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/truncate-text/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  TruncateText,\n  type TruncateTextPosition,\n  type TruncateTextProps,\n} from \"./truncate-text\"\n",
+      "target": "components/kitgrid/truncate-text/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/truncate-text/truncate-text.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type TruncateTextPosition = \"end\" | \"middle\" | \"start\"\n\nexport interface TruncateTextProps extends Omit<HTMLAttributes<HTMLSpanElement>, \"children\"> {\n  children: string\n  /** Where the ellipsis goes when the text overflows its container. */\n  position?: TruncateTextPosition\n  /** Characters kept after the ellipsis in `middle` mode, such as a file extension or hash tail. */\n  tail?: number\n  /** Caps the width. Otherwise the text fills, and truncates to, its container. */\n  maxWidth?: string\n  mono?: boolean\n}\n\n/**\n * Single-line truncation that responds to its container. In `middle` mode the head shrinks with\n * an ellipsis while the tail stays whole, so `invoice-2026-03….pdf` keeps its extension. The DOM\n * always holds the full string, so screen readers and copy-paste get all of it.\n */\nexport const TruncateText = forwardRef<HTMLSpanElement, TruncateTextProps>(\n  (\n    {\n      children,\n      position = \"end\",\n      tail = 6,\n      maxWidth,\n      mono = false,\n      className,\n      style,\n      title,\n      ...props\n    },\n    ref,\n  ) => {\n    const split = position === \"middle\" && children.length > tail + 1\n    const head = split ? children.slice(0, children.length - tail) : children\n    const end = split ? children.slice(children.length - tail) : \"\"\n    return (\n      <span\n        ref={ref}\n        className={cx(\n          \"kg-truncate-text inline-flex min-w-0 max-w-(--_max,100%) align-bottom whitespace-nowrap data-mono:font-kg-mono data-mono:text-[0.92em]\",\n          className,\n        )}\n        data-position={position}\n        data-mono={mono || undefined}\n        title={title ?? children}\n        style={{ ...(maxWidth ? ({ \"--_max\": maxWidth } as CSSProperties) : null), ...style }}\n        {...props}\n      >\n        <span\n          className={`kg-truncate-text__head min-w-0 overflow-hidden text-ellipsis ${position === \"start\" ? \"text-left [direction:rtl]\" : \"\"}`}\n        >\n          {position === \"start\" ? <bdi>{head}</bdi> : head}\n        </span>\n        {split && <span className=\"kg-truncate-text__tail flex-none\">{end}</span>}\n      </span>\n    )\n  },\n)\nTruncateText.displayName = \"TruncateText\"\n",
+      "target": "components/kitgrid/truncate-text/truncate-text.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

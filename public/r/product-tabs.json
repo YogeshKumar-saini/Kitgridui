@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "product-tabs",
+  "type": "registry:ui",
+  "title": "Product Tabs",
+  "description": "Product details, shipping and returns as tabs, or as an accordion of native disclosures.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/tabs.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/product-tabs/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  type ProductTabsLayout,\n  ProductTabs,\n  type ProductTabsProps,\n  type ProductTabsSection,\n} from \"./product-tabs\"\n",
+      "target": "components/kitgrid/product-tabs/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/product-tabs/product-tabs.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Tabs, TabsContent, TabsList, TabsTrigger } from \"../tabs/tabs\"\n\nexport interface ProductTabsSection {\n  id: string\n  label: string\n  content: ReactNode\n}\n\nexport type ProductTabsLayout = \"tabs\" | \"accordion\"\n\nexport interface ProductTabsProps extends Omit<HTMLAttributes<HTMLDivElement>, \"defaultValue\"> {\n  sections: readonly ProductTabsSection[]\n  /** `accordion` stacks native disclosures, which suits narrow columns and mobile. */\n  layout?: ProductTabsLayout\n  /** Section open first. Defaults to the first. */\n  defaultSection?: string\n  /** Accessible name of the tab list. */\n  label?: string\n}\n\nconst panelClass =\n  \"kg-product-tabs__panel text-kg-sm leading-[1.6] text-kg-fg-muted [&_p]:mt-0 [&_p]:mb-[0.75em] [&_ul]:m-0 [&_ul]:ps-[1.1em]\"\n\nconst Plus = () => (\n  <svg\n    viewBox=\"0 0 16 16\"\n    fill=\"none\"\n    stroke=\"currentColor\"\n    strokeWidth=\"1.8\"\n    strokeLinecap=\"round\"\n    aria-hidden=\"true\"\n    className=\"kg-product-tabs__icon size-4 shrink-0 text-kg-fg transition-transform duration-[var(--kg-duration-slow)] ease-kg-out group-open/item:rotate-180\"\n  >\n    <path d=\"M3 8h10\" />\n    <path\n      className=\"kg-product-tabs__plus-v origin-center transition-transform duration-[var(--kg-duration-slow)] ease-kg-out group-open/item:scale-y-0\"\n      d=\"M8 3v10\"\n    />\n  </svg>\n)\n\n/** Product details, shipping and returns as tabs, or as an accordion of native disclosures. */\nexport const ProductTabs = forwardRef<HTMLDivElement, ProductTabsProps>(\n  (\n    {\n      sections,\n      layout = \"tabs\",\n      defaultSection,\n      label = \"Product information\",\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const first = defaultSection ?? sections[0]?.id\n    if (layout === \"accordion\") {\n      return (\n        <div\n          ref={ref}\n          className={cx(\"kg-product-tabs border-t-2 border-kg-ink text-kg-fg\", className)}\n          data-layout=\"accordion\"\n          {...props}\n        >\n          {sections.map((section) => (\n            <details\n              key={section.id}\n              className=\"kg-product-tabs__item group/item border-b-2 border-kg-border\"\n              open={section.id === first || undefined}\n            >\n              <summary\n                className={cx(\n                  \"kg-product-tabs__summary flex cursor-pointer list-none items-center justify-between gap-3 rounded-kg-xs py-4\",\n                  \"text-kg-base font-semibold text-kg-fg [&::-webkit-details-marker]:hidden\",\n                  \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n                )}\n              >\n                {section.label}\n                <Plus />\n              </summary>\n              <div\n                className={cx(\n                  panelClass,\n                  \"pb-4 group-open/item:animate-[kg-pop-in_var(--kg-duration-slow)_var(--kg-ease-out)]\",\n                )}\n              >\n                {section.content}\n              </div>\n            </details>\n          ))}\n        </div>\n      )\n    }\n    return (\n      <Tabs\n        ref={ref}\n        defaultValue={first}\n        className={cx(\"kg-product-tabs text-kg-fg\", className)}\n        data-layout=\"tabs\"\n        {...props}\n      >\n        <TabsList aria-label={label} variant=\"underline\">\n          {sections.map((section) => (\n            <TabsTrigger key={section.id} value={section.id}>\n              {section.label}\n            </TabsTrigger>\n          ))}\n        </TabsList>\n        {sections.map((section) => (\n          <TabsContent key={section.id} value={section.id} className={panelClass}>\n            {section.content}\n          </TabsContent>\n        ))}\n      </Tabs>\n    )\n  },\n)\n\nProductTabs.displayName = \"ProductTabs\"\n",
+      "target": "components/kitgrid/product-tabs/product-tabs.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

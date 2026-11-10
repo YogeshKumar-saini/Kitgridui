@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "morphing-text",
+  "type": "registry:ui",
+  "title": "Morphing Text",
+  "description": "Melts one word into the next: two layers cross-blur while an SVG alpha-threshold filter fuses their edges into one liquid shape. Under reduced motion the first text stays put.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/text-reveal.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/morphing-text/index.ts",
+      "type": "registry:ui",
+      "content": "export { MorphingText, type MorphingTextProps } from \"./morphing-text\"\n",
+      "target": "components/kitgrid/morphing-text/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/morphing-text/morphing-text.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type ElementType,\n  forwardRef,\n  type HTMLAttributes,\n  useEffect,\n  useId,\n  useRef,\n} from \"react\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport type { TextEffectElement } from \"../text-reveal/split-text\"\nimport { usePlayback } from \"../text-reveal/use-playback\"\n\nexport interface MorphingTextProps extends Omit<HTMLAttributes<HTMLElement>, \"children\"> {\n  /** Words or short phrases to melt between, in order. */\n  texts: string[]\n  as?: TextEffectElement\n  /** Length of each melt, in ms. */\n  morph?: number\n  /** Time each text holds before melting into the next, in ms. */\n  hold?: number\n}\n\n/**\n * Melts one word into the next: two layers cross-blur while an SVG alpha-threshold filter\n * fuses their edges into one liquid shape. Under reduced motion the first text stays put.\n */\nexport const MorphingText = forwardRef<HTMLElement, MorphingTextProps>(\n  ({ texts, as = \"span\", morph = 1100, hold = 1400, className, ...props }, forwardedRef) => {\n    const local = useRef<HTMLElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const aRef = useRef<HTMLSpanElement>(null)\n    const bRef = useRef<HTMLSpanElement>(null)\n    const reduced = useReducedMotion()\n    const playing = usePlayback(local, !reduced && texts.length > 1)\n    const filter = `kg-morph-${useId().replace(/[^a-zA-Z0-9_-]/g, \"\")}`\n    const key = texts.join(\"\\u0000\")\n\n    useEffect(() => {\n      const a = aRef.current\n      const b = bRef.current\n      if (!a || !b) return\n      const reset = () => {\n        a.textContent = texts[0] ?? \"\"\n        b.textContent = \"\"\n        a.style.filter = b.style.filter = \"\"\n        a.style.opacity = \"1\"\n        b.style.opacity = \"0\"\n      }\n      if (!playing) {\n        if (reduced) reset()\n        return\n      }\n      let index = 0\n      let start = -1\n      let frame = 0\n\n      const paint = (t: number) => {\n        // Blur grows without bound as a layer fades out, which is what lets the threshold fuse them.\n        const show = (node: HTMLElement, f: number) => {\n          node.style.opacity = `${f ** 0.4}`\n          node.style.filter = f >= 1 ? \"\" : `blur(${Math.min(8 / Math.max(f, 0.01) - 8, 100)}px)`\n        }\n        show(b, t)\n        show(a, 1 - t)\n        const layers = a.parentElement\n        if (layers) layers.style.filter = t > 0 ? `url(#${filter})` : \"\"\n      }\n\n      const tick = (now: number) => {\n        if (start < 0) start = now\n        const elapsed = now - start\n        if (elapsed < hold) {\n          paint(0)\n        } else if (elapsed < hold + morph) {\n          paint((elapsed - hold) / morph)\n        } else {\n          index = (index + 1) % texts.length\n          a.textContent = texts[index] ?? \"\"\n          b.textContent = texts[(index + 1) % texts.length] ?? \"\"\n          paint(0)\n          start = now\n        }\n        frame = requestAnimationFrame(tick)\n      }\n      a.textContent = texts[index] ?? \"\"\n      b.textContent = texts[(index + 1) % texts.length] ?? \"\"\n      frame = requestAnimationFrame(tick)\n      return () => cancelAnimationFrame(frame)\n      // `key` stands in for the array so inline literals don't restart the cycle.\n    }, [playing, reduced, morph, hold, key, filter])\n\n    const Tag = as as ElementType\n    const longest = texts.reduce((best, text) => (text.length > best.length ? text : best), \"\")\n\n    return (\n      <Tag ref={ref} className={cx(\"kg-morphing-text inline-block\", className)} {...props}>\n        <span className=\"kg-visually-hidden\">{texts.join(\", \")}</span>\n        <span className=\"kg-morphing-text__stage relative inline-grid place-items-center\" aria-hidden=\"true\">\n          <span className=\"kg-morphing-text__sizer invisible [grid-area:1/1]\">{longest}</span>\n          <span className=\"kg-morphing-text__layers absolute inset-0 grid place-items-center\">\n            <span ref={aRef} className=\"kg-morphing-text__layer whitespace-nowrap [grid-area:1/1]\">\n              {texts[0]}\n            </span>\n            <span ref={bRef} className=\"kg-morphing-text__layer whitespace-nowrap [grid-area:1/1]\" style={{ opacity: 0 }} />\n          </span>\n          <svg className=\"kg-morphing-text__defs absolute size-0\" focusable=\"false\">\n            <defs>\n              <filter id={filter}>\n                <feColorMatrix\n                  in=\"SourceGraphic\"\n                  type=\"matrix\"\n                  values=\"1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 255 -140\"\n                />\n              </filter>\n            </defs>\n          </svg>\n        </span>\n      </Tag>\n    )\n  },\n)\n\nMorphingText.displayName = \"MorphingText\"\n",
+      "target": "components/kitgrid/morphing-text/morphing-text.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

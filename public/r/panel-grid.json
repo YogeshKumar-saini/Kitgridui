@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "panel-grid",
+  "type": "registry:ui",
+  "title": "Panel Grid",
+  "description": "A 12-column dashboard grid that responds to its own width, not the viewport's, so it works the same in a sidebar layout, a dialog or a full page. Children choose their columns with `data-span` (wide containers) and `data-span-md` (medium); `Panel` sets both from its `span` props. Below 40rem every child takes the full row. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/panel-grid/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  PanelGrid,\n  type PanelGridGap,\n  type PanelGridProps,\n  type PanelGridVariant,\n} from \"./panel-grid\"\n",
+      "target": "components/kitgrid/panel-grid/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/panel-grid/panel-grid.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Each child resets the span properties first, so a nested grid never inherits its parent cell\n * span, then reads its own from `data-span`, `data-span-md` and `data-row-span`.\n */\nconst spans = [\n  \"*:col-span-full *:min-w-0 *:[--_lg:initial] *:[--_md:initial] *:[--_md-auto:initial] *:[--_rows:initial]\",\n  \"*:[grid-row:span_var(--_rows,1)] *:[--_md-cols:var(--_md,var(--_md-auto,12))] *:[--_lg-cols:var(--_lg,12)]\",\n  \"@min-[40rem]/kg-panel-grid:*:col-span-(--_md-cols) @min-[64rem]/kg-panel-grid:*:col-span-(--_lg-cols)\",\n  \"*:data-[span=1]:[--_lg:1] *:data-[span=2]:[--_lg:2] *:data-[span=3]:[--_lg:3] *:data-[span=4]:[--_lg:4]\",\n  \"*:data-[span=5]:[--_lg:5] *:data-[span=6]:[--_lg:6] *:data-[span=7]:[--_lg:7] *:data-[span=8]:[--_lg:8]\",\n  \"*:data-[span=9]:[--_lg:9] *:data-[span=10]:[--_lg:10] *:data-[span=11]:[--_lg:11] *:data-[span=12]:[--_lg:12] *:data-[span=full]:[--_lg:12]\",\n  \"*:data-[span=1]:[--_md-auto:6] *:data-[span=2]:[--_md-auto:6] *:data-[span=3]:[--_md-auto:6]\",\n  \"*:data-[span=4]:[--_md-auto:6] *:data-[span=5]:[--_md-auto:6] *:data-[span=6]:[--_md-auto:6]\",\n  \"*:data-[span=7]:[--_md-auto:12] *:data-[span=8]:[--_md-auto:12] *:data-[span=9]:[--_md-auto:12]\",\n  \"*:data-[span=10]:[--_md-auto:12] *:data-[span=11]:[--_md-auto:12] *:data-[span=12]:[--_md-auto:12] *:data-[span=full]:[--_md-auto:12]\",\n  \"*:data-[span-md=1]:[--_md:1] *:data-[span-md=2]:[--_md:2] *:data-[span-md=3]:[--_md:3] *:data-[span-md=4]:[--_md:4]\",\n  \"*:data-[span-md=5]:[--_md:5] *:data-[span-md=6]:[--_md:6] *:data-[span-md=7]:[--_md:7] *:data-[span-md=8]:[--_md:8]\",\n  \"*:data-[span-md=9]:[--_md:9] *:data-[span-md=10]:[--_md:10] *:data-[span-md=11]:[--_md:11] *:data-[span-md=12]:[--_md:12] *:data-[span-md=full]:[--_md:12]\",\n  \"*:data-[row-span=2]:[--_rows:2] *:data-[row-span=3]:[--_rows:3]\",\n]\n\nconst panelGridVariants = variants({\n  base: [\n    \"kg-panel-grid @container/kg-panel-grid grid min-w-0 grid-flow-row-dense grid-cols-12 empty:hidden\",\n    spans,\n  ],\n  variants: {\n    variant: {\n      spaced: \"\",\n      // Paper Layers: one ink seam between panels. The grid paints the seams, each child covers its cell.\n      seam: [\n        \"gap-[2px] overflow-clip rounded-kg-xl border-2 border-kg-ink bg-kg-ink shadow-kg-sm\",\n        \"*:rounded-none *:border-0 *:shadow-none\",\n      ],\n    },\n    gap: {\n      sm: \"\",\n      md: \"\",\n      lg: \"\",\n    },\n  },\n  compound: [\n    { variant: \"spaced\", gap: \"sm\", class: \"gap-2.5\" },\n    { variant: \"spaced\", gap: \"md\", class: \"gap-4\" },\n    { variant: \"spaced\", gap: \"lg\", class: \"gap-6\" },\n  ],\n  defaults: { variant: \"spaced\", gap: \"md\" },\n})\n\ntype PanelGridVariantProps = VariantProps<typeof panelGridVariants>\nexport type PanelGridVariant = NonNullable<PanelGridVariantProps[\"variant\"]>\nexport type PanelGridGap = NonNullable<PanelGridVariantProps[\"gap\"]>\n\nexport interface PanelGridProps extends HTMLAttributes<HTMLDivElement> {\n  /** `spaced` floats panels on the page; `seam` joins them with one ink seam, like a print plate. */\n  variant?: PanelGridVariant\n  gap?: PanelGridGap\n}\n\n/**\n * A 12-column dashboard grid that responds to its own width, not the viewport's, so it works\n * the same in a sidebar layout, a dialog or a full page. Children choose their columns with\n * `data-span` (wide containers) and `data-span-md` (medium); `Panel` sets both from its `span`\n * props. Below 40rem every child takes the full row. Server-safe.\n */\nexport const PanelGrid = forwardRef<HTMLDivElement, PanelGridProps>(\n  ({ variant = \"spaced\", gap = \"md\", className, ...props }, ref) => (\n    <div\n      ref={ref}\n      className={panelGridVariants({ variant, gap, className })}\n      data-variant={variant}\n      data-gap={gap}\n      {...props}\n    />\n  ),\n)\n\nPanelGrid.displayName = \"PanelGrid\"\n",
+      "target": "components/kitgrid/panel-grid/panel-grid.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

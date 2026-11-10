@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "font-picker",
+  "type": "registry:ui",
+  "title": "Font Picker",
+  "description": "Typefaces as a native radio list, each previewed in its own face.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/option-tile.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/font-picker/font-picker.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useId } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport { OptionTile } from \"../option-tile/option-tile\"\n\nexport interface FontPickerOption {\n  value: string\n  label: string\n  /** CSS `font-family` the option is previewed in. */\n  family: string\n  /** A short line on its character, shown in the interface font. */\n  note?: ReactNode\n}\n\nexport interface FontPickerProps extends Omit<\n  HTMLAttributes<HTMLDivElement>,\n  \"defaultValue\" | \"onChange\"\n> {\n  options: readonly FontPickerOption[]\n  value?: string\n  defaultValue?: string\n  onValueChange?: (value: string) => void\n  /** The glyphs each option is previewed with. */\n  sample?: string\n  /** Native radio `name`, to submit the choice with a form. Generated when omitted. */\n  name?: string\n}\n\n/** Typefaces as a native radio list, each previewed in its own face. */\nexport const FontPicker = forwardRef<HTMLDivElement, FontPickerProps>(\n  (\n    {\n      options,\n      value: valueProp,\n      defaultValue,\n      onValueChange,\n      sample = \"Aa\",\n      name,\n      className,\n      \"aria-label\": ariaLabel = \"Typeface\",\n      ...props\n    },\n    ref,\n  ) => {\n    const generatedName = useId()\n    const [value, setValue] = useControllableState({\n      value: valueProp,\n      defaultValue: defaultValue ?? options[0]?.value ?? \"\",\n      onChange: onValueChange,\n    })\n\n    return (\n      <div\n        ref={ref}\n        role=\"radiogroup\"\n        aria-label={ariaLabel}\n        className={cx(\"kg-font-picker grid min-w-0 gap-1.5\", className)}\n        {...props}\n      >\n        {options.map((option) => (\n          <OptionTile\n            key={option.value}\n            layout=\"row\"\n            name={name ?? generatedName}\n            value={option.value}\n            checked={option.value === value}\n            onChange={(event) => {\n              if (event.currentTarget.checked) setValue(option.value)\n            }}\n            preview={\n              <span\n                className=\"kg-font-picker__sample text-[length:var(--kg-text-xl)] leading-none tracking-[-0.02em] text-kg-fg\"\n                style={{ fontFamily: option.family }}\n              >\n                {sample}\n              </span>\n            }\n            label={<span className=\"text-kg-md\" style={{ fontFamily: option.family }}>{option.label}</span>}\n            description={option.note}\n          />\n        ))}\n      </div>\n    )\n  },\n)\n\nFontPicker.displayName = \"FontPicker\"\n",
+      "target": "components/kitgrid/font-picker/font-picker.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/font-picker/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  FontPicker,\n  type FontPickerOption,\n  type FontPickerProps,\n} from \"./font-picker\"\n",
+      "target": "components/kitgrid/font-picker/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

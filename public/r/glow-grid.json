@@ -1,0 +1,35 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "glow-grid",
+  "type": "registry:ui",
+  "title": "Glow Grid",
+  "description": "A quiet hairline grid that lights up around the pointer, as if a torch were held over it. The pointer only moves two CSS variables once per frame; the light is a masked copy of the grid. Touch and keyboard users see the light at its resting point.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/glow-grid/glow-grid.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-glow-grid {\n    &[data-mask=\"radial\"] > .kg-glow-grid__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-glow-grid__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-glow-grid__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-glow-grid__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n\n  .kg-glow-grid__lines {\n    --_line: color-mix(in oklab, var(--kg-border) 75%, transparent);\n    background-image:\n      linear-gradient(to right, var(--_line) 1px, transparent 1px),\n      linear-gradient(to bottom, var(--_line) 1px, transparent 1px);\n    background-size: var(--_s) var(--_s);\n    background-position: -1px -1px;\n\n    &[data-lit] {\n      --_line: color-mix(in oklab, var(--_c) 80%, transparent);\n      mask-image: radial-gradient(\n        var(--kg-glow-grid-radius, 260px) circle at var(--_x) var(--_y),\n        #000 0%,\n        rgb(0 0 0 / 0.35) 45%,\n        transparent 100%\n      );\n    }\n  }\n}\n",
+      "target": "components/kitgrid/glow-grid/glow-grid.css"
+    },
+    {
+      "path": "kitgrid/src/components/glow-grid/glow-grid.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport type GlowGridMask = BackdropMask\n\nexport interface GlowGridProps extends HTMLAttributes<HTMLDivElement> {\n  /** Cell size, in px. */\n  size?: number\n  /** Any CSS color for the lit lines. Defaults to ink. */\n  color?: string\n  /** Radius of the light around the pointer, in px. */\n  radius?: number\n  /** Where the light rests when the pointer is away, 0–1 across and down. */\n  rest?: readonly [x: number, y: number]\n  mask?: GlowGridMask\n  children?: ReactNode\n}\n\n/**\n * A quiet hairline grid that lights up around the pointer, as if a torch were held over it.\n * The pointer only moves two CSS variables once per frame; the light is a masked copy of the\n * grid. Touch and keyboard users see the light at its resting point.\n */\nexport const GlowGrid = forwardRef<HTMLDivElement, GlowGridProps>(\n  (\n    {\n      size = 48,\n      color,\n      radius = 260,\n      rest = [0.5, 0.3],\n      mask = \"radial\",\n      className,\n      style,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const wrapper = hasChildren(children)\n    const [rx, ry] = rest\n\n    useEffect(() => {\n      const node = root.current\n      if (!node) return\n      const target = node.hasAttribute(\"data-wrapper\") ? node : (node.parentElement ?? node)\n      let frame = 0\n      let last: PointerEvent | null = null\n      const flush = () => {\n        frame = 0\n        if (!last) return\n        const rect = node.getBoundingClientRect()\n        node.style.setProperty(\"--kg-glow-grid-x\", `${last.clientX - rect.left}px`)\n        node.style.setProperty(\"--kg-glow-grid-y\", `${last.clientY - rect.top}px`)\n      }\n      const move = (event: PointerEvent) => {\n        if (event.pointerType === \"touch\") return\n        last = event\n        node.dataset.pointer = \"in\"\n        if (!frame) frame = requestAnimationFrame(flush)\n      }\n      const leave = () => {\n        last = null\n        delete node.dataset.pointer\n        node.style.removeProperty(\"--kg-glow-grid-x\")\n        node.style.removeProperty(\"--kg-glow-grid-y\")\n      }\n      target.addEventListener(\"pointermove\", move, { passive: true })\n      target.addEventListener(\"pointerleave\", leave)\n      return () => {\n        cancelAnimationFrame(frame)\n        target.removeEventListener(\"pointermove\", move)\n        target.removeEventListener(\"pointerleave\", leave)\n      }\n    }, [])\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-glow-grid absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-glow-grid-color,var(--kg-ink))] [--_s:var(--kg-glow-grid-size,48px)] [--_x:var(--kg-glow-grid-x,var(--kg-glow-grid-rest-x,50%))] [--_y:var(--kg-glow-grid-y,var(--kg-glow-grid-rest-y,30%))]\",\n          className,\n          wrapper,\n        )}\n        data-mask={mask}\n        style={\n          {\n            ...(color ? { \"--kg-glow-grid-color\": color } : null),\n            \"--kg-glow-grid-size\": `${Math.max(size, 8)}px`,\n            \"--kg-glow-grid-radius\": `${Math.max(radius, 40)}px`,\n            \"--kg-glow-grid-rest-x\": `${Math.min(Math.max(rx, 0), 1) * 100}%`,\n            \"--kg-glow-grid-rest-y\": `${Math.min(Math.max(ry, 0), 1) * 100}%`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-glow-grid__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <div className=\"kg-glow-grid__lines absolute inset-0\" />\n          <div\n            className=\"kg-glow-grid__lines absolute inset-0 opacity-55 transition-opacity duration-(--kg-duration-slow) ease-kg-out [.kg-glow-grid[data-pointer=in]_&]:opacity-100\"\n            data-lit=\"\"\n          />\n        </div>\n        {wrapper && <div className=\"kg-glow-grid__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nGlowGrid.displayName = \"GlowGrid\"\n",
+      "target": "components/kitgrid/glow-grid/glow-grid.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/glow-grid/index.ts",
+      "type": "registry:ui",
+      "content": "export { GlowGrid, type GlowGridProps, type GlowGridMask } from \"./glow-grid\"\n",
+      "target": "components/kitgrid/glow-grid/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "flowing-menu",
+  "type": "registry:ui",
+  "title": "Flowing Menu",
+  "description": "Full-width menu rows. Hovering a row floods it from the edge the pointer came through with an accent band carrying a marquee of the label, and drains it toward the edge it leaves by.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/flowing-menu/flowing-menu.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  @keyframes kg-flowing-menu-scroll {\n    to {\n      transform: translateX(-50%);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/flowing-menu/flowing-menu.css"
+    },
+    {
+      "path": "kitgrid/src/components/flowing-menu/flowing-menu.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type PointerEvent } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface FlowingMenuItem {\n  label: string\n  href: string\n  /** Shown as a pill between repeats in the hover marquee. */\n  image?: string\n}\n\nexport interface FlowingMenuProps extends HTMLAttributes<HTMLElement> {\n  items: FlowingMenuItem[]\n  /** Accessible name of the navigation landmark. */\n  label?: string\n}\n\nconst edgeOf = (event: PointerEvent<HTMLElement>): \"top\" | \"bottom\" => {\n  const rect = event.currentTarget.getBoundingClientRect()\n  return event.clientY - rect.top < rect.height / 2 ? \"top\" : \"bottom\"\n}\n\n/**\n * Full-width menu rows. Hovering a row floods it from the edge the pointer came through with\n * an accent band carrying a marquee of the label, and drains it toward the edge it leaves by.\n */\nexport const FlowingMenu = forwardRef<HTMLElement, FlowingMenuProps>(\n  ({ items, label = \"Menu\", className, ...props }, ref) => {\n    const enter = (event: PointerEvent<HTMLElement>) => {\n      const row = event.currentTarget\n      row.dataset.edge = edgeOf(event)\n      // Commit the start edge before opening so the band slides in from it.\n      void row.offsetWidth\n      row.dataset.state = \"open\"\n    }\n    const leave = (event: PointerEvent<HTMLElement>) => {\n      const row = event.currentTarget\n      row.dataset.edge = edgeOf(event)\n      row.dataset.state = \"closed\"\n    }\n\n    return (\n      <nav ref={ref} className={cx(\n          \"kg-flowing-menu w-full [--_band-fg:var(--kg-flowing-menu-band-fg,var(--kg-surface))] [--_band:var(--kg-flowing-menu-band,var(--kg-ink))]\",\n          className,\n        )} aria-label={label} {...props}>\n        <ul className=\"kg-flowing-menu__list m-0 list-none p-0\">\n          {items.map((item) => (\n            <li\n              key={item.href + item.label}\n              className=\"kg-flowing-menu__row group/row relative overflow-hidden border-t border-kg-border-strong [--_from:101%] last:border-b data-[edge=top]:[--_from:-101%]\"\n              data-state=\"closed\"\n              data-edge=\"bottom\"\n              onPointerEnter={enter}\n              onPointerLeave={leave}\n            >\n              <a\n                className=\"kg-flowing-menu__link flex min-h-[var(--kg-flowing-menu-row,5.5rem)] items-center justify-center text-kg-fg no-underline text-[length:var(--kg-flowing-menu-size,clamp(1.75rem,4vw,2.75rem))] font-[650] tracking-[-0.03em] uppercase focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-kg-ring\"\n                href={item.href}\n              >\n                {item.label}\n              </a>\n              <span\n                className=\"kg-flowing-menu__band pointer-events-none absolute inset-0 flex translate-y-(--_from) items-center overflow-hidden bg-(--_band) text-(--_band-fg) transition-transform duration-(--kg-duration-slower) ease-kg-out group-focus-within/row:translate-y-0 group-data-[state=open]/row:translate-y-0\"\n                aria-hidden=\"true\"\n              >\n                <span className=\"kg-flowing-menu__track flex w-max animate-[kg-flowing-menu-scroll_14s_linear_infinite] [animation-play-state:paused] group-focus-within/row:[animation-play-state:running] group-data-[state=open]/row:[animation-play-state:running] motion-reduce:animate-none [[data-kg-motion=reduce]_&]:animate-none\">\n                  {[0, 1].map((group) => (\n                    <span key={group} className=\"kg-flowing-menu__group flex shrink-0\">\n                      {[0, 1, 2, 3].map((i) => (\n                        <span\n                          key={i}\n                          className=\"kg-flowing-menu__chunk inline-flex items-center gap-[2.5vw] whitespace-nowrap pe-[2.5vw] text-[length:var(--kg-flowing-menu-size,clamp(1.75rem,4vw,2.75rem))] font-[650] tracking-[-0.03em] uppercase\"\n                        >\n                          <span>{item.label}</span>\n                          {item.image ? (\n                            <span\n                              className=\"kg-flowing-menu__image h-[3.5rem] w-[8rem] rounded-full border-2 border-current bg-cover bg-center\"\n                              style={{ backgroundImage: `url(\"${item.image}\")` }}\n                            />\n                          ) : (\n                            <span className=\"kg-flowing-menu__dot size-[0.6em] rounded-full bg-current\" />\n                          )}\n                        </span>\n                      ))}\n                    </span>\n                  ))}\n                </span>\n              </span>\n            </li>\n          ))}\n        </ul>\n      </nav>\n    )\n  },\n)\n\nFlowingMenu.displayName = \"FlowingMenu\"\n",
+      "target": "components/kitgrid/flowing-menu/flowing-menu.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/flowing-menu/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  FlowingMenu,\n  type FlowingMenuItem,\n  type FlowingMenuProps,\n} from \"./flowing-menu\"\n",
+      "target": "components/kitgrid/flowing-menu/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

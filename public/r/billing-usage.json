@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "billing-usage",
+  "type": "registry:ui",
+  "title": "Billing Usage",
+  "description": "Metered usage for the current billing period, with a ring for time left. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/quota-bar.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/billing-usage/billing-usage.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, forwardRef, type HTMLAttributes, type ReactNode, useId } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { QuotaBar } from \"../quota-bar/quota-bar\"\n\nexport interface BillingUsageItem {\n  id: string\n  label: ReactNode\n  used: number\n  limit: number\n  format?: (value: number) => string\n}\n\nexport interface BillingUsageProps extends Omit<HTMLAttributes<HTMLElement>, \"title\"> {\n  title?: ReactNode\n  /** The billing period, e.g. \"Oct 1 - Oct 31\". */\n  period: ReactNode\n  /** Days into the period and its length, drawn as a ring. */\n  elapsedDays: number\n  totalDays: number\n  items: readonly BillingUsageItem[]\n  /** Amount due so far, already formatted. */\n  total?: ReactNode\n  totalLabel?: ReactNode\n  /** Footer slot: a \"Manage plan\" link, say. */\n  action?: ReactNode\n  daysLeftLabel?: (days: number) => string\n}\n\n/** Metered usage for the current billing period, with a ring for time left. Server-safe. */\nexport const BillingUsage = forwardRef<HTMLElement, BillingUsageProps>(\n  (\n    {\n      title = \"Usage\",\n      period,\n      elapsedDays,\n      totalDays,\n      items,\n      total,\n      totalLabel = \"Due so far\",\n      action,\n      daysLeftLabel = (days) => `${days} ${days === 1 ? \"day\" : \"days\"} left`,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const titleId = useId()\n    const fraction = totalDays > 0 ? Math.min(Math.max(elapsedDays / totalDays, 0), 1) : 0\n    const left = Math.max(totalDays - elapsedDays, 0)\n    return (\n      <section\n        ref={ref}\n        aria-labelledby={titleId}\n        className={cx(\n          \"kg-billing-usage @container grid gap-5 min-w-0 p-5 text-kg-fg\",\n          \"bg-kg-surface border-2 border-kg-ink rounded-kg-xl shadow-kg-md\",\n          className,\n        )}\n        {...props}\n      >\n        <header className=\"kg-billing-usage__head flex items-center gap-3 min-w-0\">\n          <span\n            className={cx(\n              \"kg-billing-usage__ring shrink-0 size-[2.5rem] rounded-full\",\n              \"bg-[conic-gradient(var(--kg-accent)_calc(var(--_elapsed,0)*1turn),var(--kg-muted)_0)]\",\n              \"[mask:radial-gradient(circle,transparent_54%,var(--kg-fg)_56%)]\",\n            )}\n            style={{ \"--_elapsed\": fraction } as CSSProperties}\n            aria-hidden=\"true\"\n          />\n          <div className=\"kg-billing-usage__heading grid flex-1 gap-[0.125rem] min-w-0\">\n            <h3\n              id={titleId}\n              className=\"kg-billing-usage__title m-0 text-kg-md font-[640] tracking-[-0.01em] text-kg-fg\"\n            >\n              {title}\n            </h3>\n            <span className=\"kg-billing-usage__period flex flex-wrap gap-2 text-kg-xs text-kg-fg-muted\">\n              {period}\n              <span className=\"kg-billing-usage__left text-kg-fg-faint\">{daysLeftLabel(left)}</span>\n            </span>\n          </div>\n          {total != null && (\n            <div className=\"kg-billing-usage__total grid justify-items-end gap-[0.125rem] text-end\">\n              <span className=\"kg-billing-usage__total-label text-kg-xs text-kg-fg-faint\">\n                {totalLabel}\n              </span>\n              <span className=\"kg-billing-usage__total-value text-(length:--kg-text-xl) font-[680] tabular-nums tracking-[-0.02em] text-kg-fg\">\n                {total}\n              </span>\n            </div>\n          )}\n        </header>\n        <div className=\"kg-billing-usage__meters grid grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] gap-x-6 gap-y-4\">\n          {items.map((item) => (\n            <QuotaBar\n              key={item.id}\n              label={item.label}\n              used={item.used}\n              limit={item.limit}\n              format={item.format}\n              size=\"sm\"\n            />\n          ))}\n        </div>\n        {action != null && (\n          <footer className=\"kg-billing-usage__foot flex justify-end gap-2 pt-4 border-t-2 border-kg-border\">\n            {action}\n          </footer>\n        )}\n      </section>\n    )\n  },\n)\n\nBillingUsage.displayName = \"BillingUsage\"\n",
+      "target": "components/kitgrid/billing-usage/billing-usage.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/billing-usage/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  BillingUsage,\n  type BillingUsageItem,\n  type BillingUsageProps,\n} from \"./billing-usage\"\n",
+      "target": "components/kitgrid/billing-usage/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

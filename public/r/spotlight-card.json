@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "spotlight-card",
+  "type": "registry:ui",
+  "title": "Spotlight Card",
+  "description": "A paper sheet lit by a soft light that follows the pointer, edge included. CSS-driven, no re-renders.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/spotlight-card/index.ts",
+      "type": "registry:ui",
+      "content": "export { SpotlightCard, type SpotlightCardProps } from \"./spotlight-card\"\n",
+      "target": "components/kitgrid/spotlight-card/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/spotlight-card/spotlight-card.css",
+      "type": "registry:file",
+      "content": "/* The pointer light: a radial gradient and an XOR mask ring, which utilities cannot express. */\n@layer kg.components {\n  .kg-spotlight-card {\n    --_glow: var(--kg-spotlight-color, var(--kg-paper-sage));\n    --_radius: var(--kg-spotlight-radius, 360px);\n    --_at: var(--kg-pointer-x, 50%) var(--kg-pointer-y, 0%);\n\n    &::before,\n    &::after {\n      content: \"\";\n      position: absolute;\n      inset: 0;\n      border-radius: inherit;\n      pointer-events: none;\n      opacity: 0;\n      transition: opacity var(--kg-duration-slow) var(--kg-ease-out);\n    }\n\n    &::before {\n      z-index: -1;\n      background: radial-gradient(\n        var(--_radius) circle at var(--_at),\n        color-mix(in oklab, var(--_glow) 75%, transparent),\n        transparent 70%\n      );\n    }\n\n    /* Two masks XOR'd leave only the inner ring, so the light runs along the ink edge. */\n    &[data-border]::after {\n      padding: 2px;\n      background: radial-gradient(\n        calc(var(--_radius) * 0.7) circle at var(--_at),\n        var(--_glow),\n        transparent 70%\n      );\n      -webkit-mask:\n        linear-gradient(#000 0 0) content-box,\n        linear-gradient(#000 0 0);\n      -webkit-mask-composite: xor;\n      mask:\n        linear-gradient(#000 0 0) content-box exclude,\n        linear-gradient(#000 0 0);\n    }\n\n    &[data-pointer=\"in\"]::before,\n    &[data-pointer=\"in\"]::after,\n    &:focus-within::after {\n      opacity: 1;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/spotlight-card/spotlight-card.css"
+    },
+    {
+      "path": "kitgrid/src/components/spotlight-card/spotlight-card.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type CSSProperties, forwardRef, type HTMLAttributes, useRef } from \"react\"\nimport { usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface SpotlightCardProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color. Defaults to the sage paper tint. */\n  color?: string\n  /** Radius of the light, in px. */\n  radius?: number\n  /** Also light the border under the cursor. */\n  border?: boolean\n}\n\n/** A paper sheet lit by a soft light that follows the pointer, edge included. CSS-driven, no re-renders. */\nexport const SpotlightCard = forwardRef<HTMLDivElement, SpotlightCardProps>(\n  (\n    { color, radius = 360, border = true, className, style, ...props },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    usePointerVars(local)\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\n          \"kg-spotlight-card relative isolate overflow-hidden rounded-kg-xl border-2 border-kg-ink bg-kg-surface p-6 text-kg-fg shadow-kg-md\",\n          className,\n        )}\n        data-border={border || undefined}\n        style={\n          {\n            ...(color ? { \"--kg-spotlight-color\": color } : null),\n            \"--kg-spotlight-radius\": `${radius}px`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      />\n    )\n  },\n)\n\nSpotlightCard.displayName = \"SpotlightCard\"\n",
+      "target": "components/kitgrid/spotlight-card/spotlight-card.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

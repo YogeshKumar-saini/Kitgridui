@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "currency-input",
+  "type": "registry:ui",
+  "title": "Currency Input",
+  "description": "An amount field: the symbol sits outside the editable text, digits follow the currency's minor units, and the amount is grouped in the user's locale once they leave the field.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/number-field.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/currency-input/currency-input.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, useMemo } from \"react\"\nimport { useLocale } from \"../lib/hooks/use-locale\"\nimport { cx } from \"../lib/utils/cx\"\nimport { NumberField, type NumberFieldProps } from \"../number-field/number-field\"\n\nexport interface CurrencyInputProps\n  extends Omit<NumberFieldProps, \"formatOptions\" | \"leading\" | \"trailing\" | \"stepper\"> {\n  /** ISO 4217 code. */\n  currency?: string\n  /** Shows the currency code after the amount. */\n  showCode?: boolean\n  /** Hides the cents for currencies or prices that never use them. */\n  wholeUnits?: boolean\n}\n\nconst currencyParts = (locale: string, currency: string) => {\n  const format = new Intl.NumberFormat(locale, {\n    style: \"currency\",\n    currency,\n    currencyDisplay: \"narrowSymbol\",\n  })\n  const symbol =\n    format.formatToParts(1).find((part) => part.type === \"currency\")?.value ?? currency\n  return { symbol, digits: format.resolvedOptions().maximumFractionDigits ?? 2 }\n}\n\n/**\n * An amount field: the symbol sits outside the editable text, digits follow the currency's\n * minor units, and the amount is grouped in the user's locale once they leave the field.\n */\nexport const CurrencyInput = forwardRef<HTMLInputElement, CurrencyInputProps>(\n  (\n    {\n      currency = \"USD\",\n      showCode = false,\n      wholeUnits = false,\n      locale: localeProp,\n      min = 0,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const locale = useLocale(localeProp)\n    const { symbol, digits } = useMemo(() => currencyParts(locale, currency), [locale, currency])\n    const fraction = wholeUnits ? 0 : digits\n    const formatOptions = useMemo(\n      () => ({ minimumFractionDigits: fraction, maximumFractionDigits: fraction }),\n      [fraction],\n    )\n    return (\n      <NumberField\n        ref={ref}\n        locale={locale}\n        min={min}\n        step={fraction ? 1 / 10 ** fraction : 1}\n        largeStep={fraction ? 10 : 100}\n        formatOptions={formatOptions}\n        stepper=\"none\"\n        leading={\n          <span aria-hidden=\"true\" className=\"min-w-[1ch] font-medium\">\n            {symbol}\n          </span>\n        }\n        trailing={\n          showCode ? (\n            <span\n              className={cx(\n                \"kg-currency-input__code px-[0.45em] py-[0.2em] rounded-kg-xs border border-kg-ink\",\n                \"bg-kg-muted text-kg-xs font-semibold tracking-[0.04em] text-kg-fg-muted\",\n              )}\n            >\n              {currency}\n            </span>\n          ) : undefined\n        }\n        className={cx(\"kg-currency-input [&_input]:text-end\", className)}\n        {...props}\n      />\n    )\n  },\n)\n\nCurrencyInput.displayName = \"CurrencyInput\"\n",
+      "target": "components/kitgrid/currency-input/currency-input.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/currency-input/index.ts",
+      "type": "registry:ui",
+      "content": "export { CurrencyInput, type CurrencyInputProps } from \"./currency-input\"\n",
+      "target": "components/kitgrid/currency-input/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

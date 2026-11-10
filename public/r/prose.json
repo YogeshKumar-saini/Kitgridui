@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "prose",
+  "type": "registry:ui",
+  "title": "Prose",
+  "description": "Typesets rendered HTML you do not control, such as Markdown or CMS output: headings, lists, quotes, code, tables and media, with vertical rhythm.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/prose/index.ts",
+      "type": "registry:ui",
+      "content": "export { Prose, type ProseProps, type ProseSize } from \"./prose\"\n",
+      "target": "components/kitgrid/prose/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/prose/prose.css",
+      "type": "registry:file",
+      "content": "/* Element selectors for HTML the caller does not control: no class to put a utility on. */\n@layer kg.components {\n  .kg-prose {\n    --_flow: 1.15em;\n\n    & :where(*) {\n      margin-block: 0;\n    }\n    & :where(* + *) {\n      margin-block-start: var(--_flow);\n    }\n\n    & :where(h1, h2, h3, h4) {\n      color: var(--kg-fg);\n      font-weight: 600;\n      line-height: 1.25;\n      letter-spacing: -0.015em;\n      text-wrap: balance;\n    }\n    & :where(h1) {\n      font-size: 2.1em;\n      letter-spacing: -0.025em;\n    }\n    & :where(h2) {\n      font-size: 1.5em;\n    }\n    & :where(h3) {\n      font-size: 1.22em;\n    }\n    & :where(h4) {\n      font-size: 1em;\n    }\n    /* More room above a heading than below, so it binds to the text it introduces. */\n    & :where(* + :is(h1, h2, h3, h4)) {\n      margin-block-start: 1.9em;\n    }\n    & :where(:is(h1, h2, h3, h4) + *) {\n      margin-block-start: 0.6em;\n    }\n\n    & :where(p, li) {\n      text-wrap: pretty;\n    }\n    & :where(strong) {\n      color: var(--kg-fg);\n      font-weight: 600;\n    }\n\n    & :where(a) {\n      color: var(--kg-accent-strong);\n      font-weight: 500;\n      text-decoration-color: color-mix(in oklab, var(--kg-accent-strong) 40%, transparent);\n      text-underline-offset: 0.22em;\n    }\n    & :where(a:hover) {\n      text-decoration-color: currentColor;\n    }\n    & :where(a:focus-visible) {\n      outline: 2px solid var(--kg-ring);\n      outline-offset: 2px;\n      border-radius: var(--kg-radius-xs);\n    }\n\n    & :where(ul, ol) {\n      padding-inline-start: 1.4em;\n    }\n    & :where(li + li) {\n      margin-block-start: 0.4em;\n    }\n    & :where(li > ul, li > ol) {\n      margin-block-start: 0.4em;\n    }\n    & :where(ul > li)::marker {\n      color: var(--kg-ink);\n    }\n    & :where(ol > li)::marker {\n      color: var(--kg-fg-muted);\n      font-variant-numeric: tabular-nums;\n    }\n\n    & :where(blockquote) {\n      padding: 0.75em 1em;\n      color: var(--kg-fg);\n      font-style: italic;\n      background: var(--kg-paper-sage);\n      border-inline-start: 4px solid var(--kg-ink);\n      border-radius: var(--kg-radius-sm);\n    }\n\n    & :where(code):not(:where(pre code)) {\n      padding: 0.1em 0.35em;\n      font-family: var(--kg-font-mono);\n      font-size: 0.86em;\n      color: var(--kg-fg);\n      background: var(--kg-muted);\n      border: 1px solid var(--kg-border);\n      border-radius: var(--kg-radius-sm);\n    }\n    & :where(pre) {\n      padding: 1em 1.15em;\n      overflow-x: auto;\n      font-family: var(--kg-font-mono);\n      font-size: 0.84em;\n      line-height: 1.6;\n      color: var(--kg-fg);\n      background: var(--kg-surface);\n      border: 2px solid var(--kg-ink);\n      border-radius: var(--kg-radius-lg);\n      box-shadow: var(--kg-shadow-sm);\n    }\n\n    & :where(hr) {\n      margin-block: 2.2em;\n      border: 0;\n      border-block-start: 2px solid var(--kg-border);\n    }\n\n    & :where(img, video, figure) {\n      max-inline-size: 100%;\n      height: auto;\n      border-radius: var(--kg-radius-lg);\n    }\n    & :where(figcaption) {\n      margin-block-start: 0.6em;\n      font-size: 0.86em;\n      color: var(--kg-fg-muted);\n    }\n\n    & :where(table) {\n      inline-size: 100%;\n      font-size: 0.92em;\n      border-collapse: collapse;\n      font-variant-numeric: tabular-nums;\n    }\n    & :where(th) {\n      color: var(--kg-fg);\n      font-weight: 600;\n      text-align: start;\n      border-block-end: 2px solid var(--kg-ink);\n    }\n    & :where(th, td) {\n      padding: 0.55em 0.75em;\n    }\n    & :where(td) {\n      border-block-end: 1px solid var(--kg-border);\n    }\n\n    & :where(kbd) {\n      padding: 0.05em 0.35em;\n      font-family: var(--kg-font-mono);\n      font-size: 0.82em;\n      color: var(--kg-fg);\n      background: var(--kg-surface);\n      border: 1px solid var(--kg-ink);\n      border-radius: var(--kg-radius-sm);\n      box-shadow: 0 2px 0 var(--kg-ink);\n    }\n\n    & :where(mark) {\n      color: inherit;\n      background: var(--kg-paper-butter);\n      border-radius: var(--kg-radius-xs);\n    }\n\n    & > :where(:first-child) {\n      margin-block-start: 0;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/prose/prose.css"
+    },
+    {
+      "path": "kitgrid/src/components/prose/prose.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\nconst proseVariants = variants({\n  base: \"kg-prose text-[color-mix(in_oklab,var(--kg-fg)_88%,var(--kg-bg))] [overflow-wrap:break-word]\",\n  variants: {\n    size: {\n      sm: \"text-kg-base leading-[1.65]\",\n      md: \"text-kg-md leading-[1.7]\",\n      lg: \"text-kg-lg leading-[1.75]\",\n    },\n    measure: {\n      true: \"max-w-[68ch]\",\n      false: \"\",\n    },\n  },\n  defaults: { size: \"md\", measure: true },\n})\n\nexport type ProseSize = NonNullable<VariantProps<typeof proseVariants>[\"size\"]>\n\nexport interface ProseProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  size?: ProseSize\n  /** Caps lines near 68 characters for comfortable reading. On by default. */\n  measure?: boolean\n}\n\n/**\n * Typesets rendered HTML you do not control, such as Markdown or CMS output: headings, lists,\n * quotes, code, tables and media, with vertical rhythm.\n */\nexport const Prose = forwardRef<HTMLElement, ProseProps>(\n  ({ as: Tag = \"div\", size = \"md\", measure = true, className, ...props }, ref) => (\n    <Tag\n      ref={ref}\n      className={proseVariants({ size, measure, className })}\n      data-size={size}\n      data-measure={measure || undefined}\n      {...props}\n    />\n  ),\n)\n\nProse.displayName = \"Prose\"\n",
+      "target": "components/kitgrid/prose/prose.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

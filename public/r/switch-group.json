@@ -1,0 +1,30 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "switch-group",
+  "type": "registry:ui",
+  "title": "Switch Group",
+  "description": "A settings list: one labelled switch per row, on a single card, reporting what is on.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/field.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/switch.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/switch-group/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  SwitchGroup,\n  type SwitchGroupOption,\n  type SwitchGroupProps,\n} from \"./switch-group\"\n",
+      "target": "components/kitgrid/switch-group/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/switch-group/switch-group.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useId } from \"react\"\nimport { useControllableState } from \"../lib/hooks/use-controllable-state\"\nimport { cx } from \"../lib/utils/cx\"\nimport { FieldContext, useField } from \"../field/field\"\nimport { Switch, type SwitchSize } from \"../switch/switch\"\n\nexport interface SwitchGroupOption {\n  value: string\n  label: ReactNode\n  description?: ReactNode\n  /** Decorative, shown before the text. */\n  icon?: ReactNode\n  disabled?: boolean\n}\n\nexport interface SwitchGroupProps\n  extends Omit<HTMLAttributes<HTMLDivElement>, \"defaultValue\" | \"onChange\"> {\n  options: readonly SwitchGroupOption[]\n  /** Values of the switches that are on. */\n  value?: string[]\n  defaultValue?: string[]\n  onValueChange?: (value: string[]) => void\n  /** Names the group for assistive tech. */\n  label?: string\n  size?: SwitchSize\n  disabled?: boolean\n  /** Submits every value that is on under this name. */\n  name?: string\n}\n\n/** A settings list: one labelled switch per row, on a single card, reporting what is on. */\nexport const SwitchGroup = forwardRef<HTMLDivElement, SwitchGroupProps>(\n  (\n    {\n      options,\n      value: valueProp,\n      defaultValue = [],\n      onValueChange,\n      label,\n      size = \"md\",\n      disabled,\n      name,\n      className,\n      ...props\n    },\n    ref,\n  ) => {\n    const field = useField()\n    const [value, setValue] = useControllableState({\n      value: valueProp,\n      defaultValue,\n      onChange: onValueChange,\n    })\n    const baseId = useId()\n    const isDisabled = disabled ?? field?.disabled ?? false\n\n    return (\n      <div\n        ref={ref}\n        role=\"group\"\n        aria-label={label}\n        aria-labelledby={label ? undefined : field?.labelId}\n        aria-describedby={field?.describedBy}\n        className={cx(\n          \"kg-switch-group grid w-full overflow-hidden rounded-kg-xl border-2 border-kg-ink bg-kg-surface shadow-kg-sm\",\n          \"divide-y-2 divide-kg-border\",\n          className,\n        )}\n        data-size={size}\n        {...props}\n      >\n        {/* Each switch takes its own id instead of the surrounding Field's. */}\n        <FieldContext.Provider value={null}>\n          {options.map((option) => (\n            <div\n              key={option.value}\n              className={cx(\n                \"kg-switch-group__row group/row flex items-center gap-3 px-4 py-3.5\",\n                \"transition-[background-color] duration-(--kg-duration-fast) ease-kg-out\",\n                \"hover:not-data-disabled:bg-kg-muted/55\",\n              )}\n              data-disabled={option.disabled || isDisabled || undefined}\n            >\n              {option.icon != null && (\n                <span\n                  className={cx(\n                    \"kg-switch-group__icon inline-grid place-items-center shrink-0 size-8 rounded-kg-md\",\n                    \"bg-kg-muted text-kg-fg-muted [&_svg]:size-4\",\n                    \"transition-[background-color,color] duration-(--kg-duration-base) ease-kg-out\",\n                    \"group-has-checked/row:bg-kg-accent group-has-checked/row:text-kg-accent-fg\",\n                  )}\n                  aria-hidden=\"true\"\n                >\n                  {option.icon}\n                </span>\n              )}\n              <Switch\n                id={`${baseId}-${option.value}`}\n                size={size}\n                labelPosition=\"start\"\n                label={option.label}\n                description={option.description}\n                name={name}\n                value={option.value}\n                disabled={option.disabled || isDisabled}\n                checked={value.includes(option.value)}\n                onCheckedChange={(on) =>\n                  setValue(\n                    on\n                      ? [...value, option.value]\n                      : value.filter((v) => v !== option.value),\n                  )\n                }\n                className=\"kg-switch-group__switch flex-1 min-w-0\"\n              />\n            </div>\n          ))}\n        </FieldContext.Provider>\n      </div>\n    )\n  },\n)\n\nSwitchGroup.displayName = \"SwitchGroup\"\n",
+      "target": "components/kitgrid/switch-group/switch-group.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

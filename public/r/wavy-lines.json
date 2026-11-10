@@ -1,0 +1,36 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "wavy-lines",
+  "type": "registry:ui",
+  "title": "Wavy Lines",
+  "description": "Evenly spaced contour-like lines flowing on layered sine waves, bending apart around the pointer like water around a finger. Canvas, DPR-capped, paused offscreen.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json",
+    "https://kitgrid.dev/r/backdrop-kit.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/wavy-lines/index.ts",
+      "type": "registry:ui",
+      "content": "export { WavyLines, type WavyLinesProps, type WavyLinesMask } from \"./wavy-lines\"\n",
+      "target": "components/kitgrid/wavy-lines/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/wavy-lines/wavy-lines.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-wavy-lines {\n    &[data-mask=\"radial\"] > .kg-wavy-lines__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-wavy-lines__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-wavy-lines__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-wavy-lines__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/wavy-lines/wavy-lines.css"
+    },
+    {
+      "path": "kitgrid/src/components/wavy-lines/wavy-lines.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useRef } from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { rgba, useCanvasStage } from \"../backdrop-kit/stage\"\n\nexport type WavyLinesMask = BackdropMask\n\nexport interface WavyLinesProps extends HTMLAttributes<HTMLDivElement> {\n  /** Number of lines, 4–80. */\n  lines?: number\n  /** Any CSS color. Defaults to a faint foreground. */\n  color?: string\n  /** Any CSS color for lines bent by the pointer. Defaults to ink. */\n  activeColor?: string\n  /** Wave height, in px. */\n  amplitude?: number\n  /** Flow speed multiplier; 0 holds the lines still. */\n  speed?: number\n  /** Radius of the pointer bend, in px. */\n  reach?: number\n  mask?: WavyLinesMask\n  children?: ReactNode\n}\n\nconst STEP = 10\n\n/**\n * Evenly spaced contour-like lines flowing on layered sine waves, bending apart around the\n * pointer like water around a finger. Canvas, DPR-capped, paused offscreen.\n */\nexport const WavyLines = forwardRef<HTMLDivElement, WavyLinesProps>(\n  (\n    {\n      lines = 28,\n      color = \"color-mix(in oklab, var(--kg-fg) 20%, transparent)\",\n      activeColor = \"var(--kg-ink)\",\n      amplitude = 14,\n      speed = 1,\n      reach = 160,\n      mask = \"edges\",\n      className,\n      children,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(root, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const wrapper = hasChildren(children)\n    const bend = useRef({ x: 0, y: 0, strength: 0 })\n\n    useCanvasStage(root, canvasRef, {\n      draw: ({ ctx, width, height, time, dt, still, pointer, color: resolve }) => {\n        const total = Math.round(Math.min(Math.max(lines, 4), 80))\n        const gap = height / (total + 1)\n        const t = (time / 1000) * speed\n        const b = bend.current\n        const ease = still ? 1 : 1 - 0.9 ** dt\n        if (pointer.inside) {\n          b.x += (pointer.x - b.x) * ease\n          b.y += (pointer.y - b.y) * ease\n        }\n        b.strength += ((pointer.inside ? 1 : 0) - b.strength) * ease\n        const range = Math.max(reach, 20)\n        const base = resolve(color)\n        const lit = resolve(activeColor)\n        ctx.clearRect(0, 0, width, height)\n        ctx.lineWidth = 1\n        for (let n = 0; n < total; n++) {\n          const y0 = gap * (n + 1)\n          const rowDistance = Math.abs(y0 - b.y)\n          const near = b.strength * Math.max(0, 1 - rowDistance / range)\n          ctx.strokeStyle = near > 0.05 ? rgba(lit, 0.3 + near * 0.7) : rgba(base)\n          ctx.beginPath()\n          for (let x = -STEP; x <= width + STEP; x += STEP) {\n            let y =\n              y0 +\n              Math.sin(x * 0.006 + t * 0.9 + n * 0.22) * amplitude +\n              Math.sin(x * 0.013 - t * 0.6 + n * 0.11) * amplitude * 0.45\n            if (b.strength > 0.001) {\n              const dx = x - b.x\n              const dy = y0 - b.y\n              const d = Math.hypot(dx, dy)\n              if (d < range) {\n                const f = 1 - d / range\n                y += Math.sign(dy || 1) * f * f * range * 0.32 * b.strength\n              }\n            }\n            if (x === -STEP) ctx.moveTo(x, y)\n            else ctx.lineTo(x, y)\n          }\n          ctx.stroke()\n        }\n      },\n    })\n\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\"kg-wavy-lines absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto\", className, wrapper)}\n        data-mask={mask}\n        {...props}\n      >\n        <div className=\"kg-wavy-lines__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <canvas ref={canvasRef} className=\"kg-wavy-lines__canvas block size-full\" />\n        </div>\n        {wrapper && <div className=\"kg-wavy-lines__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nWavyLines.displayName = \"WavyLines\"\n",
+      "target": "components/kitgrid/wavy-lines/wavy-lines.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

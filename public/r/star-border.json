@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "star-border",
+  "type": "registry:ui",
+  "title": "Star Border",
+  "description": "A pill whose edge is lit by two soft points of light travelling in opposite directions along its top and bottom. Pure CSS and server-safe; the light stops under reduced motion.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/star-border/index.ts",
+      "type": "registry:ui",
+      "content": "export { StarBorder, type StarBorderElement, type StarBorderProps } from \"./star-border\"\n",
+      "target": "components/kitgrid/star-border/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/star-border/star-border.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  @keyframes kg-star-bottom {\n    from {\n      transform: translate(0%, 0%);\n      opacity: 1;\n    }\n    to {\n      transform: translate(-100%, 0%);\n      opacity: 0;\n    }\n  }\n\n  @keyframes kg-star-top {\n    from {\n      transform: translate(0%, 0%);\n      opacity: 1;\n    }\n    to {\n      transform: translate(100%, 0%);\n      opacity: 0;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/star-border/star-border.css"
+    },
+    {
+      "path": "kitgrid/src/components/star-border/star-border.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type AnchorHTMLAttributes,\n  type ButtonHTMLAttributes,\n  type CSSProperties,\n  type ElementType,\n  forwardRef,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type StarBorderElement = \"button\" | \"a\" | \"div\"\n\nexport interface StarBorderProps\n  extends ButtonHTMLAttributes<HTMLElement>,\n    Omit<AnchorHTMLAttributes<HTMLElement>, keyof ButtonHTMLAttributes<HTMLElement>> {\n  children?: ReactNode\n  as?: StarBorderElement\n  /** One lap of the two light points, in ms. */\n  speed?: number\n  /** Thickness of the lit edge, in px. */\n  thickness?: number\n}\n\n/**\n * A pill whose edge is lit by two soft points of light travelling in opposite directions along\n * its top and bottom. Pure CSS and server-safe; the light stops under reduced motion.\n */\nexport const StarBorder = forwardRef<HTMLElement, StarBorderProps>(\n  (\n    {\n      as = \"button\",\n      speed = 5000,\n      thickness = 1,\n      type,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const Tag = as as ElementType\n    return (\n      <Tag\n        ref={ref}\n        className={cx(\n          \"kg-star-border relative inline-block overflow-hidden rounded-full border-0 bg-transparent px-0 py-(--_thickness) text-kg-fg no-underline [--_star:var(--kg-star-border-color,var(--kg-ink))] [font:inherit] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring disabled:cursor-not-allowed disabled:opacity-50\",\n          as === \"div\" ? \"cursor-auto\" : \"cursor-pointer\",\n          className,\n        )}\n        type={as === \"button\" ? (type ?? \"button\") : type}\n        style={\n          {\n            \"--_speed\": `${speed}ms`,\n            \"--_thickness\": `${thickness}px`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <span\n          className=\"kg-star-border__star pointer-events-none absolute h-1/2 w-[300%] rounded-full bg-[radial-gradient(circle,var(--_star),transparent_12%)] opacity-80 motion-reduce:animate-none motion-reduce:opacity-0 [[data-kg-motion=reduce]_&]:animate-none [[data-kg-motion=reduce]_&]:opacity-0 -right-[250%] -bottom-[12px] animate-[kg-star-bottom_var(--_speed)_linear_infinite_alternate]\"\n          data-edge=\"bottom\"\n          aria-hidden=\"true\"\n        />\n        <span\n          className=\"kg-star-border__star pointer-events-none absolute h-1/2 w-[300%] rounded-full bg-[radial-gradient(circle,var(--_star),transparent_12%)] opacity-80 motion-reduce:animate-none motion-reduce:opacity-0 [[data-kg-motion=reduce]_&]:animate-none [[data-kg-motion=reduce]_&]:opacity-0 -top-[12px] -left-[250%] animate-[kg-star-top_var(--_speed)_linear_infinite_alternate]\"\n          data-edge=\"top\"\n          aria-hidden=\"true\"\n        />\n        <span className=\"kg-star-border__inner relative z-1 flex min-h-[var(--kg-control-lg)] items-center justify-center gap-2 rounded-[inherit] border-2 border-kg-ink bg-kg-surface-raised px-6 font-[560]\">{children}</span>\n      </Tag>\n    )\n  },\n)\n\nStarBorder.displayName = \"StarBorder\"\n",
+      "target": "components/kitgrid/star-border/star-border.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

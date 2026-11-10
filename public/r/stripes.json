@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stripes",
+  "type": "registry:ui",
+  "title": "Stripes",
+  "description": "Hairline diagonal stripes that scroll along their own axis, like a caution band or a loading surface. One repeating gradient whose position slides by exactly one period per loop. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/stripes/index.ts",
+      "type": "registry:ui",
+      "content": "export { Stripes, type StripesProps, type StripesMask } from \"./stripes\"\n",
+      "target": "components/kitgrid/stripes/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/stripes/stripes.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-stripes {\n    &[data-mask=\"radial\"] > .kg-stripes__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-stripes__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-stripes__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-stripes__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n\n  .kg-stripes__band {\n    background-image: repeating-linear-gradient(\n      var(--kg-stripes-angle, -45deg),\n      var(--_c) 0 var(--kg-stripes-width, 1px),\n      transparent var(--kg-stripes-width, 1px) var(--_period)\n    );\n    animation: kg-stripes-scroll calc(1.2s / var(--kg-stripes-speed, 1)) linear infinite;\n    animation-play-state: var(--kg-stripes-state, running);\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-stripes__band {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-stripes__band {\n    animation: none;\n  }\n\n  @keyframes kg-stripes-scroll {\n    from {\n      background-position: 0 0;\n    }\n    to {\n      background-position: var(--kg-stripes-shift-x, 0) var(--kg-stripes-shift-y, 0);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/stripes/stripes.css"
+    },
+    {
+      "path": "kitgrid/src/components/stripes/stripes.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\n\nexport type StripesMask = BackdropMask\n\nexport interface StripesProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color. Defaults to a faint ink. */\n  color?: string\n  /** Stripe angle, in degrees. */\n  angle?: number\n  /** Stripe thickness, in px. */\n  width?: number\n  /** Space between stripes, in px. */\n  gap?: number\n  /** Scroll speed multiplier; 0 holds them still. */\n  speed?: number\n  mask?: StripesMask\n  children?: ReactNode\n}\n\n/**\n * Hairline diagonal stripes that scroll along their own axis, like a caution band or a loading\n * surface. One repeating gradient whose position slides by exactly one period per loop. Server-component safe.\n */\nexport const Stripes = forwardRef<HTMLDivElement, StripesProps>(\n  (\n    {\n      color,\n      angle = -45,\n      width = 1,\n      gap = 10,\n      speed = 1,\n      mask = \"radial\",\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const stripe = Math.max(width, 0.5)\n    const period = stripe + Math.max(gap, 1)\n    // Shifting by exactly one period along the gradient line lands on an identical frame.\n    const radians = (angle * Math.PI) / 180\n    const dx = Math.round(Math.sin(radians) * period * 1000) / 1000\n    const dy = Math.round(-Math.cos(radians) * period * 1000) / 1000\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-stripes absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-stripes-color,color-mix(in_oklab,var(--kg-ink)_14%,transparent))] [--_period:var(--kg-stripes-period,11px)]\",\n          className,\n          wrapper,\n        )}\n        data-mask={mask}\n        style={\n          {\n            ...(color ? { \"--kg-stripes-color\": color } : null),\n            \"--kg-stripes-angle\": `${angle}deg`,\n            \"--kg-stripes-width\": `${stripe}px`,\n            \"--kg-stripes-period\": `${period}px`,\n            \"--kg-stripes-shift-x\": `${dx}px`,\n            \"--kg-stripes-shift-y\": `${dy}px`,\n            \"--kg-stripes-speed\": Math.max(speed, 0.001),\n            \"--kg-stripes-state\": speed === 0 ? \"paused\" : \"running\",\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-stripes__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <div className=\"kg-stripes__band absolute inset-0\" />\n        </div>\n        {wrapper && <div className=\"kg-stripes__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nStripes.displayName = \"Stripes\"\n",
+      "target": "components/kitgrid/stripes/stripes.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

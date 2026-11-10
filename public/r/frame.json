@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "frame",
+  "type": "registry:ui",
+  "title": "Frame",
+  "description": "A media frame: crops any image or video to a ratio, with a radius and an inner ink edge.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/frame/frame.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\nconst frameVariants = variants({\n  base: [\n    \"kg-frame relative block w-full overflow-hidden bg-kg-surface-sunken\",\n    \"[&>:is(img,video,picture,canvas,svg,iframe)]:block [&>:is(img,video,picture,canvas,svg,iframe)]:size-full [&>:is(img,video,picture,canvas,svg,iframe)]:border-0\",\n    \"[&>:is(img,video,picture,canvas,svg,iframe)]:object-[var(--_position,center)]\",\n    \"[&>picture>img]:size-full [&>picture>img]:[object-fit:inherit] [&>picture>img]:[object-position:inherit]\",\n    \"[&>img:is(:not([src]),[src=''])]:invisible\",\n    \"[&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:bg-kg-muted\",\n    \"[&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:pointer-events-none [&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:absolute\",\n    \"[&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:start-1/2 [&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:top-[46%]\",\n    \"[&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:aspect-square [&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:w-[min(28%,5.5rem)]\",\n    \"[&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:-translate-x-1/2 [&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:-translate-y-1/2 [&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:rounded-full\",\n    \"[&:is(:empty,:has(>img:is(:not([src]),[src=''])))]:before:bg-kg-border\",\n  ],\n  variants: {\n    fit: {\n      cover: \"[&>:is(img,video,picture,canvas,svg,iframe)]:object-cover\",\n      contain:\n        \"[&>:is(canvas,svg,iframe)]:object-cover [&>:is(img,video,picture)]:object-contain\",\n    },\n    radius: {\n      none: \"rounded-none\",\n      sm: \"rounded-kg-sm\",\n      md: \"rounded-kg-md\",\n      lg: \"rounded-kg-lg\",\n      xl: \"rounded-kg-xl\",\n      full: \"rounded-full\",\n    },\n    // Drawn over the media, so the ink edge stays visible on images of any brightness.\n    edge: {\n      true: \"after:pointer-events-none after:absolute after:inset-0 after:rounded-[inherit] after:shadow-[inset_0_0_0_2px_var(--kg-ink)]\",\n      false: \"\",\n    },\n  },\n  defaults: { fit: \"cover\", radius: \"lg\", edge: true },\n})\n\ntype FrameVariantProps = VariantProps<typeof frameVariants>\nexport type FrameFit = NonNullable<FrameVariantProps[\"fit\"]>\nexport type FrameRadius = NonNullable<FrameVariantProps[\"radius\"]>\n\nexport interface FrameProps extends HTMLAttributes<HTMLDivElement> {\n  /** Width over height. */\n  ratio?: number\n  /** How the image or video meets the frame. `contain` letterboxes on the sunken surface. */\n  fit?: FrameFit\n  /** Object position, such as `\"top\"` or `\"30% 70%\"`, to keep the subject in shot. */\n  position?: string\n  radius?: FrameRadius\n  /** An inner ink edge that keeps light images from bleeding into light pages. */\n  edge?: boolean\n}\n\n/** A media frame: crops any image or video to a ratio, with a radius and an inner ink edge. */\nexport const Frame = forwardRef<HTMLDivElement, FrameProps>(\n  (\n    {\n      ratio = 4 / 3,\n      fit = \"cover\",\n      position,\n      radius = \"lg\",\n      edge = true,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => (\n    <div\n      ref={ref}\n      className={frameVariants({ fit, radius, edge, className })}\n      data-fit={fit}\n      data-radius={radius}\n      data-edge={edge || undefined}\n      style={{\n        aspectRatio: String(ratio > 0 ? ratio : 1),\n        ...(position ? { \"--_position\": position } : {}),\n        ...style,\n      }}\n      {...props}\n    />\n  ),\n)\n\nFrame.displayName = \"Frame\"\n",
+      "target": "components/kitgrid/frame/frame.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/frame/index.ts",
+      "type": "registry:ui",
+      "content": "export { Frame, type FrameFit, type FrameProps, type FrameRadius } from \"./frame\"\n",
+      "target": "components/kitgrid/frame/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

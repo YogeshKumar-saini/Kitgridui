@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "gradient-border",
+  "type": "registry:ui",
+  "title": "Gradient Border",
+  "description": "A card surface whose edge is a conic gradient that orbits the border. The fill and the edge are two backgrounds on one element (`padding-box` over `border-box`), so there is no extra markup and content needs no z-index. Server-component safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/gradient-border/gradient-border.css",
+      "type": "registry:file",
+      "content": "/* Registered so the edge light can turn as a typed, animatable angle. */\n@property --kg-gradient-border-angle {\n  syntax: \"<angle>\";\n  inherits: false;\n  initial-value: 200deg;\n}\n\n@layer kg.components {\n  .kg-gradient-border {\n    background:\n      linear-gradient(var(--kg-surface), var(--kg-surface)) padding-box,\n      conic-gradient(\n          from var(--kg-gradient-border-angle),\n          var(--_c3) 0deg,\n          var(--_c3) 200deg,\n          var(--_c2) 270deg,\n          var(--_c1) 320deg,\n          var(--_c3) 360deg\n        )\n        border-box;\n\n    &[data-animated] {\n      animation: kg-gradient-border-turn var(--kg-gradient-border-duration, 6s) linear\n        infinite;\n    }\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-gradient-border[data-animated] {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-gradient-border[data-animated] {\n    animation: none;\n  }\n\n  @keyframes kg-gradient-border-turn {\n    from {\n      --kg-gradient-border-angle: 0deg;\n    }\n    to {\n      --kg-gradient-border-angle: 360deg;\n    }\n  }\n}\n",
+      "target": "components/kitgrid/gradient-border/gradient-border.css"
+    },
+    {
+      "path": "kitgrid/src/components/gradient-border/gradient-border.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface GradientBorderProps extends HTMLAttributes<HTMLDivElement> {\n  /**\n   * Up to three CSS colors for the edge. Defaults to ink fading through sage paper into the\n   * border, so the light reads as one source travelling around the card.\n   */\n  colors?: readonly string[]\n  /** Border thickness, in px. */\n  width?: number\n  /** Turn the gradient around the edge. Stops under reduced motion. */\n  animated?: boolean\n  /** Seconds per lap. */\n  duration?: number\n  /** A soft shadow under the surface, tinted by the first color. */\n  glow?: boolean\n  children?: ReactNode\n}\n\nconst base = [\n  \"kg-gradient-border relative rounded-kg-xl border-[length:var(--kg-gradient-border-width,1px)] border-solid border-transparent text-kg-fg shadow-kg-sm\",\n  \"[--_c1:var(--kg-gradient-border-color-1,var(--kg-ink))]\",\n  \"[--_c2:var(--kg-gradient-border-color-2,var(--kg-paper-sage))]\",\n  \"[--_c3:var(--kg-gradient-border-color-3,var(--kg-border))]\",\n  \"data-glow:shadow-[var(--kg-shadow-md),0_18px_40px_-22px_color-mix(in_oklab,var(--_c1)_55%,transparent)]\",\n].join(\" \")\n\n/**\n * A card surface whose edge is a conic gradient that orbits the border. The fill and the edge\n * are two backgrounds on one element (`padding-box` over `border-box`), so there is no extra\n * markup and content needs no z-index. Server-component safe.\n */\nexport const GradientBorder = forwardRef<HTMLDivElement, GradientBorderProps>(\n  (\n    {\n      colors,\n      width = 1,\n      animated = true,\n      duration = 6,\n      glow = false,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const [c1, c2, c3] = colors ?? []\n    return (\n      <div\n        ref={ref}\n        className={cx(base, className)}\n        data-animated={animated || undefined}\n        data-glow={glow || undefined}\n        style={\n          {\n            ...(c1 ? { \"--kg-gradient-border-color-1\": c1 } : null),\n            ...(c2 ? { \"--kg-gradient-border-color-2\": c2 } : null),\n            ...(c3 ? { \"--kg-gradient-border-color-3\": c3 } : null),\n            \"--kg-gradient-border-width\": `${Math.max(width, 0.5)}px`,\n            \"--kg-gradient-border-duration\": `${Math.max(duration, 0.5)}s`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        {children}\n      </div>\n    )\n  },\n)\n\nGradientBorder.displayName = \"GradientBorder\"\n",
+      "target": "components/kitgrid/gradient-border/gradient-border.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/gradient-border/index.ts",
+      "type": "registry:ui",
+      "content": "export { GradientBorder, type GradientBorderProps } from \"./gradient-border\"\n",
+      "target": "components/kitgrid/gradient-border/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

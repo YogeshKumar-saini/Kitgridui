@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "live-cursor-badge",
+  "type": "registry:ui",
+  "title": "Live Cursor Badge",
+  "description": "A collaborator's pointer with a name flag, for multiplayer canvases. Position updates glide on a spring; the colour is derived from the name so it stays stable per person. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/avatar.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/live-cursor-badge/index.ts",
+      "type": "registry:ui",
+      "content": "export { LiveCursorBadge, type LiveCursorBadgeProps } from \"./live-cursor-badge\"\n",
+      "target": "components/kitgrid/live-cursor-badge/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/live-cursor-badge/live-cursor-badge.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { hueFromString } from \"../avatar/avatar-utils\"\n\nexport interface LiveCursorBadgeProps extends HTMLAttributes<HTMLDivElement> {\n  name: string\n  /** A short status after the name, e.g. \"typing\". */\n  status?: ReactNode\n  /** Position in px inside a `position: relative` canvas. Omit to render inline. */\n  x?: number\n  y?: number\n  /** Hides the name pill and leaves the arrow. */\n  compact?: boolean\n}\n\n/* Paper Layers: each person gets a category paper picked from their name, edged in ink. */\nconst papers = [\n  \"[--_tone:var(--kg-paper-sage)]\",\n  \"[--_tone:var(--kg-paper-peach)]\",\n  \"[--_tone:var(--kg-paper-sky)]\",\n  \"[--_tone:var(--kg-paper-butter)]\",\n  \"[--_tone:var(--kg-paper-rose)]\",\n]\n\n/**\n * A collaborator's pointer with a name flag, for multiplayer canvases. Position updates glide\n * on a spring; the colour is derived from the name so it stays stable per person. Server-safe.\n */\nexport const LiveCursorBadge = forwardRef<HTMLDivElement, LiveCursorBadgeProps>(\n  ({ name, status, x, y, compact = false, className, style, ...props }, ref) => {\n    const positioned = x != null && y != null\n    return (\n      <div\n        ref={ref}\n        role=\"img\"\n        aria-label={typeof status === \"string\" ? `${name}, ${status}` : name}\n        className={cx(\n          \"kg-live-cursor-badge pointer-events-none inline-flex items-start select-none\",\n          papers[hueFromString(name) % papers.length],\n          \"data-positioned:absolute data-positioned:top-0 data-positioned:left-0 data-positioned:z-5\",\n          \"data-positioned:translate-x-(--_x) data-positioned:translate-y-(--_y) data-positioned:will-change-[translate]\",\n          \"data-positioned:transition-[translate] data-positioned:duration-[var(--kg-duration-slow)] data-positioned:ease-kg-spring\",\n          className,\n        )}\n        data-positioned={positioned || undefined}\n        data-compact={compact || undefined}\n        style={\n          {\n            ...(positioned ? { \"--_x\": `${x}px`, \"--_y\": `${y}px` } : null),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <svg\n          className=\"kg-live-cursor-badge__arrow h-4.5 w-4 shrink-0 fill-(--_tone) stroke-kg-ink stroke-[1.6]\"\n          viewBox=\"0 0 16 18\"\n          aria-hidden=\"true\"\n        >\n          <path d=\"M1.5 1.5 14 8.2l-5.6 1.4-2.6 5.6Z\" strokeLinejoin=\"round\" />\n        </svg>\n        {!compact && (\n          <span\n            className={cx(\n              \"kg-live-cursor-badge__flag ms-[-0.125rem] mt-3.5 inline-flex origin-top-left items-baseline gap-1.5 px-2 py-0.5\",\n              \"rounded-ss-[0.25rem] rounded-se-full rounded-ee-full rounded-es-full border-2 border-kg-ink bg-(--_tone) shadow-kg-xs\",\n              \"text-kg-xs font-semibold whitespace-nowrap text-kg-fg\",\n              \"transition-[opacity,scale] duration-(--kg-duration-base) ease-kg-spring starting:scale-80 starting:opacity-0 motion-reduce:transition-none\",\n            )}\n            aria-hidden=\"true\"\n          >\n            {name}\n            {status != null && (\n              <span className=\"kg-live-cursor-badge__status font-normal opacity-80\">\n                {status}\n              </span>\n            )}\n          </span>\n        )}\n      </div>\n    )\n  },\n)\n\nLiveCursorBadge.displayName = \"LiveCursorBadge\"\n",
+      "target": "components/kitgrid/live-cursor-badge/live-cursor-badge.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

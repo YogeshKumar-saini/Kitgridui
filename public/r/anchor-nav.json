@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "anchor-nav",
+  "type": "registry:ui",
+  "title": "Anchor Nav",
+  "description": "A horizontal in-page section bar: scrollspy, a pill that slides to the current section, and the current link kept in view when the bar overflows on small screens.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/table-of-contents.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/anchor-nav/anchor-nav.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type RefObject, useRef } from \"react\"\nimport { useIsomorphicLayoutEffect } from \"../lib/hooks/use-isomorphic-layout-effect\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { cx } from \"../lib/utils/cx\"\nimport { scrollToSection, useScrollSpy } from \"../table-of-contents/scroll-spy\"\n\nconst linkClass = [\n  \"kg-anchor-nav__link relative block px-3.5 py-1.5 text-kg-sm font-medium whitespace-nowrap text-kg-fg-muted no-underline rounded-full\",\n  \"transition-colors duration-(--kg-duration-fast) ease-kg-out hover:text-kg-fg aria-[current=location]:text-kg-fg aria-[current=location]:font-semibold\",\n  \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n]\n\n/* 1px wide and scaled: the sage slip moves and resizes with transform only. */\nconst pillClass =\n  \"kg-anchor-nav__pill absolute inset-y-0 left-0 w-px rounded-full bg-kg-paper-sage origin-[0_50%] [transform:translateX(var(--_x,0))_scaleX(var(--_w,0))] transition-transform duration-(--kg-duration-slow) ease-kg-out\"\n\nexport interface AnchorNavItem {\n  id: string\n  label: string\n}\n\nexport interface AnchorNavProps extends Omit<HTMLAttributes<HTMLElement>, \"onChange\"> {\n  items: AnchorNavItem[]\n  /** Height of whatever sits above the sections (this bar included), in px. */\n  offset?: number\n  root?: RefObject<HTMLElement | null>\n  /** Stick to the top of the scrolling container. */\n  sticky?: boolean\n  onActiveChange?: (id: string) => void\n}\n\n/**\n * A horizontal in-page section bar: scrollspy, a pill that slides to the current section, and\n * the current link kept in view when the bar overflows on small screens.\n */\nexport const AnchorNav = forwardRef<HTMLElement, AnchorNavProps>(\n  (\n    {\n      items,\n      offset = 64,\n      root,\n      sticky = true,\n      onActiveChange,\n      className,\n      \"aria-label\": ariaLabel = \"Sections\",\n      ...props\n    },\n    ref,\n  ) => {\n    const [active, setActive] = useScrollSpy(\n      items.map((item) => item.id),\n      { offset, root },\n    )\n    const reduced = useReducedMotion()\n    const track = useRef<HTMLUListElement>(null)\n    const pill = useRef<HTMLSpanElement>(null)\n\n    useIsomorphicLayoutEffect(() => {\n      const list = track.current\n      const node = pill.current\n      const link = list?.querySelector<HTMLElement>('[aria-current=\"location\"]')\n      if (!list || !node || !link) return\n      const place = () => {\n        node.style.setProperty(\"--_x\", `${link.offsetLeft}px`)\n        node.style.setProperty(\"--_w\", String(link.offsetWidth))\n      }\n      place()\n      const left = link.offsetLeft - list.scrollLeft\n      if (left < 0 || left + link.offsetWidth > list.clientWidth) {\n        list.scrollTo?.({\n          left: link.offsetLeft - list.clientWidth / 2 + link.offsetWidth / 2,\n          behavior: reduced ? \"auto\" : \"smooth\",\n        })\n      }\n      if (active) onActiveChange?.(active)\n      const observer = new ResizeObserver(place)\n      observer.observe(list)\n      return () => observer.disconnect()\n    }, [active])\n\n    return (\n      <nav\n        ref={ref}\n        aria-label={ariaLabel}\n        className={cx(\"kg-anchor-nav z-5 bg-kg-bg border-b-2 border-kg-ink data-sticky:sticky data-sticky:top-0\", className)}\n        data-sticky={sticky || undefined}\n        {...props}\n      >\n        <ul ref={track} className=\"kg-anchor-nav__list relative m-0 flex list-none gap-1 overflow-x-auto px-3 py-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden\">\n          <li className=\"kg-anchor-nav__pill-slot pointer-events-none absolute inset-y-2 left-0\" aria-hidden=\"true\">\n            <span ref={pill} className={pillClass} />\n          </li>\n          {items.map((item) => (\n            <li key={item.id}>\n              <a\n                href={`#${item.id}`}\n                className={cx(linkClass)}\n                aria-current={active === item.id ? \"location\" : undefined}\n                onClick={(event) => {\n                  if (event.metaKey || event.ctrlKey || event.shiftKey) return\n                  event.preventDefault()\n                  setActive(item.id)\n                  scrollToSection(item.id, offset, reduced, root)\n                  history.replaceState?.(null, \"\", `#${item.id}`)\n                }}\n              >\n                {item.label}\n              </a>\n            </li>\n          ))}\n        </ul>\n      </nav>\n    )\n  },\n)\n\nAnchorNav.displayName = \"AnchorNav\"\n",
+      "target": "components/kitgrid/anchor-nav/anchor-nav.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/anchor-nav/index.ts",
+      "type": "registry:ui",
+      "content": "export { AnchorNav, type AnchorNavItem, type AnchorNavProps } from \"./anchor-nav\"\n",
+      "target": "components/kitgrid/anchor-nav/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

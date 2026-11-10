@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "masonry",
+  "type": "registry:ui",
+  "title": "Masonry",
+  "description": "Packs items into the shortest column while keeping DOM order, so Tab and screen readers move through items as authored. Until measured (and on the server) it falls back to CSS columns.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/masonry/index.ts",
+      "type": "registry:ui",
+      "content": "export { Masonry, type MasonryProps } from \"./masonry\"\n",
+      "target": "components/kitgrid/masonry/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/masonry/masonry.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  Children,\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  isValidElement,\n  type ReactNode,\n  useRef,\n} from \"react\"\nimport { useIsomorphicLayoutEffect } from \"../lib/hooks/use-isomorphic-layout-effect\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface MasonryProps extends HTMLAttributes<HTMLDivElement> {\n  children: ReactNode\n  /** Narrowest a column gets before the count drops. Any px value. */\n  minColumnWidth?: number\n  /** Fixed column count; overrides `minColumnWidth`. */\n  columns?: number\n  /** Gap between items, in px. */\n  gap?: number\n}\n\n/**\n * Packs items into the shortest column while keeping DOM order, so Tab and screen readers move\n * through items as authored. Until measured (and on the server) it falls back to CSS columns.\n */\nexport const Masonry = forwardRef<HTMLDivElement, MasonryProps>(\n  (\n    { children, minColumnWidth = 220, columns, gap = 16, className, style, ...props },\n    forwardedRef,\n  ) => {\n    const root = useRef<HTMLDivElement>(null)\n    const composed = useComposedRefs(root, forwardedRef)\n    // toArray already drops null, undefined and booleans.\n    const items = Children.toArray(children)\n\n    useIsomorphicLayoutEffect(() => {\n      const node = root.current\n      if (!node) return\n      let frame = 0\n      const layout = () => {\n        frame = 0\n        const width = node.clientWidth\n        if (width === 0) return\n        const count = Math.max(\n          1,\n          columns ?? Math.floor((width + gap) / (minColumnWidth + gap)),\n        )\n        const columnWidth = (width - gap * (count - 1)) / count\n        const heights = new Array<number>(count).fill(0)\n        const cells = Array.from(node.children) as HTMLElement[]\n        for (const cell of cells) cell.style.width = `${columnWidth}px`\n        for (const cell of cells) {\n          let target = 0\n          for (let c = 1; c < count; c++) if ((heights[c] as number) < (heights[target] as number) - 1) target = c\n          const x = target * (columnWidth + gap)\n          const y = heights[target] as number\n          cell.style.transform = `translate(${x}px, ${y}px)`\n          heights[target] = y + cell.offsetHeight + gap\n        }\n        node.style.height = `${Math.max(0, Math.max(...heights) - gap)}px`\n        node.dataset.ready = \"\"\n      }\n      const schedule = () => {\n        if (!frame) frame = requestAnimationFrame(layout)\n      }\n      layout()\n      // Transitions start one frame after the first placement, so items don't fly in on load.\n      const settle = requestAnimationFrame(() => {\n        node.dataset.settled = \"\"\n      })\n      if (typeof ResizeObserver === \"undefined\") return () => cancelAnimationFrame(settle)\n      const observer = new ResizeObserver(schedule)\n      observer.observe(node)\n      for (const cell of Array.from(node.children)) observer.observe(cell)\n      return () => {\n        observer.disconnect()\n        cancelAnimationFrame(frame)\n        cancelAnimationFrame(settle)\n      }\n    }, [items.length, columns, minColumnWidth, gap])\n\n    return (\n      <div\n        ref={composed}\n        className={cx(\n          \"kg-masonry relative gap-(--_gap) [columns:var(--_columns)] data-ready:[columns:auto]\",\n          className,\n        )}\n        style={\n          {\n            \"--_gap\": `${gap}px`,\n            \"--_columns\": `${columns ?? \"auto\"} ${minColumnWidth}px`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        {items.map((child, index) => (\n          <div\n            key={isValidElement(child) && child.key != null ? child.key : index}\n            className=\"kg-masonry__item mb-(--_gap) break-inside-avoid [[data-ready]>&]:absolute [[data-ready]>&]:top-0 [[data-ready]>&]:left-0 [[data-ready]>&]:m-0 [[data-settled]>&]:transition-transform [[data-settled]>&]:duration-(--kg-duration-slow) [[data-settled]>&]:ease-kg-spring\"\n          >\n            {child}\n          </div>\n        ))}\n      </div>\n    )\n  },\n)\nMasonry.displayName = \"Masonry\"\n",
+      "target": "components/kitgrid/masonry/masonry.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

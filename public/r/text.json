@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "text",
+  "type": "registry:ui",
+  "title": "Text",
+  "description": "Body text on the type scale, with tone, weight, truncation and line clamping.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/text/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Text,\n  type TextLeading,\n  type TextProps,\n  type TextSize,\n  type TextTone,\n  type TextWeight,\n} from \"./text\"\n",
+      "target": "components/kitgrid/text/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/text/text.tsx",
+      "type": "registry:ui",
+      "content": "import { type CSSProperties, type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type TextSize = \"xs\" | \"sm\" | \"base\" | \"md\" | \"lg\" | \"xl\"\nexport type TextTone =\n  | \"default\"\n  | \"muted\"\n  | \"faint\"\n  | \"accent\"\n  | \"success\"\n  | \"warning\"\n  | \"danger\"\n  | \"info\"\nexport type TextWeight = \"regular\" | \"medium\" | \"semibold\" | \"bold\"\nexport type TextLeading = \"tight\" | \"normal\" | \"relaxed\"\n\nexport interface TextProps extends HTMLAttributes<HTMLElement> {\n  /** A `p` by default; `span` for inline runs. */\n  as?: ElementType\n  asChild?: boolean\n  size?: TextSize\n  tone?: TextTone\n  weight?: TextWeight\n  leading?: TextLeading\n  align?: \"start\" | \"center\" | \"end\"\n  /** One line, cut with an ellipsis. */\n  truncate?: boolean\n  /** Clamps to this many lines with an ellipsis. */\n  lines?: number\n  mono?: boolean\n  /** Equal-width digits, for figures that line up. */\n  tabular?: boolean\n}\n\nconst SIZE: Record<TextSize, string> = {\n  xs: \"text-kg-xs\",\n  sm: \"text-kg-sm\",\n  base: \"text-kg-base\",\n  md: \"text-kg-md\",\n  lg: \"text-kg-lg\",\n  xl: \"text-(length:--kg-text-xl) tracking-[-0.01em]\",\n}\n\nconst SIZE_LEADING: Record<TextSize, string> = {\n  xs: \"leading-[1.5]\",\n  sm: \"leading-[1.5]\",\n  base: \"leading-[1.55]\",\n  md: \"leading-[1.55]\",\n  lg: \"leading-[1.5]\",\n  xl: \"leading-[1.4]\",\n}\n\nconst LEADING: Record<TextLeading, string> = {\n  tight: \"leading-[1.3]\",\n  normal: \"\",\n  relaxed: \"leading-[1.75]\",\n}\n\n/* Status hues are pulled toward the text color, so they stay readable in both themes. */\nconst TONE: Record<TextTone, string> = {\n  default: \"text-kg-fg\",\n  muted: \"text-kg-fg-muted\",\n  faint: \"text-kg-fg-faint\",\n  accent: \"text-kg-accent-strong\",\n  success: \"text-[color-mix(in_oklab,var(--kg-success)_70%,var(--kg-fg))]\",\n  warning: \"text-[color-mix(in_oklab,var(--kg-warning)_55%,var(--kg-fg))]\",\n  danger: \"text-[color-mix(in_oklab,var(--kg-danger)_72%,var(--kg-fg))]\",\n  info: \"text-[color-mix(in_oklab,var(--kg-info)_70%,var(--kg-fg))]\",\n}\n\nconst WEIGHT: Record<TextWeight, string> = {\n  regular: \"font-normal\",\n  medium: \"font-medium\",\n  semibold: \"font-semibold\",\n  bold: \"font-bold\",\n}\n\nconst ALIGN = { start: \"text-start\", center: \"text-center\", end: \"text-end\" }\n\n/** Body text on the type scale, with tone, weight, truncation and line clamping. */\nexport const Text = forwardRef<HTMLElement, TextProps>(\n  (\n    {\n      as: Tag = \"p\",\n      asChild = false,\n      size = \"base\",\n      tone = \"default\",\n      weight,\n      leading,\n      align,\n      truncate = false,\n      lines,\n      mono = false,\n      tabular = false,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const Component: ElementType = asChild ? Slot : Tag\n    return (\n      <Component\n        ref={ref}\n        className={cx(\n          \"kg-text m-0 text-pretty\",\n          mono ? \"font-kg-mono text-[0.94em]\" : SIZE[size],\n          leading && leading !== \"normal\" ? LEADING[leading] : SIZE_LEADING[size],\n          TONE[tone],\n          weight && WEIGHT[weight],\n          align && ALIGN[align],\n          truncate && \"truncate\",\n          lines ? \"line-clamp-(--_lines)\" : null,\n          tabular && \"tabular-nums\",\n          className,\n        )}\n        data-size={size}\n        data-tone={tone === \"default\" ? undefined : tone}\n        data-weight={weight}\n        data-leading={leading}\n        data-align={align}\n        data-truncate={truncate || undefined}\n        data-clamp={lines ? \"\" : undefined}\n        data-mono={mono || undefined}\n        data-tabular={tabular || undefined}\n        style={lines ? ({ \"--_lines\": lines, ...style } as CSSProperties) : style}\n        {...props}\n      />\n    )\n  },\n)\n\nText.displayName = \"Text\"\n",
+      "target": "components/kitgrid/text/text.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

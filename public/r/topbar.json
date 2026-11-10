@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "topbar",
+  "type": "registry:ui",
+  "title": "Topbar",
+  "description": "The bar along the top of an app. Server-safe: it only lays out the slots it's given.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/breadcrumb.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/topbar/index.ts",
+      "type": "registry:ui",
+      "content": "export { Topbar, type TopbarProps } from \"./topbar\"\n",
+      "target": "components/kitgrid/topbar/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/topbar/topbar.tsx",
+      "type": "registry:ui",
+      "content": "import { cloneElement, forwardRef, type HTMLAttributes, isValidElement, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { Breadcrumb, type BreadcrumbProps } from \"../breadcrumb/breadcrumb\"\n\nexport interface TopbarProps extends HTMLAttributes<HTMLDivElement> {\n  /** Before the breadcrumb: a sidebar toggle, a logo. */\n  leading?: ReactNode\n  /** Where you are, usually a `Breadcrumb` (kept on one line unless it sets `wrap`) or a page title. */\n  breadcrumb?: ReactNode\n  /** Centred on wide screens, such as a `SearchField` or a command palette trigger. */\n  search?: ReactNode\n  /** Trailing buttons and menus. */\n  actions?: ReactNode\n  /** Sets the bar on a solid sheet with an ink edge, for use over scrolling content. */\n  elevated?: boolean\n}\n\nconst slot = \"flex items-center gap-1.5 shrink-0\"\n\n/** The bar along the top of an app. Server-safe: it only lays out the slots it's given. */\nexport const Topbar = forwardRef<HTMLDivElement, TopbarProps>(\n  (\n    {\n      leading,\n      breadcrumb,\n      search,\n      actions,\n      elevated = false,\n      className,\n      children,\n      ...props\n    },\n    ref,\n  ) => (\n    <div\n      ref={ref}\n      className={cx(\n        \"kg-topbar @container flex items-center gap-3 min-h-[calc(var(--kg-control-md)+var(--kg-space)*5)] px-4\",\n        \"data-elevated:bg-kg-surface data-elevated:border-b-2 data-elevated:border-kg-ink\",\n        className,\n      )}\n      data-elevated={elevated || undefined}\n      {...props}\n    >\n      {leading != null && <div className={cx(\"kg-topbar__leading\", slot)}>{leading}</div>}\n      <div\n        className={cx(\n          \"kg-topbar__breadcrumb flex-auto min-w-24 overflow-hidden\",\n          \"@max-[36rem]:[&:has(+.kg-topbar__search)]:hidden\",\n        )}\n      >\n        {isValidElement<BreadcrumbProps>(breadcrumb) &&\n        breadcrumb.type === Breadcrumb &&\n        breadcrumb.props.wrap === undefined\n          ? cloneElement(breadcrumb, { wrap: false })\n          : breadcrumb}\n      </div>\n      {search != null && (\n        <div className=\"kg-topbar__search flex-[0_1_18rem] min-w-40 @max-[36rem]:flex-auto @max-[36rem]:min-w-0\">\n          {search}\n        </div>\n      )}\n      {children}\n      {actions != null && (\n        <div className={cx(slot, \"kg-topbar__actions ms-auto @max-[36rem]:[.kg-topbar__search~&]:ms-0\")}>\n          {actions}\n        </div>\n      )}\n    </div>\n  ),\n)\n\nTopbar.displayName = \"Topbar\"\n",
+      "target": "components/kitgrid/topbar/topbar.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "show",
+  "type": "registry:ui",
+  "title": "Show / Hide",
+  "description": "Renders its children only within a width range, in CSS alone, so it works on the server and never flashes. The wrapper has `display: contents` and adds no box.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/show/index.ts",
+      "type": "registry:ui",
+      "content": "export { Hide, type HideProps, Show, type ShowBreakpoint, type ShowProps } from \"./show\"\n",
+      "target": "components/kitgrid/show/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/show/show.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\n\n/** `sm` 40rem, `md` 48rem, `lg` 64rem, `xl` 80rem. */\nexport type ShowBreakpoint = \"sm\" | \"md\" | \"lg\" | \"xl\"\n\nexport interface ShowProps extends HTMLAttributes<HTMLDivElement> {\n  /** From this width up. */\n  above?: ShowBreakpoint\n  /** Below this width. */\n  below?: ShowBreakpoint\n  /**\n   * What the widths are measured on: the viewport, or the nearest size container such as a\n   * `Container`, `Section` or `Grid`.\n   */\n  scope?: \"viewport\" | \"container\"\n}\n\nexport type HideProps = ShowProps\n\ntype Kind = \"show\" | \"hide\"\ntype Scope = NonNullable<ShowProps[\"scope\"]>\ntype Points = Record<ShowBreakpoint, string>\n\n// Written out in full so Tailwind sees every class it has to generate.\nconst NARROWER: Record<Scope, Points> = {\n  viewport: {\n    sm: \"max-[40rem]:hidden\",\n    md: \"max-[48rem]:hidden\",\n    lg: \"max-[64rem]:hidden\",\n    xl: \"max-[80rem]:hidden\",\n  },\n  container: {\n    sm: \"@max-[40rem]:hidden\",\n    md: \"@max-[48rem]:hidden\",\n    lg: \"@max-[64rem]:hidden\",\n    xl: \"@max-[80rem]:hidden\",\n  },\n}\n\nconst WIDER: Record<Scope, Points> = {\n  viewport: {\n    sm: \"min-[40rem]:hidden\",\n    md: \"min-[48rem]:hidden\",\n    lg: \"min-[64rem]:hidden\",\n    xl: \"min-[80rem]:hidden\",\n  },\n  container: {\n    sm: \"@min-[40rem]:hidden\",\n    md: \"@min-[48rem]:hidden\",\n    lg: \"@min-[64rem]:hidden\",\n    xl: \"@min-[80rem]:hidden\",\n  },\n}\n\nconst BETWEEN: Record<Scope, Record<string, string>> = {\n  viewport: {\n    \"sm-md\": \"min-[40rem]:max-[48rem]:hidden\",\n    \"sm-lg\": \"min-[40rem]:max-[64rem]:hidden\",\n    \"sm-xl\": \"min-[40rem]:max-[80rem]:hidden\",\n    \"md-lg\": \"min-[48rem]:max-[64rem]:hidden\",\n    \"md-xl\": \"min-[48rem]:max-[80rem]:hidden\",\n    \"lg-xl\": \"min-[64rem]:max-[80rem]:hidden\",\n  },\n  container: {\n    \"sm-md\": \"@min-[40rem]:@max-[48rem]:hidden\",\n    \"sm-lg\": \"@min-[40rem]:@max-[64rem]:hidden\",\n    \"sm-xl\": \"@min-[40rem]:@max-[80rem]:hidden\",\n    \"md-lg\": \"@min-[48rem]:@max-[64rem]:hidden\",\n    \"md-xl\": \"@min-[48rem]:@max-[80rem]:hidden\",\n    \"lg-xl\": \"@min-[64rem]:@max-[80rem]:hidden\",\n  },\n}\n\nconst hiding = (kind: Kind, scope: Scope, above?: ShowBreakpoint, below?: ShowBreakpoint) => {\n  if (kind === \"show\") return [above && NARROWER[scope][above], below && WIDER[scope][below]]\n  if (above && below) return BETWEEN[scope][`${above}-${below}`]\n  return [above && WIDER[scope][above], below && NARROWER[scope][below]]\n}\n\nconst visibility = (kind: Kind, name: string) => {\n  const Component = forwardRef<HTMLDivElement, ShowProps>(\n    ({ above, below, scope = \"viewport\", className, ...props }, ref) => (\n      <div\n        ref={ref}\n        className={cx(\"kg-show contents\", hiding(kind, scope, above, below), className)}\n        data-kind={kind}\n        data-scope={scope}\n        data-above={above}\n        data-below={below}\n        {...props}\n      />\n    ),\n  )\n  Component.displayName = name\n  return Component\n}\n\n/**\n * Renders its children only within a width range, in CSS alone, so it works on the server and\n * never flashes. The wrapper has `display: contents` and adds no box.\n */\nexport const Show = visibility(\"show\", \"Show\")\n\n/** The inverse of `Show`: hides its children within a width range. */\nexport const Hide = visibility(\"hide\", \"Hide\")\n",
+      "target": "components/kitgrid/show/show.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "highlight",
+  "type": "registry:ui",
+  "title": "Highlight",
+  "description": "Marks every occurrence of a search term with `<mark>`, longest terms first.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/highlight/highlight.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { variants } from \"../lib/utils/variants\"\n\nexport type HighlightVariant = \"soft\" | \"underline\" | \"solid\"\n\nexport interface HighlightProps extends Omit<HTMLAttributes<HTMLSpanElement>, \"children\"> {\n  /** The text to search in. */\n  children: string\n  /** One term or several. Empty terms are ignored. */\n  query: string | string[]\n  caseSensitive?: boolean\n  /** Match whole words only. */\n  wholeWord?: boolean\n  variant?: HighlightVariant\n}\n\nexport interface HighlightRange {\n  text: string\n  match: boolean\n}\n\nconst escape = (term: string) => term.replace(/[.*+?^${}()|[\\]\\\\]/g, \"\\\\$&\")\n\nexport const highlightRanges = (\n  text: string,\n  query: string | string[],\n  { caseSensitive = false, wholeWord = false } = {},\n): HighlightRange[] => {\n  const terms = (Array.isArray(query) ? query : [query])\n    .map((term) => term.trim())\n    .filter(Boolean)\n    .sort((a, b) => b.length - a.length)\n    .map(escape)\n  if (terms.length === 0 || !text) return [{ text, match: false }]\n  const source = wholeWord ? `\\\\b(?:${terms.join(\"|\")})\\\\b` : `(?:${terms.join(\"|\")})`\n  const pattern = new RegExp(source, caseSensitive ? \"g\" : \"gi\")\n  const parts: HighlightRange[] = []\n  let last = 0\n  for (const found of text.matchAll(pattern)) {\n    const start = found.index ?? 0\n    if (found[0].length === 0) continue\n    if (start > last) parts.push({ text: text.slice(last, start), match: false })\n    parts.push({ text: found[0], match: true })\n    last = start + found[0].length\n  }\n  if (last < text.length) parts.push({ text: text.slice(last), match: false })\n  return parts\n}\n\nconst markVariants = variants({\n  base: \"kg-highlight__mark [box-decoration-break:clone] forced-colors:bg-[Mark] forced-colors:text-[MarkText]\",\n  variants: {\n    variant: {\n      soft: \"-mx-[0.04em] rounded-kg-xs bg-kg-paper-sage px-[0.12em] text-kg-fg\",\n      underline: \"bg-transparent text-inherit underline decoration-kg-ink decoration-[0.16em] underline-offset-[0.14em] [text-decoration-skip-ink:none]\",\n      solid: \"-mx-[0.04em] rounded-kg-xs bg-kg-accent px-[0.12em] font-semibold text-kg-accent-fg\",\n    },\n  },\n  defaults: { variant: \"soft\" },\n})\n\n/** Marks every occurrence of a search term with `<mark>`, longest terms first. */\nexport const Highlight = forwardRef<HTMLSpanElement, HighlightProps>(\n  (\n    { children, query, caseSensitive, wholeWord, variant = \"soft\", className, ...props },\n    ref,\n  ) => {\n    const parts = highlightRanges(children, query, {\n      caseSensitive: caseSensitive ?? false,\n      wholeWord: wholeWord ?? false,\n    })\n    const nodes: ReactNode[] = parts.map((part, index) =>\n      part.match ? (\n        <mark key={index} className={markVariants({ variant })}>\n          {part.text}\n        </mark>\n      ) : (\n        part.text\n      ),\n    )\n    return (\n      <span\n        ref={ref}\n        className={cx(\"kg-highlight\", className)}\n        data-variant={variant}\n        {...props}\n      >\n        {nodes}\n      </span>\n    )\n  },\n)\nHighlight.displayName = \"Highlight\"\n",
+      "target": "components/kitgrid/highlight/highlight.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/highlight/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  Highlight,\n  highlightRanges,\n  type HighlightProps,\n  type HighlightRange,\n  type HighlightVariant,\n} from \"./highlight\"\n",
+      "target": "components/kitgrid/highlight/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

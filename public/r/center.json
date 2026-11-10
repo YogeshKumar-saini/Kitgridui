@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "center",
+  "type": "registry:ui",
+  "title": "Center",
+  "description": "A column centred horizontally with a readable maximum width.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/center/center.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"../box/space\"\n\nexport interface CenterProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  /** The widest the content may grow: any CSS length. */\n  max?: string\n  /** Space kept on either side once the viewport is narrower than `max`. */\n  gutters?: BoxSpace\n  /** Centres children narrower than `max` too, not just the column. */\n  intrinsic?: boolean\n  /** Centres the text as well. */\n  text?: boolean\n}\n\n/** A column centred horizontally with a readable maximum width. */\nexport const Center = forwardRef<HTMLElement, CenterProps>(\n  (\n    {\n      as: Tag = \"div\",\n      max = \"60ch\",\n      gutters,\n      intrinsic = false,\n      text = false,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => (\n    <Tag\n      ref={ref}\n      className={cx(\n        \"kg-center mx-auto box-content max-w-[var(--_max,60ch)] px-[var(--_gutters,0)]\",\n        intrinsic && \"flex flex-col items-center\",\n        text && \"text-center\",\n        className,\n      )}\n      data-intrinsic={intrinsic || undefined}\n      data-text={text || undefined}\n      style={{ ...vars({ \"--_max\": max, \"--_gutters\": space(gutters) }), ...style }}\n      {...props}\n    />\n  ),\n)\n\nCenter.displayName = \"Center\"\n",
+      "target": "components/kitgrid/center/center.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/center/index.ts",
+      "type": "registry:ui",
+      "content": "export { Center, type CenterProps } from \"./center\"\n",
+      "target": "components/kitgrid/center/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

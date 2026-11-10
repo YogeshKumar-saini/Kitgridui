@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "code",
+  "type": "registry:ui",
+  "title": "Code",
+  "description": "Inline code: a mono run on a soft paper chip that scales with the text around it.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/code/code.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\nconst codeVariants = variants({\n  base: [\n    \"kg-code rounded-kg-sm border px-[0.38em] py-[0.1em] font-kg-mono text-[0.86em] font-medium leading-[1.4]\",\n    \"text-kg-fg box-decoration-clone\",\n  ],\n  variants: {\n    tone: {\n      neutral: \"border-kg-border bg-kg-muted\",\n      accent: \"border-kg-ink bg-kg-paper-sage\",\n    },\n    nowrap: {\n      true: \"whitespace-nowrap [overflow-wrap:normal]\",\n      false: \"[overflow-wrap:anywhere]\",\n    },\n  },\n  defaults: { tone: \"neutral\", nowrap: false },\n})\n\nexport type CodeTone = NonNullable<VariantProps<typeof codeVariants>[\"tone\"]>\n\nexport interface CodeProps extends HTMLAttributes<HTMLElement> {\n  tone?: CodeTone\n  /** Keeps the snippet on one line. */\n  nowrap?: boolean\n}\n\n/** Inline code: a mono run on a soft paper chip that scales with the text around it. */\nexport const Code = forwardRef<HTMLElement, CodeProps>(\n  ({ tone = \"neutral\", nowrap = false, className, ...props }, ref) => (\n    <code\n      ref={ref}\n      className={codeVariants({ tone, nowrap, className })}\n      data-tone={tone}\n      data-nowrap={nowrap || undefined}\n      {...props}\n    />\n  ),\n)\n\nCode.displayName = \"Code\"\n",
+      "target": "components/kitgrid/code/code.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/code/index.ts",
+      "type": "registry:ui",
+      "content": "export { Code, type CodeProps, type CodeTone } from \"./code\"\n",
+      "target": "components/kitgrid/code/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

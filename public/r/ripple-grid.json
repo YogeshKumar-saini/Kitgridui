@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "ripple-grid",
+  "type": "registry:ui",
+  "title": "Ripple Grid",
+  "description": "A grid of hairline cells with a ring of light rippling out from one point. Every cell runs the same keyframes, delayed by its distance from the origin, so the wave is pure CSS. Server safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/ripple-grid/index.ts",
+      "type": "registry:ui",
+      "content": "export { RippleGrid, type RippleGridProps, type RippleGridMask } from \"./ripple-grid\"\n",
+      "target": "components/kitgrid/ripple-grid/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/ripple-grid/ripple-grid.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-ripple-grid {\n    &[data-mask=\"radial\"] > .kg-ripple-grid__layer {\n      mask-image: radial-gradient(ellipse 75% 70% at 50% 45%, #000 30%, transparent 100%);\n    }\n\n    &[data-mask=\"top\"] > .kg-ripple-grid__layer {\n      mask-image: linear-gradient(to bottom, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"bottom\"] > .kg-ripple-grid__layer {\n      mask-image: linear-gradient(to top, #000 20%, transparent 95%);\n    }\n\n    &[data-mask=\"edges\"] > .kg-ripple-grid__layer {\n      mask-image:\n        linear-gradient(to right, transparent, #000 15% 85%, transparent),\n        linear-gradient(to bottom, transparent, #000 15% 85%, transparent);\n      mask-composite: intersect;\n    }\n  }\n\n  .kg-ripple-grid__cell::after {\n    content: \"\";\n    position: absolute;\n    inset: 2px;\n    border-radius: var(--kg-radius-xs);\n    background: color-mix(in oklab, var(--_c) 24%, transparent);\n    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--_c) 45%, transparent);\n    opacity: 0;\n    transform: scale(0.6);\n    animation: kg-ripple-grid-pulse var(--_interval) var(--kg-ease-out) infinite;\n    animation-delay: calc(var(--_d) * var(--_interval) * 0.45);\n  }\n\n  /* A still frame: one ring frozen part way out, so the effect still reads. */\n  @media (prefers-reduced-motion: reduce) {\n    .kg-ripple-grid__cell::after {\n      animation: none;\n      transform: scale(0.9);\n      opacity: max(0, 0.7 - max(var(--_d) - 0.36, 0.36 - var(--_d)) * 6);\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-ripple-grid__cell::after {\n    animation: none;\n    transform: scale(0.9);\n    opacity: max(0, 0.7 - max(var(--_d) - 0.36, 0.36 - var(--_d)) * 6);\n  }\n\n  @keyframes kg-ripple-grid-pulse {\n    0% {\n      opacity: 0;\n      transform: scale(0.6);\n    }\n    6% {\n      opacity: 0.75;\n      transform: scale(1);\n    }\n    30%,\n    100% {\n      opacity: 0;\n      transform: scale(0.85);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/ripple-grid/ripple-grid.css"
+    },
+    {
+      "path": "kitgrid/src/components/ripple-grid/ripple-grid.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { type BackdropMask, backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { round } from \"../aurora/internal/random\"\n\nexport type RippleGridMask = BackdropMask\n\nexport interface RippleGridProps extends HTMLAttributes<HTMLDivElement> {\n  /** Columns, 4–40. */\n  columns?: number\n  /** Rows, 2–24. */\n  rows?: number\n  /** Any CSS color for the wave. Defaults to ink. */\n  color?: string\n  /** Seconds between rings. */\n  interval?: number\n  /** Where the ripple starts, 0–1 across and down. */\n  origin?: readonly [x: number, y: number]\n  mask?: RippleGridMask\n  children?: ReactNode\n}\n\nconst MAX_CELLS = 640\n\n/**\n * A grid of hairline cells with a ring of light rippling out from one point. Every cell runs the\n * same keyframes, delayed by its distance from the origin, so the wave is pure CSS. Server safe.\n */\nexport const RippleGrid = forwardRef<HTMLDivElement, RippleGridProps>(\n  (\n    {\n      columns = 24,\n      rows = 12,\n      color,\n      interval = 4,\n      origin = [0.5, 0.5],\n      mask = \"radial\",\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    let cols = Math.round(Math.min(Math.max(columns, 4), 40))\n    let lines = Math.round(Math.min(Math.max(rows, 2), 24))\n    while (cols * lines > MAX_CELLS) {\n      cols = Math.max(4, cols - 1)\n      lines = Math.max(2, lines - 1)\n    }\n    const [ox, oy] = origin\n    const far = Math.hypot(Math.max(ox, 1 - ox) * cols, Math.max(oy, 1 - oy) * lines) || 1\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-ripple-grid absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-ripple-grid-color,var(--kg-ink))] [--_interval:var(--kg-ripple-grid-interval,4s)]\",\n          className,\n          wrapper,\n        )}\n        data-mask={mask}\n        style={\n          {\n            ...(color ? { \"--kg-ripple-grid-color\": color } : null),\n            \"--kg-ripple-grid-interval\": `${Math.max(interval, 0.5)}s`,\n            \"--_cols\": cols,\n            \"--_rows\": lines,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-ripple-grid__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <div className=\"kg-ripple-grid__cells absolute -inset-px grid grid-cols-[repeat(var(--_cols),1fr)] grid-rows-[repeat(var(--_rows),1fr)]\">\n            {Array.from({ length: cols * lines }, (_, index) => {\n              const x = (index % cols) + 0.5 - ox * cols\n              const y = Math.floor(index / cols) + 0.5 - oy * lines\n              return (\n                <span\n                  key={index}\n                  className=\"kg-ripple-grid__cell relative border-r border-b border-[color-mix(in_oklab,var(--kg-border)_70%,transparent)]\"\n                  style={{ \"--_d\": round(Math.hypot(x, y) / far) } as CSSProperties}\n                />\n              )\n            })}\n          </div>\n        </div>\n        {wrapper && <div className=\"kg-ripple-grid__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nRippleGrid.displayName = \"RippleGrid\"\n",
+      "target": "components/kitgrid/ripple-grid/ripple-grid.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "chip-list",
+  "type": "registry:ui",
+  "title": "Chip List",
+  "description": "A read-only set of chips that folds the overflow into an expandable “+N”.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/chip-list/chip-list.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, type ReactNode, useState } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { variants } from \"../lib/utils/variants\"\n\n/* Paper Layers: chips are small paper tabs with an ink edge; tones pick the paper colour. */\nconst listVariants = variants({\n  base: \"kg-chip-list m-0 flex list-none flex-wrap gap-1.5 p-0\",\n  variants: {\n    size: {\n      sm: \"[--_h:1.375rem] [--_fs:var(--kg-text-xs)]\",\n      md: \"[--_h:1.75rem] [--_fs:var(--kg-text-sm)]\",\n    },\n  },\n  defaults: { size: \"md\" },\n})\n\nconst chip =\n  \"inline-flex h-(--_h) items-center gap-[0.3125rem] whitespace-nowrap rounded-full border-2 px-[calc(var(--_h)*0.42)] text-(length:--_fs) leading-none font-medium text-kg-fg\"\n\nconst chipVariants = variants({\n  base: [\n    \"kg-chip-list__chip border-kg-ink\",\n    chip,\n    \"data-revealed:transition-[opacity,scale,rotate] data-revealed:duration-(--kg-duration-slow) data-revealed:ease-kg-spring\",\n    \"data-revealed:starting:scale-85 data-revealed:starting:-rotate-6 data-revealed:starting:opacity-0\",\n  ],\n  variants: {\n    tone: {\n      neutral: \"bg-kg-surface\",\n      accent: \"bg-kg-paper-sage\",\n      success: \"bg-kg-paper-sage\",\n      warning: \"bg-kg-paper-butter\",\n      danger: \"bg-kg-paper-rose\",\n      info: \"bg-kg-paper-sky\",\n    },\n  },\n  defaults: { tone: \"neutral\" },\n})\n\nexport type ChipListSize = \"sm\" | \"md\"\nexport type ChipListTone = \"neutral\" | \"accent\" | \"success\" | \"warning\" | \"danger\" | \"info\"\n\nexport interface ChipListItem {\n  label: string\n  icon?: ReactNode\n  tone?: ChipListTone\n  key?: string\n}\n\nexport interface ChipListLabels {\n  /** Text for the overflow chip, given the hidden count. */\n  more?: (count: number) => string\n  less?: string\n}\n\nexport interface ChipListProps extends HTMLAttributes<HTMLUListElement> {\n  items: (string | ChipListItem)[]\n  /** Chips shown before collapsing the rest into a “+N” chip. */\n  max?: number\n  size?: ChipListSize\n  labels?: ChipListLabels\n}\n\nconst normalize = (item: string | ChipListItem): ChipListItem =>\n  typeof item === \"string\" ? { label: item } : item\n\n/** A read-only set of chips that folds the overflow into an expandable “+N”. */\nexport const ChipList = forwardRef<HTMLUListElement, ChipListProps>(\n  ({ items, max, size = \"md\", labels, className, ...props }, ref) => {\n    const [open, setOpen] = useState(false)\n    const all = items.map(normalize)\n    const limit = max !== undefined && max >= 0 && all.length > max ? max : all.length\n    const visible = open ? all : all.slice(0, limit)\n    const hidden = all.length - limit\n    const more = labels?.more ?? ((count: number) => `+${count}`)\n\n    return (\n      <ul\n        ref={ref}\n        className={listVariants({ size, className })}\n        data-size={size}\n        {...props}\n      >\n        {visible.map((item, index) => (\n          <li\n            key={item.key ?? `${item.label}-${index}`}\n            className={chipVariants({ tone: item.tone ?? \"neutral\" })}\n            data-tone={item.tone ?? \"neutral\"}\n            data-revealed={open && index >= limit ? true : undefined}\n          >\n            {item.icon && (\n              <span className=\"kg-chip-list__icon inline-flex [&_svg]:size-[0.875em]\" aria-hidden=\"true\">\n                {item.icon}\n              </span>\n            )}\n            {item.label}\n          </li>\n        ))}\n        {hidden > 0 && (\n          <li className=\"kg-chip-list__more-item inline-flex\">\n            <button\n              type=\"button\"\n              className={cx(\n                \"kg-chip-list__more cursor-pointer border-dashed border-kg-ink bg-kg-muted tabular-nums\",\n                chip,\n                \"transition-[translate,box-shadow] duration-(--kg-duration-fast) ease-kg-out hover:-translate-px hover:shadow-kg-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n              )}\n              aria-expanded={open}\n              aria-label={open ? (labels?.less ?? \"Show fewer\") : `Show ${hidden} more`}\n              onClick={() => setOpen((value) => !value)}\n            >\n              {open ? (labels?.less ?? \"Less\") : more(hidden)}\n            </button>\n          </li>\n        )}\n      </ul>\n    )\n  },\n)\nChipList.displayName = \"ChipList\"\n",
+      "target": "components/kitgrid/chip-list/chip-list.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/chip-list/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  ChipList,\n  type ChipListItem,\n  type ChipListLabels,\n  type ChipListProps,\n  type ChipListSize,\n  type ChipListTone,\n} from \"./chip-list\"\n",
+      "target": "components/kitgrid/chip-list/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

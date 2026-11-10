@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pointer-trail",
+  "type": "registry:ui",
+  "title": "Pointer Trail",
+  "description": "A ribbon of light that follows the pointer across the area and tapers away behind it. Drawn on a canvas only while there is a trail, so an idle area costs nothing. Off under reduced motion and for touch.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/pointer-trail/index.ts",
+      "type": "registry:ui",
+      "content": "export { PointerTrail, type PointerTrailProps } from \"./pointer-trail\"\n",
+      "target": "components/kitgrid/pointer-trail/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/pointer-trail/pointer-trail.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { forwardRef, type HTMLAttributes, useEffect, useRef } from \"react\"\nimport { useReducedMotion } from \"../lib/hooks/use-reduced-motion\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport interface PointerTrailProps extends HTMLAttributes<HTMLDivElement> {\n  /** How long a point of the trail lives, in ms. */\n  life?: number\n  /** Width of the trail at its head, in px. */\n  width?: number\n  /** Paint under the content instead of over it. */\n  behind?: boolean\n}\n\ninterface Point {\n  x: number\n  y: number\n  t: number\n}\n\n/**\n * A ribbon of light that follows the pointer across the area and tapers away behind it. Drawn\n * on a canvas only while there is a trail, so an idle area costs nothing. Off under reduced\n * motion and for touch.\n */\nexport const PointerTrail = forwardRef<HTMLDivElement, PointerTrailProps>(\n  (\n    { life = 520, width = 14, behind = false, className, children, ...props },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    const canvasRef = useRef<HTMLCanvasElement>(null)\n    const reduced = useReducedMotion()\n\n    useEffect(() => {\n      const root = local.current\n      const canvas = canvasRef.current\n      const ctx = canvas?.getContext?.(\"2d\")\n      if (!root || !canvas || !ctx || reduced) return\n      const points: Point[] = []\n      let frame = 0\n      let color = \"\"\n      let size = { w: 0, h: 0 }\n\n      const resize = () => {\n        const rect = root.getBoundingClientRect()\n        const dpr = Math.min(window.devicePixelRatio || 1, 2)\n        size = { w: rect.width, h: rect.height }\n        canvas.width = Math.max(1, Math.round(rect.width * dpr))\n        canvas.height = Math.max(1, Math.round(rect.height * dpr))\n        ctx.setTransform(dpr, 0, 0, dpr, 0, 0)\n        color = getComputedStyle(canvas).color\n      }\n\n      const draw = (now: number) => {\n        ctx.clearRect(0, 0, size.w, size.h)\n        while (points.length && now - (points[0] as Point).t > life) points.shift()\n        ctx.lineCap = \"round\"\n        ctx.strokeStyle = color\n        for (let i = 1; i < points.length; i++) {\n          const a = points[i - 1] as Point\n          const b = points[i] as Point\n          const age = 1 - Math.min(Math.max(now - b.t, 0) / life, 1)\n          ctx.globalAlpha = age * age * 0.9\n          ctx.lineWidth = Math.max(width * age, 0.5)\n          ctx.beginPath()\n          ctx.moveTo(a.x, a.y)\n          ctx.lineTo(b.x, b.y)\n          ctx.stroke()\n        }\n        ctx.globalAlpha = 1\n        frame = points.length > 1 ? requestAnimationFrame(draw) : 0\n        if (!frame) ctx.clearRect(0, 0, size.w, size.h)\n      }\n\n      const move = (event: PointerEvent) => {\n        if (event.pointerType === \"touch\") return\n        if (!size.w) resize()\n        const rect = root.getBoundingClientRect()\n        points.push({ x: event.clientX - rect.left, y: event.clientY - rect.top, t: performance.now() })\n        if (points.length > 64) points.shift()\n        if (!frame) frame = requestAnimationFrame(draw)\n      }\n\n      const observer =\n        typeof ResizeObserver === \"undefined\" ? null : new ResizeObserver(resize)\n      observer?.observe(root)\n      root.addEventListener(\"pointermove\", move, { passive: true })\n      return () => {\n        cancelAnimationFrame(frame)\n        observer?.disconnect()\n        root.removeEventListener(\"pointermove\", move)\n      }\n    }, [reduced, life, width])\n\n    return (\n      <div\n        ref={ref}\n        className={cx(\"kg-pointer-trail group/trail relative isolate\", className)}\n        data-behind={behind || undefined}\n        {...props}\n      >\n        <canvas ref={canvasRef} className=\"kg-pointer-trail__canvas pointer-events-none absolute inset-0 z-1 size-full text-[color:var(--kg-pointer-trail-color,var(--kg-ink))] group-data-behind/trail:-z-1\" aria-hidden=\"true\" />\n        {children}\n      </div>\n    )\n  },\n)\n\nPointerTrail.displayName = \"PointerTrail\"\n",
+      "target": "components/kitgrid/pointer-trail/pointer-trail.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

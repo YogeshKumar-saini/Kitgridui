@@ -1,0 +1,31 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "nested-drawer",
+  "type": "registry:ui",
+  "title": "Nested Drawer",
+  "description": "A drawer that can push further drawers over itself, for drill-in flows (cart, then address, then a map). Each parent slides back and dims while a child is open.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/dialog.json",
+    "https://kitgrid.dev/r/drawer.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json",
+    "https://kitgrid.dev/r/modal-stack.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/nested-drawer/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  NestedDrawer,\n  NestedDrawerBody,\n  type NestedDrawerBodyProps,\n  NestedDrawerClose,\n  type NestedDrawerCloseProps,\n  NestedDrawerContent,\n  type NestedDrawerContentProps,\n  NestedDrawerDescription,\n  type NestedDrawerDescriptionProps,\n  NestedDrawerFooter,\n  type NestedDrawerFooterProps,\n  NestedDrawerHeader,\n  type NestedDrawerHeaderProps,\n  type NestedDrawerProps,\n  NestedDrawerTitle,\n  type NestedDrawerTitleProps,\n  NestedDrawerTrigger,\n  type NestedDrawerTriggerProps,\n} from \"./nested-drawer\"\n",
+      "target": "components/kitgrid/nested-drawer/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/nested-drawer/nested-drawer.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type CSSProperties, forwardRef, useState } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { ModalRoot, type ModalRootProps } from \"../dialog/modal\"\nimport {\n  DrawerBody,\n  type DrawerBodyProps,\n  DrawerClose,\n  type DrawerCloseProps,\n  DrawerContent,\n  type DrawerContentProps,\n  DrawerDescription,\n  type DrawerDescriptionProps,\n  DrawerFooter,\n  type DrawerFooterProps,\n  DrawerHeader,\n  type DrawerHeaderProps,\n  DrawerTitle,\n  type DrawerTitleProps,\n  DrawerTrigger,\n  type DrawerTriggerProps,\n} from \"../drawer/drawer\"\nimport { StackLevel, useStackLevel } from \"../modal-stack/stack-level\"\n\n/*\n * A covered drawer slides back on the individual translate/scale properties, which compose with\n * the drawer's entry and drag transforms. Child layers clear the overlay token their ::backdrop\n * inherits: one scrim is enough.\n */\nconst nestedClass = [\n  \"kg-nested-drawer data-behind:pointer-events-none data-behind:scale-(--_scale) data-behind:brightness-90\",\n  \"data-behind:data-[side=right]:origin-[100%_50%] data-behind:data-[side=right]:translate-x-(--_tx)\",\n  \"data-behind:data-[side=left]:origin-[0_50%] data-behind:data-[side=left]:translate-x-(--_tx)\",\n  \"data-behind:data-[side=bottom]:origin-[50%_100%] data-behind:data-[side=bottom]:translate-y-(--_ty)\",\n  \"[&:not([data-depth='0'])]:[--kg-overlay:transparent]\",\n]\n\nexport interface NestedDrawerProps extends ModalRootProps {}\n\n/**\n * A drawer that can push further drawers over itself, for drill-in flows (cart, then address,\n * then a map). Each parent slides back and dims while a child is open.\n */\nexport const NestedDrawer = ({\n  open: openProp,\n  defaultOpen = false,\n  onOpenChange,\n  ...props\n}: NestedDrawerProps) => {\n  const [internal, setInternal] = useState(defaultOpen)\n  const open = openProp ?? internal\n  return (\n    <StackLevel open={open}>\n      <ModalRoot\n        {...props}\n        open={open}\n        onOpenChange={(next) => {\n          if (openProp === undefined) setInternal(next)\n          onOpenChange?.(next)\n        }}\n      />\n    </StackLevel>\n  )\n}\n\nNestedDrawer.displayName = \"NestedDrawer\"\n\nexport interface NestedDrawerContentProps extends DrawerContentProps {}\n\nexport const NestedDrawerContent = forwardRef<HTMLDialogElement, NestedDrawerContentProps>(\n  ({ className, style, side = \"right\", ...props }, ref) => {\n    const { depth, above } = useStackLevel()\n    return (\n      <DrawerContent\n        ref={ref}\n        side={side}\n        className={cx(nestedClass, className)}\n        data-depth={depth}\n        data-behind={above > 0 || undefined}\n        style={\n          {\n            \"--_above\": above,\n            \"--_scale\": 1 - above * 0.04,\n            \"--_tx\": `${side === \"left\" ? above * 28 : above * -28}px`,\n            \"--_ty\": `${above * -20}px`,\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      />\n    )\n  },\n)\n\nNestedDrawerContent.displayName = \"NestedDrawerContent\"\n\nexport interface NestedDrawerTriggerProps extends DrawerTriggerProps {}\nexport const NestedDrawerTrigger = DrawerTrigger\n\nexport interface NestedDrawerCloseProps extends DrawerCloseProps {}\nexport const NestedDrawerClose = DrawerClose\n\nexport interface NestedDrawerHeaderProps extends DrawerHeaderProps {}\nexport const NestedDrawerHeader = DrawerHeader\n\nexport interface NestedDrawerTitleProps extends DrawerTitleProps {}\nexport const NestedDrawerTitle = DrawerTitle\n\nexport interface NestedDrawerDescriptionProps extends DrawerDescriptionProps {}\nexport const NestedDrawerDescription = DrawerDescription\n\nexport interface NestedDrawerBodyProps extends DrawerBodyProps {}\nexport const NestedDrawerBody = DrawerBody\n\nexport interface NestedDrawerFooterProps extends DrawerFooterProps {}\nexport const NestedDrawerFooter = DrawerFooter\n",
+      "target": "components/kitgrid/nested-drawer/nested-drawer.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

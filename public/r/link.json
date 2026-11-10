@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "link",
+  "type": "registry:ui",
+  "title": "Link",
+  "description": "An inline link with an underline that sits clear of descenders, and a safe external mode.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/link/index.ts",
+      "type": "registry:ui",
+      "content": "export { Link, type LinkProps, type LinkTone, type LinkUnderline } from \"./link\"\n",
+      "target": "components/kitgrid/link/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/link/link.tsx",
+      "type": "registry:ui",
+      "content": "import { type AnchorHTMLAttributes, forwardRef } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/* --_ink is the text and hover underline, --_rest the quieter resting underline. */\nconst linkVariants = variants({\n  base: [\n    \"kg-link group/link inline cursor-pointer rounded-kg-xs font-medium text-(--_ink)\",\n    \"decoration-1 underline-offset-[0.22em] [text-decoration-skip-ink:auto]\",\n    \"transition-[color,text-decoration-color] duration-(--kg-duration-fast) ease-kg-out\",\n    \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n  ],\n  variants: {\n    tone: {\n      accent:\n        \"[--_ink:var(--kg-accent-strong)] [--_rest:color-mix(in_oklab,var(--kg-accent-strong)_40%,transparent)]\",\n      default:\n        \"[--_ink:var(--kg-fg)] [--_rest:color-mix(in_oklab,var(--kg-fg)_30%,transparent)]\",\n      muted:\n        \"[--_ink:var(--kg-fg-muted)] [--_rest:color-mix(in_oklab,var(--kg-fg-muted)_35%,transparent)] hover:[--_ink:var(--kg-fg)]\",\n    },\n    underline: {\n      always: \"underline decoration-(color:--_rest) hover:decoration-(color:--_ink)\",\n      hover: \"underline decoration-transparent hover:decoration-(color:--_ink)\",\n      none: \"no-underline\",\n    },\n  },\n  defaults: { tone: \"accent\", underline: \"always\" },\n})\n\ntype LinkVariantProps = VariantProps<typeof linkVariants>\nexport type LinkTone = NonNullable<LinkVariantProps[\"tone\"]>\nexport type LinkUnderline = NonNullable<LinkVariantProps[\"underline\"]>\n\nexport interface LinkProps extends AnchorHTMLAttributes<HTMLAnchorElement> {\n  tone?: LinkTone\n  underline?: LinkUnderline\n  /** Opens in a new tab, safely, with an arrow and a spoken hint. */\n  external?: boolean\n  /** Renders your router's link with these styles instead of an `a`. */\n  asChild?: boolean\n}\n\nconst Arrow = () => (\n  <svg\n    className=\"kg-link__icon ms-[0.15em] inline-block align-[-0.05em] transition-transform duration-(--kg-duration-fast) ease-kg-out group-hover/link:translate-x-px group-hover/link:-translate-y-px\"\n    viewBox=\"0 0 16 16\"\n    width=\"0.8em\"\n    height=\"0.8em\"\n    fill=\"none\"\n    stroke=\"currentColor\"\n    strokeWidth=\"1.75\"\n    strokeLinecap=\"round\"\n    strokeLinejoin=\"round\"\n    aria-hidden=\"true\"\n  >\n    <path d=\"M5.5 4.5h6v6M11.5 4.5l-7 7\" />\n  </svg>\n)\n\n/** An inline link with an underline that sits clear of descenders, and a safe external mode. */\nexport const Link = forwardRef<HTMLAnchorElement, LinkProps>(\n  (\n    {\n      tone = \"accent\",\n      underline = \"always\",\n      external = false,\n      asChild = false,\n      className,\n      children,\n      target,\n      rel,\n      ...props\n    },\n    ref,\n  ) => {\n    const shared = {\n      ref,\n      className: linkVariants({ tone, underline, className }),\n      \"data-tone\": tone,\n      \"data-underline\": underline,\n      ...props,\n    }\n    if (asChild) return <Slot {...shared}>{children}</Slot>\n    return (\n      <a\n        {...shared}\n        target={external ? \"_blank\" : target}\n        rel={external ? (rel ?? \"noopener noreferrer\") : rel}\n      >\n        {children}\n        {external ? (\n          <>\n            <Arrow />\n            <span className=\"kg-visually-hidden\"> (opens in a new tab)</span>\n          </>\n        ) : null}\n      </a>\n    )\n  },\n)\n\nLink.displayName = \"Link\"\n",
+      "target": "components/kitgrid/link/link.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

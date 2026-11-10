@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "orbit-rings",
+  "type": "registry:ui",
+  "title": "Orbit Rings",
+  "description": "Hairline concentric rings, each with a conic light sweeping around it at its own pace, alternating direction. Transform-only. Server safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/aurora.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/orbit-rings/index.ts",
+      "type": "registry:ui",
+      "content": "export { OrbitRings, type OrbitRingsProps } from \"./orbit-rings\"\n",
+      "target": "components/kitgrid/orbit-rings/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/orbit-rings/orbit-rings.css",
+      "type": "registry:file",
+      "content": "@layer kg.components {\n  .kg-orbit-rings__core {\n    background: radial-gradient(\n      closest-side,\n      color-mix(in oklab, var(--_c) 22%, transparent),\n      transparent\n    );\n  }\n\n  .kg-orbit-rings__sweep {\n    animation: kg-orbit-rings-spin calc(var(--_dur) / var(--_speed)) linear infinite;\n    animation-play-state: var(--kg-orbit-rings-state, running);\n\n    &::before {\n      content: \"\";\n      position: absolute;\n      inset: 0;\n      border-radius: 50%;\n      background: conic-gradient(\n        from 0deg,\n        transparent 0deg 250deg,\n        color-mix(in oklab, var(--_c) 70%, transparent) 345deg,\n        var(--_c) 359deg,\n        transparent 360deg\n      );\n      mask-image: radial-gradient(\n        closest-side,\n        transparent calc(100% - 2px),\n        #000 calc(100% - 1.5px),\n        #000 100%,\n        transparent 100%\n      );\n    }\n  }\n\n  .kg-orbit-rings[data-bodies] .kg-orbit-rings__sweep::after {\n    content: \"\";\n    position: absolute;\n    top: 0;\n    left: 50%;\n    width: 7px;\n    aspect-ratio: 1;\n    translate: -50% -50%;\n    border-radius: 50%;\n    background: var(--_c);\n    box-shadow: 0 0 0 3px color-mix(in oklab, var(--_c) 22%, transparent);\n  }\n\n  .kg-orbit-rings__ring:nth-child(odd) .kg-orbit-rings__sweep {\n    animation-direction: reverse;\n  }\n\n  /* Reverse sweeps keep the light trailing behind the body. */\n  .kg-orbit-rings__ring:nth-child(odd) .kg-orbit-rings__sweep::before {\n    scale: -1 1;\n  }\n\n  @media (prefers-reduced-motion: reduce) {\n    .kg-orbit-rings__sweep {\n      animation: none;\n    }\n  }\n\n  [data-kg-motion=\"reduce\"] .kg-orbit-rings__sweep {\n    animation: none;\n  }\n\n  @keyframes kg-orbit-rings-spin {\n    to {\n      transform: rotate(1turn);\n    }\n  }\n}\n",
+      "target": "components/kitgrid/orbit-rings/orbit-rings.css"
+    },
+    {
+      "path": "kitgrid/src/components/orbit-rings/orbit-rings.tsx",
+      "type": "registry:ui",
+      "content": "import {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type ReactNode,\n} from \"react\"\nimport { backdropRoot, hasChildren } from \"../aurora/internal/backdrop\"\nimport { round } from \"../aurora/internal/random\"\n\nexport interface OrbitRingsProps extends HTMLAttributes<HTMLDivElement> {\n  /** Concentric rings, 2–8. */\n  rings?: number\n  /** Any CSS color for the orbit lights. Defaults to ink. */\n  color?: string\n  /** Where the system sits: centred, or rising from the bottom edge like a horizon. */\n  position?: \"center\" | \"bottom\"\n  /** Diameter of the outer ring, as any CSS length. */\n  size?: string\n  /** Orbit speed multiplier; 0 holds the lights still. */\n  speed?: number\n  /** Draw a small body at the head of each light. */\n  bodies?: boolean\n  children?: ReactNode\n}\n\n/**\n * Hairline concentric rings, each with a conic light\n * sweeping around it at its own pace, alternating direction. Transform-only. Server safe.\n */\nexport const OrbitRings = forwardRef<HTMLDivElement, OrbitRingsProps>(\n  (\n    {\n      rings = 5,\n      color,\n      position = \"center\",\n      size = \"min(120%, 64rem)\",\n      speed = 1,\n      bodies = true,\n      className,\n      style,\n      children,\n      ...props\n    },\n    ref,\n  ) => {\n    const wrapper = hasChildren(children)\n    const total = Math.round(Math.min(Math.max(rings, 2), 8))\n    return (\n      <div\n        ref={ref}\n        {...backdropRoot(\n          \"kg-orbit-rings absolute inset-0 overflow-hidden pointer-events-none data-wrapper:relative data-wrapper:inset-auto data-wrapper:isolate data-wrapper:pointer-events-auto [--_c:var(--kg-orbit-rings-color,var(--kg-ink))] [--_speed:var(--kg-orbit-rings-speed,1)]\",\n          className,\n          wrapper,\n        )}\n        data-position={position}\n        data-bodies={bodies || undefined}\n        style={\n          {\n            ...(color ? { \"--kg-orbit-rings-color\": color } : null),\n            \"--kg-orbit-rings-size\": size,\n            \"--kg-orbit-rings-speed\": Math.max(speed, 0.001),\n            \"--kg-orbit-rings-state\": speed === 0 ? \"paused\" : \"running\",\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      >\n        <div className=\"kg-orbit-rings__layer pointer-events-none absolute inset-0 z-0 overflow-hidden\" aria-hidden=\"true\">\n          <div\n            className={`kg-orbit-rings__system absolute ${position === \"bottom\" ? \"top-full\" : \"top-1/2\"} left-1/2 aspect-square w-[var(--kg-orbit-rings-size,64rem)] -translate-1/2`}\n          >\n            <div className=\"kg-orbit-rings__core absolute inset-[38%] rounded-full\" />\n            {Array.from({ length: total }, (_, index) => {\n              const scale = (index + 1) / total\n              return (\n                <div\n                  key={index}\n                  className=\"kg-orbit-rings__ring absolute inset-(--_inset) rounded-full border border-[color-mix(in_oklab,var(--kg-border)_85%,transparent)]\"\n                  style={\n                    {\n                      \"--_inset\": `${round((1 - scale) * 50, 2)}%`,\n                      \"--_dur\": `${round(10 + index * 6.5, 2)}s`,\n                      \"--_start\": `${(index * 137) % 360}deg`,\n                    } as CSSProperties\n                  }\n                >\n                  <div className=\"kg-orbit-rings__sweep absolute -inset-px rounded-full rotate-(--_start)\" />\n                </div>\n              )\n            })}\n          </div>\n        </div>\n        {wrapper && <div className=\"kg-orbit-rings__content relative z-1\">{children}</div>}\n      </div>\n    )\n  },\n)\n\nOrbitRings.displayName = \"OrbitRings\"\n",
+      "target": "components/kitgrid/orbit-rings/orbit-rings.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

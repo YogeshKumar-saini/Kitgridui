@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "pointer-light",
+  "type": "registry:ui",
+  "title": "Pointer Light",
+  "description": "A light that follows the cursor over any surface: an image, a chart, a panel. Unlike a spotlight card it brings no styling of its own and sits over the content, not behind it. One style write per frame, no re-renders.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/pointer-light/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  PointerLight,\n  type PointerLightBlend,\n  type PointerLightProps,\n} from \"./pointer-light\"\n",
+      "target": "components/kitgrid/pointer-light/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/pointer-light/pointer-light.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type CSSProperties, forwardRef, type HTMLAttributes, useRef } from \"react\"\nimport { usePointerVars } from \"../lib/hooks/use-pointer-vars\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\n\nexport type PointerLightBlend =\n  \"normal\" | \"soft-light\" | \"overlay\" | \"plus-lighter\" | \"screen\"\n\nexport interface PointerLightProps extends HTMLAttributes<HTMLDivElement> {\n  /** Any CSS color. Defaults to a soft sage paper light. */\n  color?: string\n  /** Radius of the light, in px. */\n  size?: number\n  /** Strength, 0–1. */\n  intensity?: number\n  /** How the light combines with the content beneath it. */\n  blend?: PointerLightBlend\n  /** Light the child element itself instead of wrapping it in a div. */\n  asChild?: boolean\n}\n\nconst lightClass = cx(\n  \"kg-pointer-light relative isolate\",\n  \"after:pointer-events-none after:absolute after:inset-0 after:z-1 after:rounded-[inherit] after:opacity-0 after:content-['']\",\n  \"after:bg-[radial-gradient(var(--kg-pointer-light-size,280px)_circle_at_var(--kg-pointer-x,50%)_var(--kg-pointer-y,50%),var(--kg-pointer-light-color,color-mix(in_oklab,var(--kg-paper-sage)_70%,transparent)),transparent_70%)]\",\n  \"after:transition-opacity after:duration-(--kg-duration-slow) after:ease-kg-out\",\n  \"data-[pointer=in]:after:opacity-(--kg-pointer-light-intensity)\",\n  \"data-[blend=soft-light]:after:mix-blend-soft-light data-[blend=overlay]:after:mix-blend-overlay\",\n  \"data-[blend=plus-lighter]:after:mix-blend-plus-lighter data-[blend=screen]:after:mix-blend-screen\",\n)\n\n/**\n * A light that follows the cursor over any surface: an image, a chart, a panel. Unlike a\n * spotlight card it brings no styling of its own and sits over the content, not behind it.\n * One style write per frame, no re-renders.\n */\nexport const PointerLight = forwardRef<HTMLDivElement, PointerLightProps>(\n  (\n    {\n      color,\n      size = 280,\n      intensity = 1,\n      blend = \"normal\",\n      asChild = false,\n      className,\n      style,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const local = useRef<HTMLDivElement>(null)\n    const ref = useComposedRefs(local, forwardedRef)\n    usePointerVars(local)\n    const Component = asChild ? Slot : \"div\"\n\n    return (\n      <Component\n        ref={ref}\n        className={cx(lightClass, className)}\n        data-blend={blend}\n        style={\n          {\n            ...(color ? { \"--kg-pointer-light-color\": color } : null),\n            \"--kg-pointer-light-size\": `${Math.max(size, 0)}px`,\n            \"--kg-pointer-light-intensity\": Math.min(Math.max(intensity, 0), 1),\n            ...style,\n          } as CSSProperties\n        }\n        {...props}\n      />\n    )\n  },\n)\n\nPointerLight.displayName = \"PointerLight\"\n",
+      "target": "components/kitgrid/pointer-light/pointer-light.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

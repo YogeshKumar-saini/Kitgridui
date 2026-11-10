@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "stack",
+  "type": "registry:ui",
+  "title": "Stack",
+  "description": "Children in one column or one row, evenly spaced.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/stack/index.ts",
+      "type": "registry:ui",
+      "content": "export { Stack, type StackDirection, type StackProps } from \"./stack\"\n",
+      "target": "components/kitgrid/stack/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/stack/stack.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { Slot } from \"../lib/primitives/slot\"\nimport { cx } from \"../lib/utils/cx\"\nimport {\n  type BoxAlign,\n  type BoxJustify,\n  type BoxSpace,\n  alignValue,\n  justifyValue,\n  space,\n  vars,\n} from \"../box/space\"\n\nexport type StackDirection = \"vertical\" | \"horizontal\"\n\nexport interface StackProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  asChild?: boolean\n  direction?: StackDirection\n  /** Space between children: a spacing step or a CSS length. */\n  gap?: BoxSpace\n  align?: BoxAlign\n  justify?: BoxJustify\n  /** Lets a horizontal stack wrap onto new lines. */\n  wrap?: boolean\n  /** Draws a hairline between children. */\n  dividers?: boolean\n}\n\nconst DIRECTION: Record<StackDirection, string> = {\n  vertical: \"flex-col [align-items:var(--_align,stretch)]\",\n  horizontal: \"flex-row [align-items:var(--_align,center)]\",\n}\n\n/* The rule sits in the middle of the gap, so spacing stays what `gap` says. */\nconst DIVIDERS: Record<StackDirection, string> = {\n  vertical: [\n    \"[&>*+*]:relative [&>*+*]:before:pointer-events-none [&>*+*]:before:absolute [&>*+*]:before:inset-x-0\",\n    \"[&>*+*]:before:top-[calc(var(--_gap,calc(var(--kg-space)*3))/-2)] [&>*+*]:before:border-t [&>*+*]:before:border-kg-border\",\n  ].join(\" \"),\n  horizontal: [\n    \"[&>*+*]:relative [&>*+*]:before:pointer-events-none [&>*+*]:before:absolute [&>*+*]:before:inset-y-0\",\n    \"[&>*+*]:before:start-[calc(var(--_gap,calc(var(--kg-space)*3))/-2)] [&>*+*]:before:border-s [&>*+*]:before:border-kg-border\",\n  ].join(\" \"),\n}\n\n/** Children in one column or one row, evenly spaced. */\nexport const Stack = forwardRef<HTMLElement, StackProps>(\n  (\n    {\n      as: Tag = \"div\",\n      asChild = false,\n      direction = \"vertical\",\n      gap = 3,\n      align,\n      justify,\n      wrap = false,\n      dividers = false,\n      className,\n      style,\n      ...props\n    },\n    ref,\n  ) => {\n    const Component: ElementType = asChild ? Slot : Tag\n    return (\n      <Component\n        ref={ref}\n        className={cx(\n          \"kg-stack m-0 flex min-w-0 list-none p-0\",\n          \"[justify-content:var(--_justify,flex-start)] gap-[var(--_gap,calc(var(--kg-space)*3))]\",\n          DIRECTION[direction] ?? DIRECTION.vertical,\n          wrap && \"flex-wrap\",\n          dividers && (DIVIDERS[direction] ?? DIVIDERS.vertical),\n          className,\n        )}\n        data-direction={direction}\n        data-wrap={wrap || undefined}\n        data-dividers={dividers || undefined}\n        style={{\n          ...vars({\n            \"--_gap\": space(gap),\n            \"--_align\": alignValue(align),\n            \"--_justify\": justifyValue(justify),\n          }),\n          ...style,\n        }}\n        {...props}\n      />\n    )\n  },\n)\n\nStack.displayName = \"Stack\"\n",
+      "target": "components/kitgrid/stack/stack.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

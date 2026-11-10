@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "plan-badge",
+  "type": "registry:ui",
+  "title": "Plan Badge",
+  "description": "The plan a workspace is on, for menus, headers and settings rows. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/plan-badge/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  PlanBadge,\n  type PlanBadgeProps,\n  type PlanBadgeSize,\n  type PlanBadgeTier,\n  planBadgeWords,\n} from \"./plan-badge\"\n",
+      "target": "components/kitgrid/plan-badge/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/plan-badge/plan-badge.tsx",
+      "type": "registry:ui",
+      "content": "import { forwardRef, type HTMLAttributes, type ReactNode } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/* Paper Layers: each tier is a flat paper chip; pro is ink, enterprise a lifted butter sheet. */\nexport const planBadgeVariants = variants({\n  base: [\n    \"kg-plan-badge inline-flex items-center rounded-full border-2\",\n    \"font-[640] tracking-[0.02em] whitespace-nowrap\",\n  ],\n  variants: {\n    tier: {\n      free: \"border-kg-border bg-kg-muted text-kg-fg-muted\",\n      pro: \"border-kg-ink bg-kg-accent text-kg-accent-fg\",\n      team: \"border-kg-ink bg-kg-paper-sky text-kg-fg\",\n      enterprise: \"border-kg-ink bg-kg-paper-butter text-kg-fg shadow-kg-xs\",\n    },\n    size: {\n      sm: \"h-[1.125rem] px-1.75 text-[0.625rem]\",\n      md: \"h-[1.375rem] px-2.25 text-[0.6875rem]\",\n    },\n  },\n  defaults: { size: \"md\" },\n})\n\ntype PlanBadgeVariantProps = VariantProps<typeof planBadgeVariants>\nexport type PlanBadgeTier = NonNullable<PlanBadgeVariantProps[\"tier\"]>\nexport type PlanBadgeSize = NonNullable<PlanBadgeVariantProps[\"size\"]>\n\nexport interface PlanBadgeProps extends HTMLAttributes<HTMLSpanElement> {\n  tier: PlanBadgeTier\n  size?: PlanBadgeSize\n  /** Defaults to the tier name. */\n  children?: ReactNode\n}\n\nexport const planBadgeWords: Record<PlanBadgeTier, string> = {\n  free: \"Free\",\n  pro: \"Pro\",\n  team: \"Team\",\n  enterprise: \"Enterprise\",\n}\n\n/** The plan a workspace is on, for menus, headers and settings rows. Server-safe. */\nexport const PlanBadge = forwardRef<HTMLSpanElement, PlanBadgeProps>(\n  ({ tier, size = \"md\", children, className, ...props }, ref) => (\n    <span\n      ref={ref}\n      className={planBadgeVariants({ tier, size, className })}\n      data-tier={tier}\n      data-size={size}\n      {...props}\n    >\n      {children ?? planBadgeWords[tier]}\n    </span>\n  ),\n)\n\nPlanBadge.displayName = \"PlanBadge\"\n",
+      "target": "components/kitgrid/plan-badge/plan-badge.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

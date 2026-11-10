@@ -1,0 +1,29 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "container",
+  "type": "registry:ui",
+  "title": "Container",
+  "description": "The page column: a centred maximum width with side padding. It is also a size container, so a `Grid` or `Show` inside responds to its width.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/box.json",
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/container/container.tsx",
+      "type": "registry:ui",
+      "content": "import { type ElementType, forwardRef, type HTMLAttributes } from \"react\"\nimport { cx } from \"../lib/utils/cx\"\nimport { type BoxSpace, space, vars } from \"../box/space\"\n\nexport type ContainerSize = \"sm\" | \"md\" | \"lg\" | \"xl\" | \"2xl\" | \"prose\" | \"full\"\n\nexport interface ContainerProps extends HTMLAttributes<HTMLElement> {\n  as?: ElementType\n  size?: ContainerSize\n  /** Side padding. Grows with the viewport, from 1rem to 2.5rem, when omitted. */\n  gutter?: BoxSpace\n}\n\nconst MAX: Record<ContainerSize, string> = {\n  sm: \"40rem\",\n  md: \"48rem\",\n  lg: \"64rem\",\n  xl: \"80rem\",\n  \"2xl\": \"96rem\",\n  prose: \"68ch\",\n  full: \"none\",\n}\n\nconst FLUID_GUTTER = \"clamp(1rem, 4vw, 2.5rem)\"\n\n/**\n * The page column: a centred maximum width with side padding. It is also a size container, so\n * a `Grid` or `Show` inside responds to its width.\n */\nexport const Container = forwardRef<HTMLElement, ContainerProps>(\n  ({ as: Tag = \"div\", size = \"lg\", gutter, className, style, ...props }, ref) => {\n    const max = MAX[size] ?? MAX.lg\n    return (\n      <Tag\n        ref={ref}\n        className={cx(\n          \"kg-container @container mx-auto box-border w-full max-w-(--_max)\",\n          \"px-[var(--_gutter,clamp(1rem,4vw,2.5rem))]\",\n          className,\n        )}\n        data-size={size}\n        style={{\n          ...vars({\n            \"--_gutter\": space(gutter),\n            \"--_max\":\n              max === \"none\"\n                ? \"none\"\n                : `calc(${max} + ${space(gutter) ?? FLUID_GUTTER} * 2)`,\n          }),\n          ...style,\n        }}\n        {...props}\n      />\n    )\n  },\n)\n\nContainer.displayName = \"Container\"\n",
+      "target": "components/kitgrid/container/container.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/container/index.ts",
+      "type": "registry:ui",
+      "content": "export { Container, type ContainerProps, type ContainerSize } from \"./container\"\n",
+      "target": "components/kitgrid/container/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

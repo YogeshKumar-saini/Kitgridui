@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "kpi-strip",
+  "type": "registry:ui",
+  "title": "KPI Strip",
+  "description": "A row of readouts separated by hairlines. Items wrap when space runs out and the dividers follow the wrap, so no row starts with a stray rule. Server-safe.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/kpi-strip/index.ts",
+      "type": "registry:ui",
+      "content": "export { KpiStrip, type KpiStripDensity, type KpiStripProps } from \"./kpi-strip\"\n",
+      "target": "components/kitgrid/kpi-strip/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/kpi-strip/kpi-strip.tsx",
+      "type": "registry:ui",
+      "content": "import { Children, type CSSProperties, forwardRef, type HTMLAttributes } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Every item draws its rule on its leading and top edges and is pulled 1px out, so the strip's\n * overflow clips the rules of the first column and row wherever wrapping puts them.\n */\nconst kpiStripVariants = variants({\n  base: \"kg-kpi-strip m-0 flex list-none flex-wrap overflow-hidden p-0\",\n  variants: {\n    density: {\n      compact: \"[--_pad:calc(var(--kg-space)*3)]\",\n      default: \"[--_pad:calc(var(--kg-space)*5)]\",\n      comfortable: \"[--_pad:calc(var(--kg-space)*7)]\",\n    },\n  },\n  defaults: { density: \"default\" },\n})\n\nexport type KpiStripDensity = NonNullable<VariantProps<typeof kpiStripVariants>[\"density\"]>\n\nexport interface KpiStripProps extends HTMLAttributes<HTMLUListElement> {\n  /** Names the group for assistive tech, e.g. \"Key metrics\". */\n  label?: string\n  /** Narrowest an item gets before the strip wraps. Any CSS length. */\n  minItemWidth?: string\n  density?: KpiStripDensity\n}\n\n/**\n * A row of readouts separated by hairlines. Items wrap when space runs out and the dividers\n * follow the wrap, so no row starts with a stray rule. Server-safe.\n */\nexport const KpiStrip = forwardRef<HTMLUListElement, KpiStripProps>(\n  (\n    { label, minItemWidth, density = \"default\", className, style, children, ...props },\n    ref,\n  ) => (\n    <ul\n      ref={ref}\n      className={kpiStripVariants({ density, className })}\n      aria-label={label}\n      data-density={density}\n      style={\n        minItemWidth\n          ? ({ ...style, \"--kg-kpi-strip-min\": minItemWidth } as CSSProperties)\n          : style\n      }\n      {...props}\n    >\n      {Children.map(children, (child) =>\n        child == null || typeof child === \"boolean\" ? null : (\n          <li className=\"kg-kpi-strip__item -ms-px -mt-px min-w-0 grow shrink basis-[var(--kg-kpi-strip-min,10rem)] border-s border-t border-kg-border px-(--_pad) py-[calc(var(--_pad)*0.75)]\">{child}</li>\n        ),\n      )}\n    </ul>\n  ),\n)\n\nKpiStrip.displayName = \"KpiStrip\"\n",
+      "target": "components/kitgrid/kpi-strip/kpi-strip.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

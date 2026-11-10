@@ -1,0 +1,28 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "icon-button",
+  "type": "registry:ui",
+  "title": "Icon Button",
+  "description": "An icon control with a required accessible name.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/icon-button/icon-button.tsx",
+      "type": "registry:ui",
+      "content": "import { type ButtonHTMLAttributes, forwardRef, type ReactNode } from \"react\"\nimport { type VariantProps, variants } from \"../lib/utils/variants\"\n\n/*\n * Paper Layers: solid and outline are ink-edged sheets with an offset; soft is a sage paper and\n * ghost has no sheet until hovered. Colours go through --_size, --_bg, --_fg and --_border, and icons through --_icon-size\n * (55% by default), so a parent component can retune them.\n */\nconst iconButtonVariants = variants({\n  base: [\n    \"kg-icon-button relative inline-grid size-(--_size) shrink-0 cursor-pointer place-items-center p-0 [font:inherit]\",\n    \"border-2 border-(color:--_border) bg-(--_bg) text-(--_fg) [-webkit-tap-highlight-color:transparent]\",\n    \"transition-[background-color,color,border-color,box-shadow,scale,translate] duration-(--kg-duration-fast) ease-kg-out\",\n    // Small buttons keep a 40px hit area without growing visually.\n    \"before:absolute before:inset-[min(0px,calc((var(--_size)-2.5rem)/2))]\",\n    \"interactive:hover:bg-(--_bg-hover) interactive:hover:text-(--_fg-hover) interactive:active:scale-90\",\n    \"focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n    \"disabled:cursor-not-allowed disabled:opacity-50 disabled:shadow-none\",\n    \"[&_svg]:size-[var(--_icon-size,55%)]\",\n  ],\n  variants: {\n    variant: {\n      solid: [\n        \"[--_bg:var(--kg-accent)] [--_bg-hover:var(--kg-accent-hover)] [--_fg:var(--kg-accent-fg)] [--_fg-hover:var(--kg-accent-fg)]\",\n        \"[--_border:var(--kg-ink)] shadow-[2px_2px_0_var(--kg-paper-sage)]\",\n      ],\n      soft: \"[--_bg:var(--kg-paper-sage)] [--_bg-hover:var(--kg-accent-soft)] [--_fg:var(--kg-fg)] [--_fg-hover:var(--kg-fg)] [--_border:transparent]\",\n      outline: [\n        \"[--_bg:var(--kg-surface)] [--_bg-hover:var(--kg-surface-raised)] [--_fg:var(--kg-fg)] [--_fg-hover:var(--kg-fg)]\",\n        \"[--_border:var(--kg-ink)] shadow-kg-xs\",\n      ],\n      ghost: \"[--_bg:transparent] [--_bg-hover:var(--kg-muted)] [--_fg:var(--kg-fg-muted)] [--_fg-hover:var(--kg-fg)] [--_border:transparent]\",\n    },\n    size: {\n      sm: \"[--_size:var(--kg-control-sm)]\",\n      md: \"[--_size:var(--kg-control-md)]\",\n      lg: \"[--_size:var(--kg-control-lg)]\",\n    },\n    round: {\n      true: \"rounded-full\",\n      false: \"rounded-kg-md\",\n    },\n  },\n  defaults: { variant: \"ghost\", size: \"md\", round: false },\n})\n\ntype IconButtonVariantProps = VariantProps<typeof iconButtonVariants>\nexport type IconButtonVariant = NonNullable<IconButtonVariantProps[\"variant\"]>\nexport type IconButtonSize = NonNullable<IconButtonVariantProps[\"size\"]>\n\nexport interface IconButtonProps extends Omit<\n  ButtonHTMLAttributes<HTMLButtonElement>,\n  \"children\" | \"aria-label\"\n> {\n  /** Required: an icon-only button has no other accessible name. */\n  label: string\n  icon: ReactNode\n  variant?: IconButtonVariant\n  size?: IconButtonSize\n  round?: boolean\n}\n\nexport const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(\n  (\n    {\n      label,\n      icon,\n      variant = \"ghost\",\n      size = \"md\",\n      round = false,\n      className,\n      type,\n      ...props\n    },\n    ref,\n  ) => (\n    <button\n      ref={ref}\n      type={type ?? \"button\"}\n      aria-label={label}\n      className={iconButtonVariants({ variant, size, round, className })}\n      data-variant={variant}\n      data-size={size}\n      data-round={round || undefined}\n      {...props}\n    >\n      {icon}\n    </button>\n  ),\n)\n\nIconButton.displayName = \"IconButton\"\n",
+      "target": "components/kitgrid/icon-button/icon-button.tsx"
+    },
+    {
+      "path": "kitgrid/src/components/icon-button/index.ts",
+      "type": "registry:ui",
+      "content": "export {\n  IconButton,\n  type IconButtonProps,\n  type IconButtonSize,\n  type IconButtonVariant,\n} from \"./icon-button\"\n",
+      "target": "components/kitgrid/icon-button/index.ts"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "virtual-list",
+  "type": "registry:ui",
+  "title": "Virtual List",
+  "description": "Renders thousands of fixed-height rows by mounting only the visible window. Rows keep `aria-setsize` and `aria-posinset`, so screen readers still announce the full length.",
+  "dependencies": [],
+  "registryDependencies": [
+    "https://kitgrid.dev/r/kitgrid-lib.json"
+  ],
+  "files": [
+    {
+      "path": "kitgrid/src/components/virtual-list/index.ts",
+      "type": "registry:ui",
+      "content": "export { VirtualList, type VirtualListProps } from \"./virtual-list\"\nexport { useVirtualWindow, type VirtualWindow } from \"./use-virtual-window\"\n",
+      "target": "components/kitgrid/virtual-list/index.ts"
+    },
+    {
+      "path": "kitgrid/src/components/virtual-list/use-virtual-window.ts",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport { type RefObject, useCallback, useEffect, useState } from \"react\"\n\nexport interface VirtualWindow {\n  start: number\n  end: number\n  /** Pixels above the first rendered item. */\n  offset: number\n  /** Full scroll height of all items. */\n  total: number\n}\n\n/**\n * Fixed-row windowing: only the rows in view, plus `overscan` either side, are rendered.\n * State changes only when the visible range changes, not on every scroll event.\n */\nexport const useVirtualWindow = (\n  ref: RefObject<HTMLElement | null>,\n  count: number,\n  itemHeight: number,\n  overscan: number,\n  /** Used before the container has been measured (SSR and first paint). */\n  initialHeight: number,\n): VirtualWindow => {\n  const compute = useCallback(\n    (scrollTop: number, viewport: number): VirtualWindow => {\n      const first = Math.floor(scrollTop / itemHeight)\n      const visible = Math.ceil(viewport / itemHeight)\n      const start = Math.max(0, first - overscan)\n      const end = Math.min(count, first + visible + overscan)\n      return { start, end, offset: start * itemHeight, total: count * itemHeight }\n    },\n    [count, itemHeight, overscan],\n  )\n\n  const [range, setRange] = useState<VirtualWindow>(() => compute(0, initialHeight))\n\n  useEffect(() => {\n    const node = ref.current\n    if (!node) return\n    const update = () => {\n      const next = compute(node.scrollTop, node.clientHeight || initialHeight)\n      setRange((current) =>\n        current.start === next.start && current.end === next.end && current.total === next.total\n          ? current\n          : next,\n      )\n    }\n    update()\n    node.addEventListener(\"scroll\", update, { passive: true })\n    const observer = typeof ResizeObserver === \"undefined\" ? null : new ResizeObserver(update)\n    observer?.observe(node)\n    return () => {\n      node.removeEventListener(\"scroll\", update)\n      observer?.disconnect()\n    }\n  }, [ref, compute, initialHeight])\n\n  return range\n}\n",
+      "target": "components/kitgrid/virtual-list/use-virtual-window.ts"
+    },
+    {
+      "path": "kitgrid/src/components/virtual-list/virtual-list.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\"\n\nimport {\n  type CSSProperties,\n  forwardRef,\n  type HTMLAttributes,\n  type Key,\n  type ReactNode,\n  useEffect,\n  useRef,\n} from \"react\"\nimport { useComposedRefs } from \"../lib/utils/compose-refs\"\nimport { cx } from \"../lib/utils/cx\"\nimport { useVirtualWindow } from \"./use-virtual-window\"\n\nexport interface VirtualListProps extends Omit<HTMLAttributes<HTMLDivElement>, \"children\"> {\n  count: number\n  /** Every row has this height, in px. */\n  itemHeight: number\n  /** Viewport height, in px. */\n  height: number\n  renderItem: (index: number) => ReactNode\n  getKey?: (index: number) => Key\n  /** Rows rendered beyond each edge of the viewport. */\n  overscan?: number\n  /** Scrolls this row into view whenever it changes. */\n  scrollToIndex?: number\n  /** Names the list for assistive tech. */\n  label?: string\n}\n\n/**\n * Renders thousands of fixed-height rows by mounting only the visible window. Rows keep\n * `aria-setsize` and `aria-posinset`, so screen readers still announce the full length.\n */\nexport const VirtualList = forwardRef<HTMLDivElement, VirtualListProps>(\n  (\n    {\n      count,\n      itemHeight,\n      height,\n      renderItem,\n      getKey,\n      overscan = 6,\n      scrollToIndex,\n      label,\n      className,\n      style,\n      ...props\n    },\n    forwardedRef,\n  ) => {\n    const ref = useRef<HTMLDivElement>(null)\n    const composed = useComposedRefs(ref, forwardedRef)\n    const range = useVirtualWindow(ref, count, itemHeight, overscan, height)\n\n    useEffect(() => {\n      const node = ref.current\n      if (!node || scrollToIndex === undefined) return\n      const top = scrollToIndex * itemHeight\n      if (top < node.scrollTop) node.scrollTop = top\n      else if (top + itemHeight > node.scrollTop + node.clientHeight)\n        node.scrollTop = top + itemHeight - node.clientHeight\n    }, [scrollToIndex, itemHeight])\n\n    const rows: ReactNode[] = []\n    for (let index = range.start; index < range.end; index++) {\n      rows.push(\n        <div\n          key={getKey ? getKey(index) : index}\n          role=\"listitem\"\n          aria-setsize={count}\n          aria-posinset={index + 1}\n          className=\"kg-virtual-list__item box-border overflow-hidden\"\n          style={{ height: itemHeight }}\n        >\n          {renderItem(index)}\n        </div>,\n      )\n    }\n\n    return (\n      <div\n        ref={composed}\n        className={cx(\n          \"kg-virtual-list relative overflow-auto overscroll-contain [contain:strict] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-kg-ring\",\n          className,\n        )}\n        // biome-ignore lint/a11y/noNoninteractiveTabindex: the scroll region must be keyboard reachable.\n        tabIndex={0}\n        style={{ height, ...style }}\n        {...props}\n      >\n        <div\n          role=\"list\"\n          aria-label={label}\n          className=\"kg-virtual-list__spacer relative w-full\"\n          style={{ height: range.total } as CSSProperties}\n        >\n          <div\n            className=\"kg-virtual-list__window absolute inset-x-0 top-0 will-change-transform\"\n            style={{ transform: `translateY(${range.offset}px)` }}\n          >\n            {rows}\n          </div>\n        </div>\n      </div>\n    )\n  },\n)\nVirtualList.displayName = \"VirtualList\"\n",
+      "target": "components/kitgrid/virtual-list/virtual-list.tsx"
+    }
+  ],
+  "meta": {
+    "base": "components/kitgrid"
+  }
+}
