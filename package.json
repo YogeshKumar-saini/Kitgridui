@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "echarts": "^6.1.0",
-    "kitgrid": "npm:@yogeshkumar-saini/kitgrid@^0.1.0",
+    "kitgrid": "npm:@yogeshsaini/kitgrid@^0.1.0",
     "lucide-react": "^1.61.0",
     "next": "16.4.3",
     "react": "19.3.0",
