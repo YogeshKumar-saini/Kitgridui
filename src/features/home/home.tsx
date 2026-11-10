@@ -163,9 +163,9 @@ export const Home = () => (
         </p>
         <div className="flex items-center gap-1 rounded-full border-2 border-kg-ink bg-kg-surface py-1 pr-1 pl-5 shadow-kg-xs">
           <code className="bg-transparent p-0 font-mono text-kg-base">
-            <span className="text-kg-fg-muted select-none">$ </span>npm i kitgrid
+            <span className="text-kg-fg-muted select-none">$ </span>npm i @yogeshsaini/kitgrid
           </code>
-          <CopyButton text="npm i kitgrid" label="Copy install command" />
+          <CopyButton text="npm i @yogeshsaini/kitgrid" label="Copy install command" />
         </div>
         <div className="flex flex-wrap gap-3">
           <Button size="lg" asChild>

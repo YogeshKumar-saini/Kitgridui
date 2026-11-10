@@ -596,14 +596,14 @@ export const demos = [
         label="Install"
         style={{ width: 420 }}
         items={[
-          { value: "npm", label: "npm", code: "npm install kitgrid" },
-          { value: "pnpm", label: "pnpm", code: "pnpm add kitgrid" },
-          { value: "yarn", label: "yarn", code: "yarn add kitgrid" },
+          { value: "npm", label: "npm", code: "npm install @yogeshsaini/kitgrid" },
+          { value: "pnpm", label: "pnpm", code: "pnpm add @yogeshsaini/kitgrid" },
+          { value: "yarn", label: "yarn", code: "yarn add @yogeshsaini/kitgrid" },
         ]}
       />
     ),
     code: () =>
-      `import { CodeTabs } from "kitgrid"\n\n<CodeTabs\n  label="Install"\n  style={{ width: 420 }}\n  items={[\n    { value: "npm", label: "npm", code: "npm install kitgrid" },\n    { value: "pnpm", label: "pnpm", code: "pnpm add kitgrid" },\n    { value: "yarn", label: "yarn", code: "yarn add kitgrid" },\n  ]}\n/>`,
+      `import { CodeTabs } from "kitgrid"\n\n<CodeTabs\n  label="Install"\n  style={{ width: 420 }}\n  items={[\n    { value: "npm", label: "npm", code: "npm install @yogeshsaini/kitgrid" },\n    { value: "pnpm", label: "pnpm", code: "pnpm add @yogeshsaini/kitgrid" },\n    { value: "yarn", label: "yarn", code: "yarn add @yogeshsaini/kitgrid" },\n  ]}\n/>`,
     accessibility: ["Tabs pattern with roving focus: arrows move and select, Home/End jump."],
   }),
   defineDemo({

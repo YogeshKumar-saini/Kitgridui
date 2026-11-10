@@ -8,7 +8,7 @@ npm run dev        # http://localhost:3000
 npm run build
 ```
 
-The site uses the library from `../kitgridpackage/packages/kitgrid` (`"kitgrid": "file:../kitgridpackage/packages/kitgrid"`). After changing library code, run `npm run build` in `../kitgridpackage`.
+The site uses the published package `@yogeshsaini/kitgrid` (`"kitgrid": "npm:@yogeshsaini/kitgrid@^0.1.0"`).
 
 | Path | |
 | --- | --- |

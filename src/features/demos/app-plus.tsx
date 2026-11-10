@@ -559,13 +559,13 @@ export const demos = [
     controls: { variant: { type: "select", options: ["field", "command"], default: "command" } },
     render: ({ variant }) =>
       variant === "command" ? (
-        <CopyField style={narrow} variant="command" aria-label="install command" value="npm i kitgrid" />
+        <CopyField style={narrow} variant="command" aria-label="install command" value="npm i @yogeshsaini/kitgrid" />
       ) : (
         <CopyField style={narrow} label="Project ID" value="prj_8f2k1q7Lx" />
       ),
     code: ({ variant }) =>
       variant === "command"
-        ? `<CopyField variant="command" aria-label="install command" value="npm i kitgrid" />`
+        ? `<CopyField variant="command" aria-label="install command" value="npm i @yogeshsaini/kitgrid" />`
         : `<CopyField label="Project ID" value="prj_8f2k1q7Lx" />`,
     accessibility: ["The copy button is named after the value's label. \"Copied\" is announced."],
   }),

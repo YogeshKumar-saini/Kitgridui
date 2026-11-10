@@ -109,10 +109,10 @@ export const CodeBlock = ({
 const managers = ["npm", "pnpm", "yarn", "bun"] as const
 type Manager = (typeof managers)[number]
 const installCommand: Record<Manager, string> = {
-  npm: "npm i kitgrid",
-  pnpm: "pnpm add kitgrid",
-  yarn: "yarn add kitgrid",
-  bun: "bun add kitgrid",
+  npm: "npm i @yogeshsaini/kitgrid",
+  pnpm: "pnpm add @yogeshsaini/kitgrid",
+  yarn: "yarn add @yogeshsaini/kitgrid",
+  bun: "bun add @yogeshsaini/kitgrid",
 }
 const PM_KEY = "kg-playground-pm"
 
